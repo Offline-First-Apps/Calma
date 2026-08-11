@@ -52,6 +52,7 @@ coverage
 # Planning & system docs (local working notes)
 plans/
 systems/
+progress/
 
 # Misc
 *.tgz
