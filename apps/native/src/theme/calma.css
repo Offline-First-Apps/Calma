@@ -1,0 +1,153 @@
+/* ------------------------------------------------------------------------- *
+ * Calma theme for heroui-native.
+ *
+ * We do NOT fork heroui-native. Every one of its components (button, card,
+ * chip, input, sheet, switch, slider, tabs…) reads these CSS variables, so
+ * overriding them here re-skins the entire library at once.
+ *
+ * Values extracted from designs/extracted/. See systems/09-decisions.md D-018.
+ * Import this AFTER heroui-native's own styles.
+ * ------------------------------------------------------------------------- */
+
+@import "heroui-native/styles";
+
+:root {
+  --background: #FBF7F1;              /* warm off-white. never clinical white */
+  --foreground: #2A3642;              /* deep slate-navy. never black */
+
+  --surface: #F3EBE0;                 /* cards, wells, the quiet button */
+  --surface-foreground: #2A3642;
+  --surface-secondary: #FDFAF3;       /* paper-feeling screens */
+  --surface-secondary-foreground: #2A3642;
+  --surface-tertiary: #FDFCFA;        /* highest surface, sheets */
+  --surface-tertiary-foreground: #2A3642;
+
+  --overlay: #FDFCFA;
+  --overlay-foreground: #2A3642;
+  --backdrop: rgba(42, 54, 66, 0.45);
+
+  --muted: #5B6873;
+
+  --accent: #E39A45;                  /* amber. the only thing that glows */
+  --accent-foreground: #33230F;
+
+  --default: #F3EBE0;
+  --default-foreground: #2A3642;
+
+  --border: #E4D8C8;
+  --separator: rgba(42, 54, 66, 0.25);
+  --focus: #E39A45;
+  --link: #8A4E36;
+
+  --segment: #FDFCFA;
+  --segment-foreground: #2A3642;
+
+  /* ---------------------------------------------------------------------- *
+   * NO SEMANTIC ALARM COLOURS.
+   *
+   * heroui-native ships success/warning/danger. Calma has no error states —
+   * nothing here is a failure and a red alert shown to an anxious person is a
+   * small act of harm (systems/03-design-system.md). They are remapped rather
+   * than left at their defaults so an accidental <Button variant="danger">
+   * degrades to clay, not to red.
+   * ---------------------------------------------------------------------- */
+  --success: #7D9A7E;                 /* sage. quiet affirmative, used rarely */
+  --success-foreground: #2A3642;
+  --warning: #BE7458;                 /* clay */
+  --warning-foreground: #8A4E36;
+  --danger: #BE7458;                  /* clay. NOT red. deliberate */
+  --danger-foreground: #8A4E36;
+
+  --radius: 20px;                     /* dominant component radius */
+  --border-width: 1px;
+  --opacity-disabled: 0.45;
+
+  --field-background: #FDFCFA;
+  --field-border: #E4D8C8;
+  --field-radius: 20px;
+  --field-placeholder: #7A6A5C;
+
+  /* ---- Calma-specific, not part of heroui-native ---- */
+  --warm: #2A3642;                    /* serif copy colour */
+  --clay: #BE7458;
+  --clay-fill: rgba(190, 116, 88, 0.12);
+  --clay-border: rgba(190, 116, 88, 0.34);
+  --clay-foreground: #8A4E36;
+  --orb-core: #F8DFB2;
+  --orb-mid: #EFB86E;
+  --orb-edge: #E39A45;
+  --accent-pressed: #D68B36;
+}
+
+.dark:root,
+.dark {
+  --background: #141C26;
+  --foreground: #C9D2DA;              /* cool grey — functional sans copy */
+
+  --surface: #1D2733;
+  --surface-foreground: #C9D2DA;
+  --surface-secondary: #1E2731;
+  --surface-secondary-foreground: #C9D2DA;
+  --surface-tertiary: #2C3844;
+  --surface-tertiary-foreground: #C9D2DA;
+
+  --overlay: #2C3844;
+  --overlay-foreground: #C9D2DA;
+  --backdrop: rgba(0, 0, 0, 0.6);
+
+  --muted: #8F98A3;
+
+  --accent: #D19249;                  /* amber drops in dark. the 2am rule */
+  --accent-foreground: #221708;
+
+  --default: #1D2733;
+  --default-foreground: #C9D2DA;
+
+  --border: #2B3745;
+  --separator: rgba(234, 226, 215, 0.3);
+  --focus: #D19249;
+  --link: #E3A98C;
+
+  --segment: #2C3742;
+  --segment-foreground: #EAE2D7;
+
+  --success: #7D9A7E;
+  --success-foreground: #EAE2D7;
+  --warning: #D48C6A;
+  --warning-foreground: #E3A98C;
+  --danger: #D48C6A;
+  --danger-foreground: #E3A98C;
+
+  --field-background: #1D2733;
+  --field-border: #2B3745;
+  --field-placeholder: #8996A2;
+
+  --warm: #EAE2D7;                    /* warm cream — serif emotional copy */
+  --clay: #D48C6A;
+  --clay-fill: rgba(222, 150, 110, 0.13);
+  --clay-border: rgba(222, 150, 110, 0.32);
+  --clay-foreground: #E3A98C;
+  --accent-pressed: #B87A3A;
+}
+
+@theme inline {
+  --color-warm: var(--warm);
+  --color-clay: var(--clay);
+  --color-clay-fill: var(--clay-fill);
+  --color-clay-border: var(--clay-border);
+  --color-clay-foreground: var(--clay-foreground);
+  --color-accent-pressed: var(--accent-pressed);
+  --color-orb-core: var(--orb-core);
+  --color-orb-mid: var(--orb-mid);
+  --color-orb-edge: var(--orb-edge);
+
+  --font-serif: Newsreader;           /* copy meant to be FELT */
+  --font-sans: Figtree;               /* copy meant to be READ */
+
+  /* Control heights, from the designs. 46 is the most repeated dimension. */
+  --height-pill: 46px;
+  --height-button: 62px;
+  --height-card: 64px;
+  --height-card-tall: 78px;
+  --height-panic: 72px;
+}
