@@ -12,6 +12,7 @@
  * See systems/01-architecture.md Â§ Package boundaries.
  */
 export * from './entities';
+export * from './breathing';
 export * from './id';
 export * from './tier';
 export * from './time';
