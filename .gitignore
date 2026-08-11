@@ -8,6 +8,10 @@ dist
 build
 *.tsbuildinfo
 
+/designs/extracted
+/designs/extract.py
+/designs/TOKEN-CENSUS.md
+
 # Generated files
 apps/web/src/routeTree.gen.ts
 
