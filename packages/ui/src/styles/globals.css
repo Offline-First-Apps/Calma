@@ -7,72 +7,73 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.58 0.22 27);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
-  --chart-1: oklch(0.809 0.105 251.813);
-  --chart-2: oklch(0.623 0.214 259.815);
-  --chart-3: oklch(0.546 0.245 262.881);
-  --chart-4: oklch(0.488 0.243 264.376);
-  --chart-5: oklch(0.424 0.199 265.638);
-  --radius: 0.625rem;
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
+  /* ---- Calma design system. Extracted from designs/extracted/. ---- */
+  /* Do not add a red. There is no destructive colour in this product. */
+
+  --background: #FBF7F1;          /* warm off-white. never clinical white */
+  --foreground: #2A3642;          /* deep slate-navy. never black */
+  --card: #F3EBE0;
+  --card-foreground: #2A3642;
+  --popover: #FDFCFA;
+  --popover-foreground: #2A3642;
+
+  --primary: #E39A45;             /* amber. the only thing that glows */
+  --primary-foreground: #33230F;
+  --secondary: #F3EBE0;           /* sand fill. the quiet button */
+  --secondary-foreground: #2A3642;
+
+  --muted: #F3EBE0;
+  --muted-foreground: #5B6873;
+  --accent: #EDE2CE;
+  --accent-foreground: #2A3642;
+
+  /* Clay, not red. Used for the crisis exit and worry surfaces. */
+  --destructive: #BE7458;
+  --destructive-foreground: #8A4E36;
+
+  --border: #E4D8C8;
+  --input: #E4D8C8;
+  --ring: #E39A45;
+
+  --clay: #BE7458;
+  --clay-foreground: #8A4E36;
+  --orb-core: #F8DFB2;
+  --orb-mid: #EFB86E;
+  --orb-edge: #E39A45;
+
+  --radius: 1.25rem;              /* 20px — the dominant component radius */
+
+  --font-serif: Newsreader, Georgia, serif;   /* copy meant to be FELT */
+  --font-sans: Figtree, system-ui, sans-serif; /* copy meant to be READ */
 }
 
 .dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.87 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.371 0 0);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.556 0 0);
-  --chart-1: oklch(0.809 0.105 251.813);
-  --chart-2: oklch(0.623 0.214 259.815);
-  --chart-3: oklch(0.546 0.245 262.881);
-  --chart-4: oklch(0.488 0.243 264.376);
-  --chart-5: oklch(0.424 0.199 265.638);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.556 0 0);
+  --background: #141C26;
+  --foreground: #C9D2DA;          /* cool grey — functional sans copy */
+  --card: #1D2733;
+  --card-foreground: #C9D2DA;
+  --popover: #2C3844;
+  --popover-foreground: #C9D2DA;
+
+  --primary: #D19249;             /* amber drops in dark. the 2am rule */
+  --primary-foreground: #221708;
+  --secondary: #1D2733;
+  --secondary-foreground: #EAE2D7;
+
+  --muted: #1E2731;
+  --muted-foreground: #8F98A3;
+  --accent: #2C3742;
+  --accent-foreground: #EAE2D7;   /* warm cream — serif emotional copy */
+
+  --destructive: #D48C6A;
+  --destructive-foreground: #E3A98C;
+
+  --border: #2B3745;
+  --input: #2B3745;
+  --ring: #D19249;
+
+  --clay: #D48C6A;
+  --clay-foreground: #E3A98C;
 }
 
 @theme inline {
@@ -127,4 +128,29 @@
   html {
     @apply font-sans;
   }
+}
+
+/* Warm text — pair with .font-serif for emotional copy. In light mode this is
+   the same as --foreground; in dark it shifts to cream so serif lines don't
+   read clinical. */
+:root { --warm: #2A3642; }
+.dark  { --warm: #EAE2D7; }
+
+@theme inline {
+  --color-clay: var(--clay);
+  --color-clay-foreground: var(--clay-foreground);
+  --color-warm: var(--warm);
+  --color-orb-core: var(--orb-core);
+  --color-orb-mid: var(--orb-mid);
+  --color-orb-edge: var(--orb-edge);
+  --font-serif: var(--font-serif);
+  --font-sans: var(--font-sans);
+}
+
+/* The orb. Three stacked blurred radial layers — not a gradient circle. */
+@keyframes calmaBreathe { 0%,100% { transform: scale(0.93) } 46% { transform: scale(1.07) } }
+@keyframes calmaGlow    { 0%,100% { opacity: 0.72 } 46% { opacity: 1 } }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
 }
