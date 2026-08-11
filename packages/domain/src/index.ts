@@ -13,4 +13,5 @@
  */
 export * from './entities';
 export * from './id';
+export * from './tier';
 export * from './time';
