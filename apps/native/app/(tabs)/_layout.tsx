@@ -26,10 +26,16 @@ export default function TabsLayout() {
   const insets = useSafeAreaInsets();
   const reduceMotion = useReduceMotion();
 
-  const active = useThemeColor('accent');
-  const inactive = useThemeColor('mutedForeground');
-  const background = useThemeColor('background');
-  const border = useThemeColor('border');
+  // `mutedForeground` is not a heroui theme colour -- the name is `muted`.
+  // The old value resolved to undefined, which React Navigation reads as
+  // "use the default blue", so all four inactive tabs were tinted by a
+  // library default rather than by the palette.
+  const [active, inactive, background, border] = useThemeColor([
+    'accent',
+    'muted',
+    'background',
+    'border',
+  ]);
 
   return (
     <View className="flex-1">
@@ -45,9 +51,11 @@ export default function TabsLayout() {
             paddingBottom: insets.bottom,
           },
           tabBarLabelStyle: {
-            fontFamily: 'Figtree',
+            // The registered face, not a family + weight pair. expo-font does
+            // not synthesise weights, so 'Figtree' at '500' silently renders
+            // as regular on iOS and can fall back to Roboto on Android.
+            fontFamily: 'Figtree_500Medium',
             fontSize: 11,
-            fontWeight: '500',
           },
           // Labels are single words on purpose. Five of them have to fit at
           // 200% font scale, and the rule is that the label gets shorter

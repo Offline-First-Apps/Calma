@@ -1,57 +1,131 @@
 /**
- * Tailwind preset shared by apps/native (uniwind) and apps/web.
+ * The token -> CSS-variable name map.
  *
- * Semantic names only. A component that writes `bg-sand-100` will be wrong in
- * dark mode; `bg-surface` will not. Theme switching is handled by the
- * `.dark` class / colorScheme, so every semantic colour resolves per theme.
+ * ---------------------------------------------------------------------------
+ * THIS FILE USED TO EXPORT A TAILWIND v3 PRESET. IT WAS DEAD CODE.
+ *
+ * `calmaPreset` was a `theme.extend` object of the shape Tailwind v3 reads
+ * from `tailwind.config.js`. Uniwind v1 runs Tailwind v4, which is CSS-first
+ * and never loads a JS config. Nothing imported the preset, so nothing
+ * noticed: every semantic class in the app quietly resolved against
+ * heroui-native's stock palette instead, and the app rendered in heroui blue
+ * on cool grey while the tokens sat here describing a warm, lamp-lit room.
+ *
+ * The theme now lives in `apps/native/global.css` as real CSS. That file is
+ * the only place the values are consumed; THIS file remains the only place
+ * they are *defined*. `theme-parity.test.ts` walks the map below, reads the
+ * CSS, and fails if any pair has drifted.
+ *
+ * So: change a colour here. Never there.
+ * ---------------------------------------------------------------------------
  */
-import { light, dark, amber, clay, orb } from './colors';
-import { radius, space, control } from './layout';
-import { type, fontFamily } from './typography';
+import { amber, clay, dark, light, orb } from './colors';
+import { control, radius } from './layout';
+import { fontFamily } from './typography';
 
-export const calmaPreset = {
-  theme: {
-    extend: {
-      colors: {
-        bg: { DEFAULT: light.bg, dark: dark.bg },
-        'bg-immersive': { DEFAULT: light.bg, dark: dark.bgImmersive },
-        surface: { DEFAULT: light.surface, dark: dark.surface },
-        'surface-raised': { DEFAULT: light.surfaceRaised, dark: dark.surfaceRaised },
-        'surface-warm': { DEFAULT: light.surfaceWarm, dark: dark.surfaceWarm },
-        border: { DEFAULT: light.border, dark: dark.border },
-        'border-strong': { DEFAULT: light.borderStrong, dark: dark.borderStrong },
+/**
+ * A theme-dependent variable: the bare custom property heroui-native reads,
+ * and the value it must carry in each theme.
+ *
+ * The bare name (`--accent`) is the override point; the utility class name
+ * (`bg-accent`) is generated from heroui's own `@theme inline` mapping, or
+ * from ours for the Calma-only additions.
+ */
+export interface ThemedVar {
+  /** The bare custom property, without the leading dashes. */
+  cssVar: string;
+  lightValue: string;
+  darkValue: string;
+}
 
-        text: { DEFAULT: light.text, dark: dark.text },
-        'text-warm': { DEFAULT: light.text, dark: dark.textWarm },
-        'text-secondary': { DEFAULT: light.textSecondary, dark: dark.textSecondary },
-        'text-muted': { DEFAULT: light.textMuted, dark: dark.textMuted },
-        'text-faint': { DEFAULT: light.textFaint, dark: dark.textFaint },
+/**
+ * Every colour that changes between themes.
+ *
+ * Note `warm`: light and dark do NOT agree, and that is the point. Dark mode
+ * carries two text colours -- cream for the serif sentences meant to be felt,
+ * cool grey for the sans copy that only needs reading (D-017). Collapsing
+ * them would make "You're still here. That's enough." read like a status bar.
+ */
+export const themedColors: readonly ThemedVar[] = [
+  { cssVar: 'background', lightValue: light.bg, darkValue: dark.bg },
+  { cssVar: 'foreground', lightValue: light.text, darkValue: dark.text },
+  { cssVar: 'surface', lightValue: light.surface, darkValue: dark.surface },
+  { cssVar: 'surface-secondary', lightValue: light.surfaceRaised, darkValue: dark.surfaceRaised },
+  { cssVar: 'surface-tertiary', lightValue: light.surfaceWarm, darkValue: dark.surfaceWarm },
+  { cssVar: 'muted', lightValue: light.textMuted, darkValue: dark.textMuted },
+  { cssVar: 'border', lightValue: light.border, darkValue: dark.border },
+  { cssVar: 'separator', lightValue: light.border, darkValue: dark.border },
+  { cssVar: 'border-strong', lightValue: light.borderStrong, darkValue: dark.borderStrong },
 
-        accent: { DEFAULT: amber.light.base, dark: amber.dark.base },
-        'accent-pressed': { DEFAULT: amber.light.pressed, dark: amber.dark.pressed },
-        'accent-soft': { DEFAULT: amber.light.soft, dark: amber.dark.soft },
-        'on-accent': { DEFAULT: amber.light.on, dark: amber.dark.on },
+  { cssVar: 'accent', lightValue: amber.light.base, darkValue: amber.dark.base },
+  { cssVar: 'accent-foreground', lightValue: amber.light.on, darkValue: amber.dark.on },
+  { cssVar: 'accent-pressed', lightValue: amber.light.pressed, darkValue: amber.dark.pressed },
+  { cssVar: 'accent-soft', lightValue: amber.light.soft, darkValue: amber.dark.soft },
+  { cssVar: 'accent-softer', lightValue: amber.light.softer, darkValue: amber.dark.softer },
 
-        clay: { DEFAULT: clay.light.base, dark: clay.dark.base },
-        'clay-text': { DEFAULT: clay.light.text, dark: clay.dark.text },
+  /** Light mode has one text colour; dark mode's cream is the whole reason. */
+  { cssVar: 'warm', lightValue: light.text, darkValue: dark.textWarm },
+  { cssVar: 'secondary', lightValue: light.textSecondary, darkValue: dark.textSecondary },
+  { cssVar: 'faint', lightValue: light.textFaint, darkValue: dark.textFaint },
 
-        orb: { core: orb.core, mid: orb.mid, edge: orb.edge },
-      },
-      borderRadius: {
-        sm: `${radius.sm}px`, md: `${radius.md}px`, lg: `${radius.lg}px`,
-        xl: `${radius.xl}px`, '2xl': `${radius['2xl']}px`, '3xl': `${radius['3xl']}px`,
-      },
-      spacing: Object.fromEntries(Object.entries(space).map(([k, v]) => [k, `${v}px`])),
-      height: Object.fromEntries(Object.entries(control).map(([k, v]) => [k, `${v}px`])),
-      fontFamily: { serif: [fontFamily.serif, 'serif'], sans: [fontFamily.sans, 'system-ui', 'sans-serif'] },
-      fontSize: Object.fromEntries(
-        Object.entries(type).map(([k, v]) => [
-          k,
-          [`${v.size}px`, { lineHeight: `${v.lineHeight}px`, letterSpacing: `${v.letterSpacing}px`, fontWeight: v.weight }],
-        ]),
-      ),
-    },
-  },
-} as const;
+  /** The deeper ground under a breathing or panic session. */
+  { cssVar: 'immersive', lightValue: light.bg, darkValue: dark.bgImmersive },
 
-export default calmaPreset;
+  { cssVar: 'clay', lightValue: clay.light.base, darkValue: clay.dark.base },
+  { cssVar: 'clay-foreground', lightValue: clay.light.text, darkValue: clay.dark.text },
+  { cssVar: 'clay-fill', lightValue: clay.light.fill, darkValue: clay.dark.fill },
+  { cssVar: 'clay-border', lightValue: clay.light.border, darkValue: clay.dark.border },
+] as const;
+
+/**
+ * Colours that are identical in both themes.
+ *
+ * Only the orb qualifies. It glows the same at 3pm and 3am because it is a
+ * lamp in the room rather than part of the room.
+ */
+export const staticColors: Readonly<Record<string, string>> = {
+  'color-orb-core': orb.core,
+  'color-orb-mid': orb.mid,
+  'color-orb-edge': orb.edge,
+};
+
+/**
+ * Font families, by the name they are registered under in `useFonts`.
+ *
+ * The weight is baked into the family name on purpose -- see the long note in
+ * `global.css`. Asking for `font-sans font-medium` gets you the regular face
+ * on iOS and Roboto on some Android builds, silently, with no error anywhere.
+ */
+export const fontVars: Readonly<Record<string, string>> = {
+  'font-serif': fontFamily.serif,
+  'font-serif-medium': `${fontFamily.serif}_500Medium`,
+  'font-sans': fontFamily.sans,
+  'font-sans-medium': `${fontFamily.sans}_500Medium`,
+  'font-sans-semibold': `${fontFamily.sans}_600SemiBold`,
+};
+
+/** Control heights, exposed through Tailwind's `--spacing-*` namespace. */
+export const spacingVars: Readonly<Record<string, string>> = {
+  'spacing-pill': `${control.pill}px`,
+  'spacing-button': `${control.button}px`,
+  'spacing-card': `${control.card}px`,
+  'spacing-card-tall': `${control.cardTall}px`,
+  'spacing-min-target': `${control.minTarget}px`,
+  'spacing-panic-fab': `${control.panicFab}px`,
+};
+
+/**
+ * Radii, namespaced away from heroui's `--radius-*` scale.
+ *
+ * heroui's own components are built against `rounded-lg` meaning 8px. Calma's
+ * `lg` means 20. Overriding the scale would restyle every heroui internal;
+ * naming ours `rounded-card` and friends keeps both correct.
+ */
+export const radiusVars: Readonly<Record<string, string>> = {
+  'radius-tight': `${radius.sm}px`,
+  'radius-input': `${radius.md}px`,
+  'radius-card': `${radius.lg}px`,
+  'radius-sheet': `${radius.xl}px`,
+  'radius-well': `${radius['2xl']}px`,
+  'radius-hero': `${radius['3xl']}px`,
+};

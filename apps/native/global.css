@@ -3,3 +3,223 @@
 @import "heroui-native/styles";
 
 @source './node_modules/heroui-native/lib';
+
+/* ==========================================================================
+ * CALMA THEME
+ *
+ * WHY THIS FILE EXISTS AND WHY IT IS NOT A JS PRESET.
+ *
+ * `packages/tokens/src/tailwind.ts` used to export `calmaPreset`, a Tailwind
+ * v3 `theme.extend` object. Nothing ever imported it. Uniwind v1 runs
+ * Tailwind v4, which is CSS-first: a JS preset is not read at all. So every
+ * semantic class in the app -- `bg-accent`, `text-foreground`, `h-button` --
+ * was resolving against heroui-native's default palette (a blue accent on
+ * cool grey) or, where heroui has no such name, against nothing.
+ *
+ * The app was never going to look like Calma until this file existed. It is
+ * the single highest-leverage fix in the repo and it is why plan 06 opens
+ * with a `fix(nav):` commit.
+ *
+ * HOW IT WORKS. heroui-native declares `@theme inline` mappings of
+ * `--color-x` onto a bare `--x`, then sets the bare vars per theme in
+ * `:root { @variant light / @variant dark }`. Overriding the bare vars is
+ * therefore enough to restyle heroui's own components too -- a heroui Button
+ * inside Calma comes out amber without being touched.
+ *
+ * VALUES ARE MIRRORED FROM `@calma/tokens`, WHICH REMAINS THE SOURCE OF
+ * TRUTH. `packages/tokens/src/theme-parity.test.ts` reads this file and
+ * fails if a single hex drifts. Change the token, not the hex.
+ * ========================================================================== */
+
+@layer theme {
+  :root {
+    /* ---- LIGHT ------------------------------------------------------- */
+    @variant light {
+      /* heroui base, overridden */
+      --background: #FBF7F1;
+      --foreground: #2A3642;
+
+      --surface: #F3EBE0;
+      --surface-foreground: #2A3642;
+      --surface-secondary: #FDFCFA;
+      --surface-secondary-foreground: #2A3642;
+      --surface-tertiary: #FDFAF3;
+      --surface-tertiary-foreground: #2A3642;
+
+      --overlay: #FDFCFA;
+      --overlay-foreground: #2A3642;
+      --backdrop: rgba(42, 54, 66, 0.28);
+
+      --muted: #5B6873;
+
+      --default: #F3EBE0;
+      --default-foreground: #2A3642;
+
+      --accent: #E39A45;
+      --accent-foreground: #33230F;
+
+      --segment: #FDFCFA;
+      --segment-foreground: #2A3642;
+
+      --border: #E4D8C8;
+      --separator: #E4D8C8;
+      --focus: #E39A45;
+      --link: #2A3642;
+
+      --field-background: #F3EBE0;
+      --field-foreground: #2A3642;
+      --field-placeholder: #5B6873;
+      --field-border: #E4D8C8;
+
+      /*
+       * Calma additions.
+       *
+       * `--warm` is the one that matters. In light mode it is identical to
+       * `--foreground`; in dark mode it is a cream rather than the cool grey
+       * used for UI copy. Newsreader serif -- the sentences meant to be felt
+       * -- always takes `--warm`, so an emotional line never reads clinical
+       * at 2am. That is D-017 expressed as a colour.
+       */
+      --warm: #2A3642;
+      --secondary: #454F5A;
+      --faint: #7A6A5C;
+
+      /* The deeper ground for breathing and panic. Light mode has no
+       * separate immersive value -- the room does not need dimming when the
+       * lights are already on. */
+      --immersive: #FBF7F1;
+
+      --border-strong: #EDE2CE;
+      --accent-pressed: #D68B36;
+      --accent-soft: #F0B96D;
+      --accent-softer: #F0BE7E;
+
+      --clay: #BE7458;
+      --clay-foreground: #8A4E36;
+      --clay-fill: rgba(190, 116, 88, 0.12);
+      --clay-border: rgba(190, 116, 88, 0.34);
+    }
+
+    /* ---- DARK -- the primary mode. "The panic that hits at 2am." ------- */
+    @variant dark {
+      --background: #141C26;
+      --foreground: #C9D2DA;
+
+      --surface: #1D2733;
+      --surface-foreground: #C9D2DA;
+      --surface-secondary: #2C3844;
+      --surface-secondary-foreground: #C9D2DA;
+      --surface-tertiary: #1E2731;
+      --surface-tertiary-foreground: #C9D2DA;
+
+      --overlay: #2C3844;
+      --overlay-foreground: #C9D2DA;
+      --backdrop: rgba(12, 15, 20, 0.62);
+
+      --muted: #8F98A3;
+
+      --default: #1D2733;
+      --default-foreground: #C9D2DA;
+
+      /* Amber drops in intensity here. This is the 2am rule, in a token: a
+       * full-strength fill sears a dark-adapted eye. */
+      --accent: #D19249;
+      --accent-foreground: #221708;
+
+      --segment: #2C3844;
+      --segment-foreground: #C9D2DA;
+
+      --border: #2B3745;
+      --separator: #2B3745;
+      --focus: #D19249;
+      --link: #C9D2DA;
+
+      --field-background: #1D2733;
+      --field-foreground: #C9D2DA;
+      --field-placeholder: #8F98A3;
+      --field-border: #2B3745;
+
+      --warm: #EAE2D7;
+      --secondary: #A8B4BF;
+      --faint: #8996A2;
+
+      --immersive: #101823;
+
+      --border-strong: #2C3742;
+      --accent-pressed: #B87A3A;
+      --accent-soft: #DFA55B;
+      --accent-softer: #E7C089;
+
+      --clay: #D48C6A;
+      --clay-foreground: #E3A98C;
+      --clay-fill: rgba(222, 150, 110, 0.13);
+      --clay-border: rgba(222, 150, 110, 0.32);
+    }
+  }
+}
+
+/* Expose the Calma-only vars as utilities. `inline` so the utility resolves
+ * to the var reference and keeps following the theme at runtime. */
+@theme inline {
+  --color-warm: var(--warm);
+  --color-secondary: var(--secondary);
+  --color-faint: var(--faint);
+  --color-immersive: var(--immersive);
+
+  --color-border-strong: var(--border-strong);
+  --color-accent-pressed: var(--accent-pressed);
+  --color-accent-soft-fill: var(--accent-soft);
+  --color-accent-softer: var(--accent-softer);
+
+  --color-clay: var(--clay);
+  --color-clay-foreground: var(--clay-foreground);
+  --color-clay-fill: var(--clay-fill);
+  --color-clay-border: var(--clay-border);
+}
+
+@theme {
+  /* ---- The orb ------------------------------------------------------- *
+   * Identical in both themes. The orb is the one thing in Calma that
+   * glows, and it glows the same colour at 3pm and at 3am -- it is a lamp
+   * in the room, not part of the room. */
+  --color-orb-core: #F8DFB2;
+  --color-orb-mid: #EFB86E;
+  --color-orb-edge: #E39A45;
+
+  /* ---- Type ---------------------------------------------------------- *
+   * WEIGHT IS PART OF THE FAMILY NAME, DELIBERATELY.
+   *
+   * expo-font registers each face under its own family. `font-sans
+   * font-medium` would ask for Figtree at weight 500, and neither iOS nor
+   * Android will synthesise it -- iOS silently returns the regular face,
+   * Android may substitute Roboto. The result is a design where half the
+   * emphasis quietly disappears on device and nothing errors.
+   *
+   * So the weight is selected by picking the family. These names must
+   * match the keys passed to `useFonts` in `app/_layout.tsx` exactly. */
+  --font-serif: Newsreader;
+  --font-serif-medium: Newsreader_500Medium;
+  --font-sans: Figtree;
+  --font-sans-medium: Figtree_500Medium;
+  --font-sans-semibold: Figtree_600SemiBold;
+
+  /* ---- Control heights ----------------------------------------------- *
+   * `pill` (46) is the single most repeated dimension in the design set.
+   * `min-target` is the floor for anything tappable, anywhere. */
+  --spacing-pill: 46px;
+  --spacing-button: 62px;
+  --spacing-card: 64px;
+  --spacing-card-tall: 78px;
+  --spacing-min-target: 48px;
+  --spacing-panic-fab: 72px;
+
+  /* ---- Radii ---------------------------------------------------------- *
+   * Namespaced rather than overriding heroui's --radius-* scale, which its
+   * own components are built against. Nothing in Calma is sharper than 8. */
+  --radius-tight: 8px;
+  --radius-input: 14px;
+  --radius-card: 20px;
+  --radius-sheet: 24px;
+  --radius-well: 28px;
+  --radius-hero: 32px;
+}

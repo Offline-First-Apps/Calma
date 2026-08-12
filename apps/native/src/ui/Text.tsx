@@ -11,8 +11,16 @@ import type { TextProps as RNTextProps } from 'react-native';
  * A serif "Save" button reads precious. A sans "Breathe into it." reads like a
  * system notification. Choosing the variant IS choosing the tone.
  *
- * Note `color-warm` on serif variants: in dark mode that resolves to cream
+ * Note `text-warm` on serif variants: in dark mode that resolves to cream
  * rather than the cool grey used for UI copy, so emotional lines stay warm.
+ *
+ * WEIGHT IS SELECTED BY FAMILY, NEVER BY `font-medium`.
+ *
+ * expo-font registers every face under its own family name, so asking for
+ * `font-sans font-medium` gets Figtree Regular on iOS and, on some Android
+ * builds, Roboto. It fails silently -- no error, no warning, just an app
+ * where half the intended emphasis is missing. `font-sans-medium` names the
+ * registered face directly and cannot be got wrong.
  */
 const variants = {
   /** Splash wordmark, panic ending. The largest thing in the app. */
@@ -26,15 +34,15 @@ const variants = {
 
   /** DOMINANT BODY SIZE — the most used value across all 58 screens. */
   body: 'font-sans text-[21px] leading-[31px] text-foreground',
-  bodyEmphasis: 'font-sans text-[21px] leading-[31px] font-medium text-foreground',
+  bodyEmphasis: 'font-sans-medium text-[21px] leading-[31px] text-foreground',
   /** Buttons and control labels. */
-  control: 'font-sans text-[18px] leading-[24px] font-medium text-foreground',
+  control: 'font-sans-medium text-[18px] leading-[24px] text-foreground',
   /** Supporting copy, hints, secondary rows. */
   callout: 'font-sans text-[17px] leading-[26px] text-muted',
   /** Chip and pill labels. */
-  label: 'font-sans text-[15px] leading-[20px] font-medium text-foreground',
+  label: 'font-sans-medium text-[15px] leading-[20px] text-foreground',
   /** Timestamps, meta, fine print. */
-  caption: 'font-sans text-[13px] leading-[18px] font-medium tracking-[0.13px] text-muted',
+  caption: 'font-sans-medium text-[13px] leading-[18px] tracking-[0.13px] text-muted',
 } as const;
 
 export type TextVariant = keyof typeof variants;
