@@ -35,7 +35,9 @@
   "panic": {
     "opening": "Right now, just breathe. Everything else can wait.",
     "dismiss": "I'm okay",
-    "end": "You're still here. That's enough."
+    "end": "You're still here. That's enough.",
+    "fabLabel": "Breathe",
+    "fabHint": "Starts a breathing session straight away"
   },
   "suds": {
     "pre": {
