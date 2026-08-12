@@ -10,6 +10,7 @@ import { applyLocale, initI18n } from '@calma/i18n';
 import { getLocales } from 'expo-localization';
 
 import { usePrefsStore } from '../stores/prefs';
+import { initAudio } from './audio';
 
 /**
  * The boot sequence.
@@ -68,7 +69,16 @@ export async function boot(): Promise<BootResult> {
   await usePrefsStore.getState().hydrate(repositories.prefs);
   const prefs = usePrefsStore.getState().prefs;
 
-  // 4. Language. Resolution is synchronous and offline — the bundles are
+  // 4. Sound and haptics. Preloading here means the first pebble lands on
+  //    the same beat as the animation that triggered it rather than a
+  //    decode-time later, and it means Settings' two switches take effect
+  //    without any screen having to subscribe to them.
+  //
+  //    Deliberately not awaited into the critical path beyond its own
+  //    failure handling: audio never blocks boot, and boot cannot fail.
+  await initAudio(prefs);
+
+  // 5. Language. Resolution is synchronous and offline — the bundles are
   //    compiled in — so no screen can render untranslated.
   const deviceTags = getLocales().map((locale) => locale.languageTag);
   await initI18n({
