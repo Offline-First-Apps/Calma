@@ -41,8 +41,8 @@ export function FeelingPicker({ onSubmit }: FeelingPickerProps) {
   const { t } = useTranslation('breathing');
 
   return (
-    <View className="flex-1 justify-center gap-9">
-      <Text variant="heading">{t('suds.post.prompt')}</Text>
+    <View className="flex-1 justify-center" style={{ gap: 34 }}>
+      <Text variant="titleSm">{t('suds.post.prompt')}</Text>
 
       <View className="flex-row gap-3">
         {ORDER.map((feeling) => (
@@ -54,7 +54,7 @@ export function FeelingPicker({ onSubmit }: FeelingPickerProps) {
             // "pensive face" instead of "worse" would be describing a picture
             // of the answer rather than the answer.
             accessibilityLabel={t(`suds.post.${feeling}`)}
-            className="flex-1 items-center justify-center gap-4 rounded-sheet border border-border bg-surface px-2 py-7 active:opacity-90"
+            className="flex-1 items-center justify-center gap-[14px] rounded-sheet border border-border bg-surface px-2 py-[26px] active:opacity-90"
           >
             {/*
               Raw RN Text, not the app's `Text`: an emoji rendered in

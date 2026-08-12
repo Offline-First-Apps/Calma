@@ -1,4 +1,4 @@
-import { ambientOrb } from '@calma/tokens';
+import { amberGradient, amberGradientStops, ambientOrb, control } from '@calma/tokens';
 import { useRouter } from 'expo-router';
 import { useEffect } from 'react';
 import { Pressable, View } from 'react-native';
@@ -11,6 +11,8 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import Svg, { Defs, LinearGradient, Circle, Stop } from 'react-native-svg';
+import { useUniwind } from 'uniwind';
 import { useTranslation } from 'react-i18next';
 
 /**
@@ -41,6 +43,10 @@ export function PanicFab({
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const { t } = useTranslation('breathing');
+  const { theme } = useUniwind();
+
+  const isDark = theme === 'dark';
+  const stops = isDark ? amberGradient.dark.fab : amberGradient.light.fab;
 
   const pulse = useSharedValue(0);
 
@@ -82,18 +88,45 @@ export function PanicFab({
         accessibilityLabel={t('panic.fabLabel')}
         accessibilityHint={t('panic.fabHint')}
         hitSlop={12}
-        className="h-[72px] w-[72px] rounded-full bg-accent active:bg-accent-pressed items-center justify-center"
+        className="rounded-full items-center justify-center active:opacity-90"
         style={[
           breathing,
           {
-            shadowColor: '#E39A45',
-            shadowOpacity: 0.35,
-            shadowRadius: 18,
-            shadowOffset: { width: 0, height: 6 },
-            elevation: 8,
+            width: control.panicFab,
+            height: control.panicFab,
+            // The glow carries the accent's own colour, not a neutral grey.
+            // This is the most important button in the app and in the designs
+            // it is the only thing on the screen that looks lit.
+            shadowColor: isDark ? '#D19249' : '#D68B36',
+            shadowOpacity: isDark ? 0.6 : 0.8,
+            shadowRadius: isDark ? 20 : 18,
+            shadowOffset: { width: 0, height: 16 },
+            elevation: 10,
           },
         ]}
       >
+        {/* A three-stop gradient, brighter at both ends than the primary
+            button's (d1). Drawn as a circle so no overflow clip is needed --
+            clipping the container would clip the glow on Android. */}
+        <Svg
+          width={control.panicFab}
+          height={control.panicFab}
+          style={{ position: 'absolute' }}
+        >
+          <Defs>
+            <LinearGradient id="panicFab" x1="0" y1="0" x2="0.38" y2="1">
+              {stops.map((color, i) => (
+                <Stop
+                  key={color}
+                  offset={`${amberGradientStops.fab[i]! * 100}%`}
+                  stopColor={color}
+                />
+              ))}
+            </LinearGradient>
+          </Defs>
+          <Circle cx="50%" cy="50%" r="50%" fill="url(#panicFab)" />
+        </Svg>
+
         <View className="h-6 w-6 rounded-full bg-accent-foreground opacity-90" />
       </AnimatedPressable>
     </View>

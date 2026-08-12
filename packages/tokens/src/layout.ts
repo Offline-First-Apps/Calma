@@ -31,6 +31,12 @@ export const control = {
   pill: 46,
   /** Primary and secondary buttons. */
   button: 62,
+  /**
+   * Buttons on the immersive ground (d4, d5). Two points taller than
+   * `button`, which is not a rounding error in the designs: these are the
+   * only buttons ever tapped mid-session, sometimes by a shaking hand.
+   */
+  buttonImmersive: 64,
   /** Standard list/option card. */
   card: 64,
   /** Option card with a description line. */

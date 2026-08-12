@@ -20,10 +20,33 @@
 export const light = {
   /** Screen background. Warm off-white, never clinical. */
   bg: '#FBF7F1',
+  /**
+   * The breathing and panic ground. A warmer, deeper sand than `bg`.
+   *
+   * LIGHT MODE HAS ITS OWN IMMERSIVE COLOUR AND IT IS NOT `bg`. Session 9
+   * originally assumed it did not — reasoning that a room does not need
+   * dimming when the lights are already on — and shipped the ordinary
+   * background instead. The designer disagreed: `#F2E7D6` is the ground on
+   * five screens (d3, d4, d5, b7-first-breath, k3-session-interrupted), and
+   * the warmth is the point. Stepping into a session should feel like moving
+   * to a different, lamp-lit room, not like the same page with less on it.
+   *
+   * It was missing from `designs/TOKEN-CENSUS.md` too, which is how it got
+   * this far unnoticed. Take colours from `designs/extracted/*.html`.
+   */
+  bgImmersive: '#F2E7D6',
   /** Highest surface — sheets, elevated cards. */
   surfaceRaised: '#FDFCFA',
   /** Cards, wells, secondary button fill. */
   surface: '#F3EBE0',
+  /**
+   * Cards and buttons sitting ON the immersive ground.
+   *
+   * `surface` is mixed against `bg`; on the warmer immersive ground it reads
+   * washed out, so the designs use a separate, warmer pair (d4 and d5).
+   */
+  surfaceImmersive: '#EADCC7',
+  borderImmersive: '#DFCEB4',
   /** Warmer card variant used on paper-feeling screens (journal, founder note). */
   surfaceWarm: '#FDFAF3',
   /** Hairlines and card borders. */
@@ -51,6 +74,9 @@ export const dark = {
   bgImmersive: '#101823',
   surfaceRaised: '#2C3844',
   surface: '#1D2733',
+  /** Cards and buttons on the immersive ground (d4, d5). */
+  surfaceImmersive: '#1C2733',
+  borderImmersive: '#2A3644',
   surfaceWarm: '#1E2731',
   border: '#2B3745',
   borderStrong: '#2C3742',
@@ -79,6 +105,12 @@ export const amber = {
     pressed: '#D68B36',
     soft: '#F0B96D',
     softer: '#F0BE7E',
+    /**
+     * Ring around an amber control that sits ON an amber surface -- the
+     * SUDS thumb (d2). A step between `base` and `pressed`: reach for either
+     * of those instead and the thumb reads flat against the track.
+     */
+    ring: '#D08A45',
     /** Label colour on an amber fill. */
     on: '#33230F',
   },
@@ -88,8 +120,43 @@ export const amber = {
     pressed: '#B87A3A',
     soft: '#DFA55B',
     softer: '#E7C089',
+    ring: '#C08347',
     on: '#221708',
   },
+} as const;
+
+/**
+ * Amber is a GRADIENT wherever it is a fill, never a flat colour.
+ *
+ * Every amber surface in the designs — the primary button, the panic FAB — is
+ * a three-stop linear gradient at 158deg with a coloured glow beneath it.
+ * Session 9 shipped them as flat `bg-accent` and they read as dead: amber is
+ * the one thing in this app that gives off light, and a flat fill is a swatch.
+ *
+ * Angles and offsets are the designers'. The glow is a real shadow in the
+ * accent's own colour, not a neutral drop shadow.
+ */
+export const amberGradient = {
+  light: {
+    /** Primary button (d2). Offsets 0 / 52 / 100. */
+    button: ['#F0B96D', '#E39A45', '#D68B36'],
+    /** Panic FAB (d1). Offsets 0 / 54 / 100. Brighter at both ends. */
+    fab: ['#F2C079', '#E39A45', '#D0842F'],
+    buttonGlow: 'rgba(214,139,54,0.7)',
+    fabGlow: 'rgba(214,139,54,0.8)',
+  },
+  dark: {
+    button: ['#DFA55B', '#D19249', '#BE8039'],
+    fab: ['#E0AC66', '#D19249', '#B9772F'],
+    buttonGlow: 'rgba(209,146,73,0.5)',
+    fabGlow: 'rgba(209,146,73,0.6)',
+  },
+} as const;
+
+/** Gradient stop positions, as fractions. Same in both themes. */
+export const amberGradientStops = {
+  button: [0, 0.52, 1],
+  fab: [0, 0.54, 1],
 } as const;
 
 /** Orb radial gradient stops, inner → outer. Identical in both themes. */

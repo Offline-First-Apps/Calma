@@ -46,6 +46,12 @@
       --surface-tertiary: #FDFAF3;
       --surface-tertiary-foreground: #2A3642;
 
+      /* Cards and buttons sitting ON the immersive ground. `surface` is
+       * mixed against `background`; on the warmer immersive sand it reads
+       * washed out, so d4 and d5 use a separate, warmer pair. */
+      --surface-immersive: #EADCC7;
+      --border-immersive: #DFCEB4;
+
       --overlay: #FDFCFA;
       --overlay-foreground: #2A3642;
       --backdrop: rgba(42, 54, 66, 0.28);
@@ -84,15 +90,23 @@
       --secondary: #454F5A;
       --faint: #7A6A5C;
 
-      /* The deeper ground for breathing and panic. Light mode has no
-       * separate immersive value -- the room does not need dimming when the
-       * lights are already on. */
-      --immersive: #FBF7F1;
+      /* The deeper ground for breathing and panic.
+       *
+       * LIGHT MODE HAS ITS OWN, AND IT IS NOT `--background`. This file
+       * originally claimed otherwise, reasoning that a room does not need
+       * dimming when the lights are already on. The designer disagreed:
+       * #F2E7D6 is the ground on d3, d4, d5, b7-first-breath and
+       * k3-session-interrupted. Stepping into a session should feel like
+       * moving to a different, warmer room -- not like the same page with
+       * less on it. */
+      --immersive: #F2E7D6;
 
       --border-strong: #EDE2CE;
       --accent-pressed: #D68B36;
       --accent-soft: #F0B96D;
       --accent-softer: #F0BE7E;
+      /* Ring around an amber control standing on an amber surface (d2). */
+      --accent-ring: #D08A45;
 
       --clay: #BE7458;
       --clay-foreground: #8A4E36;
@@ -111,6 +125,9 @@
       --surface-secondary-foreground: #C9D2DA;
       --surface-tertiary: #1E2731;
       --surface-tertiary-foreground: #C9D2DA;
+
+      --surface-immersive: #1C2733;
+      --border-immersive: #2A3644;
 
       --overlay: #2C3844;
       --overlay-foreground: #C9D2DA;
@@ -149,6 +166,7 @@
       --accent-pressed: #B87A3A;
       --accent-soft: #DFA55B;
       --accent-softer: #E7C089;
+      --accent-ring: #C08347;
 
       --clay: #D48C6A;
       --clay-foreground: #E3A98C;
@@ -165,11 +183,14 @@
   --color-secondary: var(--secondary);
   --color-faint: var(--faint);
   --color-immersive: var(--immersive);
+  --color-surface-immersive: var(--surface-immersive);
+  --color-border-immersive: var(--border-immersive);
 
   --color-border-strong: var(--border-strong);
   --color-accent-pressed: var(--accent-pressed);
   --color-accent-soft-fill: var(--accent-soft);
   --color-accent-softer: var(--accent-softer);
+  --color-accent-ring: var(--accent-ring);
 
   --color-clay: var(--clay);
   --color-clay-foreground: var(--clay-foreground);
@@ -208,6 +229,9 @@
    * `min-target` is the floor for anything tappable, anywhere. */
   --spacing-pill: 46px;
   --spacing-button: 62px;
+  /* Two points taller, and not a rounding error: these are the only buttons
+   * ever tapped mid-session, sometimes by a shaking hand (d4, d5). */
+  --spacing-button-immersive: 64px;
   --spacing-card: 64px;
   --spacing-card-tall: 78px;
   --spacing-min-target: 48px;

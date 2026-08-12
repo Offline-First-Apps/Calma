@@ -52,6 +52,8 @@ export const themedColors: readonly ThemedVar[] = [
   { cssVar: 'surface', lightValue: light.surface, darkValue: dark.surface },
   { cssVar: 'surface-secondary', lightValue: light.surfaceRaised, darkValue: dark.surfaceRaised },
   { cssVar: 'surface-tertiary', lightValue: light.surfaceWarm, darkValue: dark.surfaceWarm },
+  { cssVar: 'surface-immersive', lightValue: light.surfaceImmersive, darkValue: dark.surfaceImmersive },
+  { cssVar: 'border-immersive', lightValue: light.borderImmersive, darkValue: dark.borderImmersive },
   { cssVar: 'muted', lightValue: light.textMuted, darkValue: dark.textMuted },
   { cssVar: 'border', lightValue: light.border, darkValue: dark.border },
   { cssVar: 'separator', lightValue: light.border, darkValue: dark.border },
@@ -62,14 +64,20 @@ export const themedColors: readonly ThemedVar[] = [
   { cssVar: 'accent-pressed', lightValue: amber.light.pressed, darkValue: amber.dark.pressed },
   { cssVar: 'accent-soft', lightValue: amber.light.soft, darkValue: amber.dark.soft },
   { cssVar: 'accent-softer', lightValue: amber.light.softer, darkValue: amber.dark.softer },
+  { cssVar: 'accent-ring', lightValue: amber.light.ring, darkValue: amber.dark.ring },
 
   /** Light mode has one text colour; dark mode's cream is the whole reason. */
   { cssVar: 'warm', lightValue: light.text, darkValue: dark.textWarm },
   { cssVar: 'secondary', lightValue: light.textSecondary, darkValue: dark.textSecondary },
   { cssVar: 'faint', lightValue: light.textFaint, darkValue: dark.textFaint },
 
-  /** The deeper ground under a breathing or panic session. */
-  { cssVar: 'immersive', lightValue: light.bg, darkValue: dark.bgImmersive },
+  /**
+   * The deeper ground under a breathing or panic session.
+   *
+   * BOTH themes have their own value. Light mode's is not `bg` -- see the
+   * note on `light.bgImmersive`.
+   */
+  { cssVar: 'immersive', lightValue: light.bgImmersive, darkValue: dark.bgImmersive },
 
   { cssVar: 'clay', lightValue: clay.light.base, darkValue: clay.dark.base },
   { cssVar: 'clay-foreground', lightValue: clay.light.text, darkValue: clay.dark.text },
@@ -108,6 +116,7 @@ export const fontVars: Readonly<Record<string, string>> = {
 export const spacingVars: Readonly<Record<string, string>> = {
   'spacing-pill': `${control.pill}px`,
   'spacing-button': `${control.button}px`,
+  'spacing-button-immersive': `${control.buttonImmersive}px`,
   'spacing-card': `${control.card}px`,
   'spacing-card-tall': `${control.cardTall}px`,
   'spacing-min-target': `${control.minTarget}px`,

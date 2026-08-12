@@ -27,6 +27,9 @@ const variants = {
   display: 'font-serif text-[38px] leading-[45px] tracking-[-0.4px] text-warm',
   /** Screen-opening emotional lines. "Breathe into it." */
   title: 'font-serif text-[36px] leading-[43px] tracking-[-0.36px] text-warm',
+  /** Between title and heading. Used where an emotional line shares a
+   * screen with something else -- d5's extension offer, d6's feeling check. */
+  titleSm: 'font-serif text-[34px] leading-[41px] tracking-[-0.34px] text-warm',
   /** Question headings. "What brings you here?" */
   heading: 'font-serif text-[32px] leading-[39px] tracking-[-0.32px] text-warm',
   /** Smaller emotional line where a heading must share space. */

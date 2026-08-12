@@ -147,7 +147,10 @@ export function SudsSlider({ onSubmit, initial = 5 }: SudsSliderProps) {
                 },
                 thumbStyle,
               ]}
-              className="bg-background border-accent-pressed"
+              // The ring is its own token, not the nearest one. It is a step
+              // between `accent` and `accent-pressed`; reach for either and
+              // the thumb reads flat against the track it sits on.
+              className="bg-background border-accent-ring"
             />
           </View>
         </GestureDetector>

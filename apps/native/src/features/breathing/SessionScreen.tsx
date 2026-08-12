@@ -52,6 +52,21 @@ const PANIC_SECONDS = 60;
 /** One tap of "A bit longer" adds this much, once. */
 const EXTENSION_SECONDS = 60;
 
+/**
+ * Orb size and the gap beneath it, per state, straight from the designs.
+ *
+ * These are not one shared value. The orb shrinks and the gap opens as
+ * something is asked of the person: 320/46 while breathing (d3), 268/48 while
+ * the extension is offered (d5), 240/54 and half-faded behind "Stop here?"
+ * (d4). The orb giving up room to the question is how the screen shows it is
+ * listening, so the numbers are worth keeping exact.
+ */
+const LAYOUT = {
+  breathing: { orb: 320, gap: 46 },
+  extend: { orb: 268, gap: 48 },
+  stopping: { orb: 240, gap: 54 },
+} as const;
+
 type Stage = 'intensity' | 'breathing' | 'extend' | 'feeling' | 'offer';
 
 export interface SessionScreenProps {
@@ -286,9 +301,18 @@ export function SessionScreen({
   }
 
   // breathing | extend
+  const layout = confirmingStop
+    ? LAYOUT.stopping
+    : stage === 'extend'
+      ? LAYOUT.extend
+      : LAYOUT.breathing;
+
   return (
     <Screen immersive>
-      <View className="flex-1 items-center justify-center gap-11">
+      <View
+        className="flex-1 items-center justify-center"
+        style={{ gap: layout.gap }}
+      >
         {panic && stage === 'breathing' && !confirmingStop ? (
           <Text variant="title" className="text-center">
             {t('breathing:panic.opening')}
@@ -297,7 +321,7 @@ export function SessionScreen({
 
         <Orb
           animation={animation}
-          size={confirmingStop ? 240 : 320}
+          size={layout.orb}
           reduceMotion={reduceMotion}
           dimmed={confirmingStop}
         />
@@ -367,13 +391,13 @@ function StopConfirmation({
   const { t } = useTranslation('breathing');
 
   return (
-    <View className="w-full items-center gap-11">
+    <View className="w-full items-center" style={{ gap: LAYOUT.stopping.gap }}>
       <Text variant="title" className="text-center">
         {t('stopConfirm')}
       </Text>
       <View className="w-full flex-row gap-3">
-        <Button variant="secondary" className="flex-1" label={t('stop.keepGoing')} onPress={onKeepGoing} />
-        <Button variant="secondary" className="flex-1" label={t('stop.stop')} onPress={onStop} />
+        <Button variant="immersive" className="flex-1" label={t('stop.keepGoing')} onPress={onKeepGoing} />
+        <Button variant="immersive" className="flex-1" label={t('stop.stop')} onPress={onStop} />
       </View>
     </View>
   );
@@ -396,13 +420,13 @@ function ExtensionOffer({
   const { t } = useTranslation('breathing');
 
   return (
-    <View className="w-full items-center gap-11">
-      <Text variant="title" className="text-center">
+    <View className="w-full items-center" style={{ gap: LAYOUT.extend.gap }}>
+      <Text variant="titleSm" className="text-center">
         {t('extend.prompt')}
       </Text>
       <View className="w-full flex-row gap-3">
-        <Button variant="secondary" className="flex-1" label={t('extend.yes')} onPress={onExtend} />
-        <Button variant="secondary" className="flex-1" label={t('extend.no')} onPress={onDone} />
+        <Button variant="immersive" className="flex-1" label={t('extend.yes')} onPress={onExtend} />
+        <Button variant="immersive" className="flex-1" label={t('extend.no')} onPress={onDone} />
       </View>
     </View>
   );

@@ -40,6 +40,13 @@ export const type = {
   display: { size: 38, lineHeight: 45, family: 'serif', weight: '400', letterSpacing: -0.4 },
   /** Screen-opening emotional lines. "Breathe into it." */
   title: { size: 36, lineHeight: 43, family: 'serif', weight: '400', letterSpacing: -0.36 },
+  /**
+   * The step between `title` and `heading`, used where an emotional line
+   * shares a screen with something else (d5's extension offer, d6's feeling
+   * check). Session 9 rounded these to 36 and 32 because the scale had no
+   * 34; the designs use 34 in both places.
+   */
+  titleSm: { size: 34, lineHeight: 41, family: 'serif', weight: '400', letterSpacing: -0.34 },
   /** Question headings. "What brings you here?" */
   heading: { size: 32, lineHeight: 39, family: 'serif', weight: '400', letterSpacing: -0.32 },
   /** Smaller emotional line, used where a heading must share space. */

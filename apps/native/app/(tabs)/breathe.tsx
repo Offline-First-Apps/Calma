@@ -54,7 +54,7 @@ export default function Breathe() {
           {t('picker.subtitle')}
         </Text>
 
-        <View className="mt-6 gap-3">
+        <View className="mt-[22px] gap-3">
           {ROWS.map((row) => {
             // Custom is present but inert until plan 11 gates it on Plus.
             // Present-and-quiet rather than hidden: someone who would value
