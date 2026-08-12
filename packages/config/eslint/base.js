@@ -1,5 +1,7 @@
 import tsParser from '@typescript-eslint/parser';
 
+import calma from './calma-plugin.js';
+
 /**
  * Package import boundaries, as lint rules.
  *
@@ -19,8 +21,10 @@ const MMKV_MESSAGE =
   'Only packages/db may import react-native-mmkv. Use a repository from @calma/db.';
 
 const PLATFORM_MESSAGE =
-  '@calma/domain must stay dependency-free — no React, React Native or Expo. ' +
-  'Platform code belongs in apps/native or packages/db.';
+  '@calma/domain must stay dependency-free — no React, React Native, Expo, ' +
+  'storage or i18n. Domain logic returns keys and data, never a rendered ' +
+  'sentence: a pure function that returns "3 days in a row" cannot be ' +
+  'translated. Platform code belongs in apps/native or packages/db.';
 
 /** Directories no lint run should ever descend into. */
 export const ignores = {
@@ -96,6 +100,8 @@ export const domainBoundary = {
               'zustand/*',
               '@calma/db',
               '@calma/db/*',
+              '@calma/i18n',
+              '@calma/i18n/*',
               '@calma/tokens',
               '@calma/tokens/*',
             ],
@@ -107,5 +113,26 @@ export const domainBoundary = {
   },
 };
 
+/**
+ * Every string goes through `@calma/i18n`.
+ *
+ * Scoped to `features/` because that is where product copy lives. A literal in
+ * a component is a string no translator will ever see — and, since tone is
+ * reviewed against the JSON, one no tone audit will catch either.
+ */
+export const literalCopyBoundary = {
+  files: ['apps/native/src/features/**/*.tsx', 'apps/native/src/app/**/*.tsx'],
+  plugins: { calma },
+  rules: {
+    'calma/no-literal-jsx-text': 'error',
+  },
+};
+
 /** The whole boundary set, in the order the root config applies it. */
-export default [ignores, typescript, mmkvBoundary, domainBoundary];
+export default [
+  ignores,
+  typescript,
+  mmkvBoundary,
+  domainBoundary,
+  literalCopyBoundary,
+];
