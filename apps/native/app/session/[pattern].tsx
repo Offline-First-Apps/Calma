@@ -1,33 +1,47 @@
-import { useLocalSearchParams, useRouter } from 'expo-router';
-import { useTranslation } from 'react-i18next';
-import { View } from 'react-native';
+import {
+  type BreathingEntryPoint,
+  type BreathingPatternId,
+  breathingEntryPointSchema,
+  breathingPatternIdSchema,
+} from '@calma/domain';
+import { useLocalSearchParams } from 'expo-router';
 
-import { useReduceMotion } from '@/src/lib/motion';
-import { Button } from '@/src/ui/Button';
-import { Orb } from '@/src/ui/Orb';
-import { Screen } from '@/src/ui/Screen';
-import { Text } from '@/src/ui/Text';
+import { SessionScreen } from '@/src/features/breathing/SessionScreen';
+import { usePrefsStore } from '@/src/stores/prefs';
 
 /**
- * A breathing session. Full screen, tab bar hidden.
+ * A breathing session, launched by pattern.
  *
- * Back and swipe-down ask "Stop here?" rather than dumping someone out
- * mid-cycle — wired up with the engine in plan 06.
+ * Route params arrive as untyped strings, so both are parsed rather than
+ * cast. A bad `pattern` falls back to the physiological sigh: it is the
+ * shortest of the three and the one that works soonest, which makes it the
+ * right thing to do when we do not know why someone is here.
  */
 export default function Session() {
-  const { pattern } = useLocalSearchParams<{ pattern: string }>();
-  const { t } = useTranslation('breathing');
-  const router = useRouter();
-  const reduceMotion = useReduceMotion();
+  const params = useLocalSearchParams<{
+    pattern: string;
+    entryPoint?: string;
+    seconds?: string;
+  }>();
+
+  const customRatio = usePrefsStore((state) => state.prefs.customRatio);
+
+  const pattern: BreathingPatternId =
+    breathingPatternIdSchema.safeParse(params.pattern).data ?? 'physiological-sigh';
+
+  const entryPoint: BreathingEntryPoint =
+    breathingEntryPointSchema.safeParse(params.entryPoint).data ?? 'breathe-tab';
+
+  const seconds = Number(params.seconds);
 
   return (
-    <Screen immersive>
-      <View className="flex-1 items-center justify-center gap-12">
-        <Orb size={300} reduceMotion={reduceMotion} />
-        <Text variant="heading">{t('phase.inhale')}</Text>
-      </View>
-
-      <Button variant="quiet" label={t('extend.no')} onPress={() => router.back()} />
-    </Screen>
+    <SessionScreen
+      pattern={pattern}
+      // A custom pattern with no stored ratio would throw in `getPattern`.
+      // Only pass one when it is actually needed.
+      {...(pattern === 'custom' && customRatio ? { customRatio } : {})}
+      entryPoint={entryPoint}
+      {...(Number.isFinite(seconds) && seconds > 0 ? { targetSeconds: seconds } : {})}
+    />
   );
 }

@@ -1,37 +1,31 @@
-import { useRouter } from 'expo-router';
-import { useTranslation } from 'react-i18next';
-import { View } from 'react-native';
+import { useEffect } from 'react';
 
-import { useReduceMotion } from '@/src/lib/motion';
-import { Button } from '@/src/ui/Button';
-import { Orb } from '@/src/ui/Orb';
-import { Screen } from '@/src/ui/Screen';
-import { Text } from '@/src/ui/Text';
+import { SessionScreen } from '@/src/features/breathing/SessionScreen';
+import { hapticPanic } from '@/src/lib/haptics';
 
 /**
  * The panic session.
  *
- * Full screen, no tab bar, no FAB, nothing else on it. Dismissible at any
- * moment with a single visible button — never trap someone in a screen, least
- * of all this one.
+ * The physiological sigh, because it is the fastest of the three to do
+ * anything at all -- two breaths in and one long breath out, and the nervous
+ * system has already started to move. Sixty seconds, because a session has to
+ * end before someone gives up on it.
  *
- * The breathing engine lands in plan 06 and replaces the static orb here.
+ * NOTHING IS ASKED HERE. No intensity slider, no permission prompt, no
+ * paywall, no modal, ever (D-006). Someone who has just pressed the panic
+ * button is not going to rate their distress out of ten first, and being
+ * asked would be its own small cruelty.
+ *
+ * Dismissible at any moment with a single visible button.
  */
 export default function Panic() {
-  const { t } = useTranslation('breathing');
-  const router = useRouter();
-  const reduceMotion = useReduceMotion();
+  useEffect(() => {
+    // Fires on activation, then the phone is silent for the whole minute.
+    // The heaviest haptic in the app: it has to land through a shaking hand.
+    hapticPanic();
+  }, []);
 
   return (
-    <Screen immersive>
-      <View className="flex-1 items-center justify-center gap-12">
-        <Text variant="title" className="text-center">
-          {t('panic.opening')}
-        </Text>
-        <Orb size={300} reduceMotion={reduceMotion} />
-      </View>
-
-      <Button variant="quiet" label={t('panic.dismiss')} onPress={() => router.back()} />
-    </Screen>
+    <SessionScreen pattern="physiological-sigh" entryPoint="panic" panic />
   );
 }
