@@ -63,6 +63,25 @@ export function isoWeek(date: Date): { year: number; week: number } {
 }
 
 /**
+ * A day key moved by whole days.
+ *
+ * Goes back through local calendar fields rather than adding milliseconds, so
+ * a 23- or 25-hour day cannot shift the answer.
+ *
+ * @example shiftDayKey('2026-03-01', -1) // '2026-02-28'
+ */
+export function shiftDayKey(key: string, days: number): string {
+  const [year, month, day] = key.split('-').map(Number) as [
+    number,
+    number,
+    number,
+  ];
+  // Midday, so the shift cannot land on a skipped or repeated hour.
+  const date = new Date(year, month - 1, day + days, 12);
+  return dayKey(date);
+}
+
+/**
  * ISO week key as `YYYY-Www`, Monday-start.
  *
  * @example weekKey(new Date(2025, 11, 29)) // '2026-W01' — Monday of week 1
