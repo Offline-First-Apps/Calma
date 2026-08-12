@@ -1,32 +1,18 @@
-import { useRouter } from 'expo-router';
-import { useTranslation } from 'react-i18next';
-import { View } from 'react-native';
-
-import { useReduceMotion } from '@/src/lib/motion';
-import { Button } from '@/src/ui/Button';
-import { Orb } from '@/src/ui/Orb';
-import { Screen } from '@/src/ui/Screen';
-import { Text } from '@/src/ui/Text';
+import { OnboardingFlow } from '@/src/features/onboarding/OnboardingFlow';
 
 /**
- * Onboarding. Eleven steps, built in plan 13.
+ * Onboarding. Full-screen, no tab bar, no panic FAB.
  *
- * This is the welcome beat only, so the boot gate has somewhere to route a
- * first run to. The crisis exit belongs on every step from B1 onward.
+ * The FAB's absence is not a gap: `features/onboarding/CrisisExit.tsx` is on
+ * every step, higher in the reading order and worded rather than symbolic,
+ * because someone who has never seen this app before cannot be expected to
+ * know what an amber circle in the corner does. Step six then teaches the
+ * circle by having them press it.
+ *
+ * `gestureEnabled: false` in the stack (see `app/_layout.tsx`): a swipe back
+ * out of onboarding would land on a Home the person has not been set up for.
+ * The way out is the crisis exit, which is deliberate and goes somewhere.
  */
 export default function Onboarding() {
-  const { t } = useTranslation(['onboarding', 'common']);
-  const router = useRouter();
-  const reduceMotion = useReduceMotion();
-
-  return (
-    <Screen>
-      <View className="flex-1 items-center justify-center gap-12">
-        <Orb size={260} reduceMotion={reduceMotion} />
-        <Text variant="title">{t('onboarding:welcome.tagline')}</Text>
-      </View>
-
-      <Button label={t('common:continue')} onPress={() => router.replace('/')} />
-    </Screen>
-  );
+  return <OnboardingFlow />;
 }
