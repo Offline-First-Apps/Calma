@@ -14,13 +14,24 @@ import { Text } from './Text';
  * never tap it; its presence is what makes the rest of onboarding safe to be
  * long.
  */
-export function CrisisExit({ label, onPress }: { label: string; onPress: () => void }) {
+export function CrisisExit({
+  label,
+  hint,
+  onPress,
+}: {
+  label: string;
+  hint: string;
+  onPress: () => void;
+}) {
   return (
     <Pressable
       onPress={onPress}
       accessibilityRole="button"
       accessibilityLabel={label}
-      accessibilityHint="Skips setup and starts a breathing session immediately."
+      // The hint is a prop rather than a literal: it was hard-coded English
+      // here, which is a string no translator would ever have seen -- and the
+      // lint rule that catches those only watches `features/`.
+      accessibilityHint={hint}
       hitSlop={12}
       className="h-pill flex-row items-center gap-[9px] self-end rounded-full border border-clay-border bg-clay-fill px-[18px]"
     >

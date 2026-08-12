@@ -3,6 +3,7 @@
     "tagline": "Breathe into it."
   },
   "crisisExit": "I need this now",
+  "crisisExitHint": "Skips setup and starts a breathing session straight away",
   "language": {
     "title": "Is this right?",
     "hint": "We guessed from your phone. Change it if we got it wrong.",
@@ -36,22 +37,38 @@
     "intro": "Let's try one now. Follow the light.",
     "hint": "You can close your eyes and feel it instead."
   },
+  "howWasThat": {
+    "title": "How was that?"
+  },
   "reveal": {
     "title": "Here's your Calma.",
     "window": "Your worry window is set for {{time}}. You can change it any time.",
     "windowUnsure": "We've set your worry window for {{time}} to start with. Move it whenever you like.",
     "panic": "That button you just used stays with you, on every screen. One tap, whenever you need it.",
+    "leadSigh": "Breathing opens on the sigh — the shortest thing here, for when there's no room for anything longer.",
+    "leadBreathing": "Breathing sits first on Home, since it's helped you before.",
+    "leadJournal": "Writing sits first on Home, since it's helped you before.",
     "privacy": "Everything you put into Calma stays here. On your phone. Nowhere else."
   },
   "notifications": {
     "title": "Want a nudge before your window?",
     "body": "That's the only thing we'll send.",
     "yes": "Yes, remind me",
-    "no": "No thanks"
+    "no": "No thanks",
+    "preview": {
+      "now": "now",
+      "disclaimer": "this is the whole notification, not an example"
+    }
   },
   "name": {
     "title": "What should we call you?",
-    "hint": "Only stored on this phone. Leave it blank if you'd rather."
+    "hint": "Only stored on this phone. Leave it blank if you'd rather.",
+    "placeholder": "Your name"
+  },
+  "reOffer": {
+    "title": "There's a bit of setup still waiting, whenever you want it.",
+    "yes": "Finish setting up",
+    "no": "I'm good"
   },
   "closing": "Wherever you are right now — I'm glad you're here."
 }
