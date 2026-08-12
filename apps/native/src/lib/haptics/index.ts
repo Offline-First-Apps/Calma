@@ -136,6 +136,18 @@ export function hapticJournalSaved(): void {
   fire(selection);
 }
 
+/**
+ * A discrete value was picked — a mark on the intensity scale.
+ *
+ * The lightest thing in the vocabulary that is not a breath. It exists so
+ * that a control answered eleven times in a row does not have to borrow
+ * `hapticJournalSaved`, which would put a "you finished something" feeling on
+ * an act of adjusting a number.
+ */
+export function hapticSelection(): void {
+  fire(selection);
+}
+
 export function hapticStreakReached(): void {
   fire(() => Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success));
 }

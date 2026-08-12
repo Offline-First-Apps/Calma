@@ -10,7 +10,9 @@
     "slug": "calma",
     "plugins": [
       "expo-font",
-      "expo-audio"
+      "expo-audio",
+      "expo-localization",
+      "expo-router"
     ],
     "experiments": {
       "typedRoutes": true,
@@ -21,6 +23,9 @@
         "projectId": "f74cd574-565e-4cf4-88e8-9adbbdba54d3"
       }
     },
-    "owner": "codewithkin"
+    "owner": "codewithkin",
+    "android": {
+      "package": "com.anonymous.calma"
+    }
   }
 }

@@ -20,3 +20,4 @@ export * from './onboarding';
 export * from './streak';
 export * from './tier';
 export * from './time';
+export * from './worry';

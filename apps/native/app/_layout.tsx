@@ -7,6 +7,7 @@ import {
 } from '@expo-google-fonts/figtree';
 import {
   Newsreader_400Regular,
+  Newsreader_400Regular_Italic,
   Newsreader_500Medium,
 } from '@expo-google-fonts/newsreader';
 import { useFonts } from 'expo-font';
@@ -42,6 +43,16 @@ export default function RootLayout() {
   const [fontsLoaded] = useFonts({
     Newsreader: Newsreader_400Regular,
     Newsreader_500Medium,
+    /**
+     * The italic is a REGISTERED FACE, not `fontStyle: 'italic'`.
+     *
+     * Same trap as the weights: neither platform synthesises an oblique for a
+     * custom family, so asking for italic on `Newsreader` returns the upright
+     * face on iOS and can fall back to a system serif on Android — silently.
+     * f8's "How does that feel?" is the only italic in the app, and it is the
+     * closing line of the worry window, so it is worth one more face.
+     */
+    Newsreader_400Regular_Italic,
     Figtree: Figtree_400Regular,
     Figtree_500Medium,
     Figtree_600SemiBold,
@@ -113,6 +124,9 @@ function Routes({ firstRun }: { firstRun: boolean }) {
       <Stack.Screen name="panic" options={{ animation: 'fade' }} />
       <Stack.Screen name="session/[pattern]" options={{ animation: 'fade' }} />
       <Stack.Screen name="worry-window" />
+      {/* The editor is full-screen: writing a thought record should not have
+          a tab bar under it offering somewhere else to be. */}
+      <Stack.Screen name="journal/[id]" />
 
       {/* The one sheet. A paywall is not a place you arrive at. */}
       <Stack.Screen

@@ -19,7 +19,7 @@
  * So: change a colour here. Never there.
  * ---------------------------------------------------------------------------
  */
-import { amber, clay, dark, light, orb } from './colors';
+import { amber, clay, dark, light, orb, sage } from './colors';
 import { control, radius } from './layout';
 import { fontFamily } from './typography';
 
@@ -97,6 +97,38 @@ export const themedColors: readonly ThemedVar[] = [
   { cssVar: 'clay-foreground', lightValue: clay.light.text, darkValue: clay.dark.text },
   { cssVar: 'clay-fill', lightValue: clay.light.fill, darkValue: clay.dark.fill },
   { cssVar: 'clay-border', lightValue: clay.light.border, darkValue: clay.dark.border },
+  /** The focused capture field's edge, and clay as a label colour (f1, f2). */
+  { cssVar: 'clay-ring', lightValue: clay.light.ring, darkValue: clay.dark.ring },
+  { cssVar: 'clay-ink', lightValue: clay.light.ink, darkValue: clay.dark.ink },
+  { cssVar: 'clay-on', lightValue: clay.light.on, darkValue: clay.dark.on },
+  { cssVar: 'clay-placeholder', lightValue: clay.light.placeholder, darkValue: clay.dark.placeholder },
+
+  /**
+   * The fourth ground and everything standing on it (f1-f7).
+   *
+   * See the long note on `light.bgWorry`: six screens, four light hexes, one
+   * dark hex, normalised to f1's. `bgWindow` is deliberately not folded in.
+   */
+  /** The fifth ground: writing (g0, g2, g3, g5, g6, e1). */
+  { cssVar: 'write', lightValue: light.bgWrite, darkValue: dark.bgWrite },
+  { cssVar: 'surface-paper', lightValue: light.surfacePaper, darkValue: dark.surfacePaper },
+  { cssVar: 'border-paper', lightValue: light.borderPaper, darkValue: dark.borderPaper },
+  /** A draft. Dashed border, never an error colour. */
+  { cssVar: 'surface-draft', lightValue: light.surfaceDraft, darkValue: dark.surfaceDraft },
+  { cssVar: 'border-draft', lightValue: light.borderDraft, darkValue: dark.borderDraft },
+
+  { cssVar: 'worry', lightValue: light.bgWorry, darkValue: dark.bgWorry },
+  { cssVar: 'surface-worry', lightValue: light.surfaceWorry, darkValue: dark.surfaceWorry },
+  { cssVar: 'border-worry', lightValue: light.borderWorry, darkValue: dark.borderWorry },
+  { cssVar: 'surface-worry-quiet', lightValue: light.surfaceWorryQuiet, darkValue: dark.surfaceWorryQuiet },
+  { cssVar: 'border-worry-quiet', lightValue: light.borderWorryQuiet, darkValue: dark.borderWorryQuiet },
+  { cssVar: 'surface-clay-quiet', lightValue: light.surfaceClayQuiet, darkValue: dark.surfaceClayQuiet },
+  { cssVar: 'border-clay-quiet', lightValue: light.borderClayQuiet, darkValue: dark.borderClayQuiet },
+  { cssVar: 'window-ground', lightValue: light.bgWindow, darkValue: dark.bgWindow },
+
+  /** One screen, one meaning: the action step's edge and caret (f6). */
+  { cssVar: 'sage', lightValue: sage.light.base, darkValue: sage.dark.base },
+  { cssVar: 'sage-ring', lightValue: sage.light.ring, darkValue: sage.dark.ring },
 ] as const;
 
 /**
@@ -121,6 +153,8 @@ export const staticColors: Readonly<Record<string, string>> = {
 export const fontVars: Readonly<Record<string, string>> = {
   'font-serif': fontFamily.serif,
   'font-serif-medium': `${fontFamily.serif}_500Medium`,
+  /** f8's closing line. A registered face — see the note in `_layout.tsx`. */
+  'font-serif-italic': `${fontFamily.serif}_400Regular_Italic`,
   'font-sans': fontFamily.sans,
   'font-sans-medium': `${fontFamily.sans}_500Medium`,
   'font-sans-semibold': `${fontFamily.sans}_600SemiBold`,
@@ -136,6 +170,8 @@ export const spacingVars: Readonly<Record<string, string>> = {
   'spacing-card-tall': `${control.cardTall}px`,
   'spacing-min-target': `${control.minTarget}px`,
   'spacing-panic-fab': `${control.panicFab}px`,
+  'spacing-button-compact': `${control.compact}px`,
+  'spacing-button-fork': `${control.fork}px`,
 };
 
 /**
@@ -151,6 +187,7 @@ export const radiusVars: Readonly<Record<string, string>> = {
   'radius-card': `${radius.lg}px`,
   'radius-option': `${radius.option}px`,
   'radius-sheet': `${radius.xl}px`,
+  'radius-note': `${radius.note}px`,
   'radius-well': `${radius['2xl']}px`,
   'radius-hero': `${radius['3xl']}px`,
 };

@@ -18,6 +18,15 @@ export const radius = {
   option: 22,
   /** Larger cards and sheets. */
   xl: 24,
+  /**
+   * The worry card (f1, f2, f3, f6, f7).
+   *
+   * Between `xl` and `2xl` and used by nothing else. Worth its own name
+   * rather than rounding to 28, because the capture field is the component a
+   * person touches most in this feature and it is the one card in the app
+   * that is lighter than its ground — the radius is doing visible work.
+   */
+  note: 26,
   '2xl': 28,
   '3xl': 32,
   /** Pills and primary buttons — always exactly half the control height. */
@@ -49,6 +58,18 @@ export const control = {
   optionCard: 76,
   /** Option card with a description line. */
   cardTall: 78,
+  /**
+   * The worry flow's two extra heights.
+   *
+   * `compact` (54) is "Open it now" and "Set it down" — buttons that sit
+   * beside content rather than under it, and are not the screen's one big
+   * action. `fork` (66) is f5's pair, the tallest buttons in the app: both
+   * answers to "is this something you can do something about?" are equally
+   * weighted and equally easy to hit, because which one is right depends on
+   * the worry and the app does not know.
+   */
+  compact: 54,
+  fork: 66,
   /** Minimum tappable target, anywhere. */
   minTarget: 48,
   /** The panic button. Sized to be hittable by shaking hands. */

@@ -1,5 +1,5 @@
 import { leadToolFor } from '@calma/domain';
-import { formatTimeOfDay } from '@calma/i18n';
+import { formatWindowTime } from '@calma/i18n';
 import { useRouter } from 'expo-router';
 import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -107,12 +107,14 @@ export function HomeScreen() {
               <Text variant="body">
                 {t('worry:pending', { count: pending })}
               </Text>
+              {/* `windowAt`, not `windowIn`. The key used to be phrased as a
+                  duration -- "opens in {{duration}}" -- and was being handed a
+                  clock time, so it read "Your window opens in 7:00 PM". f1
+                  says "at", the value was always a time, and only the key was
+                  ever wrong. */}
               <Text variant="callout">
-                {t('worry:windowIn', {
-                  duration: formatTimeOfDay(
-                    prefs.worryWindowTime,
-                    i18n.language,
-                  ),
+                {t('worry:windowAt', {
+                  time: formatWindowTime(prefs.worryWindowTime, i18n.language),
                 })}
               </Text>
               <Button

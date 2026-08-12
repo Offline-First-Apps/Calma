@@ -83,6 +83,98 @@ export const light = {
   borderLift: '#EBDBC4',
 
   /**
+   * THE FOURTH GROUND: worry.
+   *
+   * f1, f2, f3, f5, f6 and f7 all sit on a warm clay-tinted sand that is
+   * neither `bg` nor `bgImmersive`. It is the ground for everything to do
+   * with setting something down and coming back to it later, and it is the
+   * third time this project has found a ground missing from the token layer
+   * — after `bgImmersive` in session 9 and `surfaceQuiet` in session 10.
+   *
+   * A NOTE ON THE VALUES, BECAUSE THEY DO NOT ALL MATCH.
+   *
+   * The six screens carry four hexes: #F6EDE3 (f1, f2, f3), #F4E8DD (f5, f7)
+   * and #F5EADF (f6) in light; #1A1D24 for all six in dark. Dark agreeing
+   * exactly while light varies by two or three points, non-monotonically
+   * through the flow, is the signature of hand-tuning rather than intent —
+   * there is no reading of f5 → f6 → f7 in which the ground gets lighter,
+   * then darker again, on purpose.
+   *
+   * So they are normalised to f1's value, which is the one the tab itself
+   * uses and therefore the one a person sees most. Recorded in `plans/08`
+   * T04 as a judgement call, and cheap to reverse: split this into three
+   * names and the screens take them individually.
+   */
+  /**
+   * THE FIFTH GROUND: writing.
+   *
+   * g0, g2, g3, g5, g6 and e1. Warmer than `bg` and lighter than `bgWorry` —
+   * paper rather than clay. Worry is something you set down; writing is
+   * something you sit with, and the grounds say so before any copy does.
+   */
+  bgWrite: '#FAF4E9',
+  /**
+   * The page itself: the blank-page card on g0 and the editor field on g2.
+   *
+   * Nearly white and, like `surfaceWorry`, brighter than its ground. The two
+   * features' surfaces are the same idea in different materials.
+   */
+  surfacePaper: '#FEFCF7',
+  borderPaper: '#EBDFC9',
+  /**
+   * A draft (g0).
+   *
+   * The border is DASHED and that is the whole signal — a draft is visually
+   * distinct without being an error state (plan 09 T11). No amber, no badge,
+   * no "unfinished" label. Something left open, drawn as something left open.
+   */
+  surfaceDraft: '#F5EDDF',
+  borderDraft: '#DFCFB6',
+
+  bgWorry: '#F6EDE3',
+  /**
+   * The capture card, and the card a worry is shown in during triage.
+   *
+   * Lighter than the ground rather than darker — a slip of paper laid on a
+   * table, per f2's caption. This is the only surface in Calma that is
+   * brighter than the screen it sits on.
+   */
+  surfaceWorry: '#FCF6EF',
+  borderWorry: '#E7D6C6',
+  /**
+   * Quiet buttons standing on the worry ground (f5's fork), and the card the
+   * released worry sits in on f7.
+   *
+   * Not `surfaceQuiet`: that pair is mixed against `bg`, and on the warmer
+   * worry sand it reads washed out. The same relationship, and the same
+   * reason, as `surfaceImmersive` versus `surface`.
+   */
+  surfaceWorryQuiet: '#EFDFD0',
+  borderWorryQuiet: '#E2CDBB',
+  /**
+   * "Open it now" (f1) — a quiet button carrying a clay label.
+   *
+   * In light mode this is the same pair as `surfaceWorryQuiet` and only the
+   * label colour differs. In dark they part company: the fork's buttons stay
+   * navy-grey (#262A33) while this one warms to #2C2A2C, because it is the
+   * one thing on the tab a person is being invited to do. Two names rather
+   * than one, so the dark divergence is expressible.
+   */
+  surfaceClayQuiet: '#EFDFD0',
+  borderClayQuiet: '#E2CDBB',
+  /**
+   * The window intro (f4), which is its own ground for one screen.
+   *
+   * Kept separate from `bgWorry` rather than normalised with the rest,
+   * because f4's caption describes an intention the others do not share:
+   * "clay warms toward amber and the light comes from above — sitting down at
+   * a table with a lamp on". Dark has its own value too, which the six
+   * normalised screens do not. Where a difference has a stated reason it is
+   * kept; where it does not, it is jitter.
+   */
+  bgWindow: '#F7EBDC',
+
+  /**
    * The empty mark on an unselected option row (b4, b5, b6).
    *
    * Deliberately not `border`: the ring has to read as an unfilled control
@@ -137,6 +229,33 @@ export const dark = {
   bgLift: '#16202B',
   surfaceLift: '#1F2A36',
   borderLift: '#2C3846',
+
+  /**
+   * The worry ground in dark.
+   *
+   * Note it is WARMER than `bg` (#141C26) rather than cooler — it drops the
+   * blue slightly instead of deepening it. The light theme warms up and the
+   * dark theme de-blues; both move the same direction emotionally, toward
+   * clay, which is the direction the whole feature is coloured in.
+   *
+   * Unlike light, all six worry screens agree on this value exactly. See the
+   * note on `light.bgWorry` for why that asymmetry decided the normalisation.
+   */
+  bgWrite: '#151D26',
+  /** Note this equals `surfaceWarm` in dark — the designs converge here. */
+  surfacePaper: '#1E2731',
+  borderPaper: '#2C3742',
+  surfaceDraft: '#1B242E',
+  borderDraft: '#333E4A',
+
+  bgWorry: '#1A1D24',
+  surfaceWorry: '#242830',
+  borderWorry: '#343945',
+  surfaceWorryQuiet: '#262A33',
+  borderWorryQuiet: '#363B46',
+  surfaceClayQuiet: '#2C2A2C',
+  borderClayQuiet: '#3D383B',
+  bgWindow: '#1C1F26',
   optionMark: '#3B4857',
   hairlineTrack: 'rgba(234,226,215,0.12)',
   surfaceWarm: '#1E2731',
@@ -269,13 +388,109 @@ export const clay = {
     text: '#8A4E36',
     fill: 'rgba(190,116,88,0.12)',
     border: 'rgba(190,116,88,0.34)',
+    /**
+     * The edge of a focused capture field (f2).
+     *
+     * 1.5px and solid, where the unfocused edge is 1px and neutral. Focus is
+     * shown by the field warming rather than by a glow or a shadow: the
+     * keyboard is already up, so this is confirmation that typing lands here
+     * — not an attention-grab.
+     */
+    ring: '#C98B6B',
+    /**
+     * Clay as text, on a clay-tinted quiet button ("Open it now", f1).
+     *
+     * Distinct from `text` (#8A4E36), which is the crisis exit's label on the
+     * ordinary background. This one is read against `surfaceWorryQuiet` and
+     * the designs give it its own, slightly lighter value.
+     */
+    ink: '#7A4633',
+    /**
+     * The label on the clay gradient button ("Set it down", f2).
+     *
+     * Very dark and slightly warm rather than the app's text colour: it sits
+     * on a mid-tone clay fill, and `foreground` (#2A3642) is a cool navy that
+     * reads as a bruise against it.
+     */
+    on: '#2E1810',
+    /** Ripple rings on the capture confirmation (f3), at 0.22 / 0.3 / 0.4. */
+    ripple: '190,116,88',
+    /** Placeholder in the capture field (f1). */
+    placeholder: '#6E6155',
   },
   dark: {
     base: '#D48C6A',
     text: '#E3A98C',
     fill: 'rgba(222,150,110,0.13)',
     border: 'rgba(222,150,110,0.32)',
+    ring: '#A96B52',
+    ink: '#DBA78F',
+    on: '#23130C',
+    ripple: '196,129,106',
+    placeholder: '#A0A5AE',
   },
+} as const;
+
+/**
+ * The clay gradient — the "Set it down" button on f2.
+ *
+ * The only fill in Calma that is neither amber nor flat. Amber is the app's
+ * light source and is reserved for the one obvious action on a screen;
+ * setting a worry down is not that kind of action, but it is not a quiet
+ * dismissal either, so it gets the same treatment in the feature's own
+ * colour. Same three-stop shape and the same offsets as the amber button.
+ */
+export const clayGradient = {
+  light: {
+    button: ['#D4906F', '#BE7458', '#A9634A'],
+    buttonGlow: 'rgba(190,116,88,0.7)',
+  },
+  dark: {
+    button: ['#C9866B', '#B06E55', '#965B44'],
+    buttonGlow: 'rgba(176,110,85,0.6)',
+  },
+} as const;
+
+/* ------------------------------------------------------------------ *
+ * SAGE — one screen, one meaning
+ * ------------------------------------------------------------------ */
+
+/**
+ * The action step's green (f6), and nowhere else in the app.
+ *
+ * The designer's note: "Sage enters here, quietly, on the field's edge —
+ * something turned useful." It marks the one moment in the worry flow where a
+ * person is writing down what they are going to do about something, and it is
+ * the only non-amber, non-clay hue in the product.
+ *
+ * It is a border and a caret, never a fill and never text at body size. That
+ * restraint is what keeps it from reading as a success state — Calma has no
+ * green ticks, because it has nothing to be right about (systems/03).
+ */
+export const sage = {
+  light: {
+    /** The caret in the action field. */
+    base: '#7E8F72',
+    /** The focused field's 1.5px edge. */
+    ring: '#A8B39C',
+  },
+  dark: {
+    base: '#9AAA8C',
+    ring: '#6E7C63',
+  },
+} as const;
+
+/**
+ * The lamp on the window intro (f4).
+ *
+ * A radial ellipse from the top edge, 320px tall, in the amber accent at low
+ * opacity. It is the only light-from-above in the app and it exists for one
+ * screen, where the metaphor is sitting down at a table to look at something
+ * properly.
+ */
+export const windowLamp = {
+  light: { from: 'rgba(227,154,69,0.28)', to: 'rgba(227,154,69,0)' },
+  dark: { from: 'rgba(209,146,73,0.2)', to: 'rgba(209,146,73,0)' },
 } as const;
 
 /** Device chrome in the design mockups. Not app UI — reference only. */

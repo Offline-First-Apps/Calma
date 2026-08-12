@@ -1,21 +1,32 @@
 {
+  "tab": "Worries",
   "captureHint": "What's on your mind?",
+  "captureLabel": "Write down what's on your mind",
+  "setDown": "Set it down",
   "captured": "Got it. I'll hold onto this until {{time}}.",
   "pending_one": "You have 1 thing waiting.",
   "pending_other": "You have {{count}} things waiting.",
   "none": "Nothing waiting. That's a good place to be.",
-  "windowIn": "Your window opens in {{duration}}.",
+  "windowAt": "Your window opens at {{time}}.",
   "openNow": "Open it now",
   "window": {
-    "intro": "You saved this earlier. Let's look at it with fresh eyes.",
+    "introTitle": "You saved this earlier.",
+    "introSub": "Let's look at it with fresh eyes.",
+    "begin": "I'm ready",
     "question": "Is this something you can do something about?",
     "yes": "Yes",
     "no": "Not really",
     "step": "What's one small step?",
     "stepHint": "Doesn't have to be big.",
+    "stepLabel": "Write one small step",
+    "stepDone": "That'll do",
+    "stepEmpty": "Nothing comes to mind",
     "release": "Then this one isn't yours to carry.",
     "releaseAction": "Swipe up to let it go",
+    "releaseLabel": "Let this go",
+    "back": "Back",
     "leave": "The rest can wait",
+    "close": "Close",
     "summary": {
       "captured_one": "You captured 1 worry today.",
       "captured_other": "You captured {{count}} worries today.",
@@ -27,7 +38,8 @@
       "allReleased_one": "You let it go. That took something.",
       "allReleased_other": "You let all {{count}} of them go. That took something.",
       "allActioned_one": "It had a next step. You've got a plan.",
-      "allActioned_other": "All {{count}} had a next step. You've got a plan."
+      "allActioned_other": "All {{count}} had a next step. You've got a plan.",
+      "none": "Nothing was waiting. That's a good place to be."
     }
   }
 }

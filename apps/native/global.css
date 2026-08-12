@@ -137,6 +137,40 @@
       --clay-foreground: #8A4E36;
       --clay-fill: rgba(190, 116, 88, 0.12);
       --clay-border: rgba(190, 116, 88, 0.34);
+      --clay-ring: #C98B6B;
+      --clay-ink: #7A4633;
+      --clay-on: #2E1810;
+      --clay-placeholder: #6E6155;
+
+      /* The fourth ground: worry (f1-f7).
+       *
+       * Neither `--background` nor `--immersive`. The six screens carry four
+       * different light hexes and one dark hex between them; they are
+       * normalised here to f1's, which is the value the tab itself uses.
+       * See the note on `light.bgWorry` in packages/tokens/src/colors.ts. */
+      /* The fifth ground: writing. Paper rather than clay. */
+      --write: #FAF4E9;
+      --surface-paper: #FEFCF7;
+      --border-paper: #EBDFC9;
+      /* A draft. The DASHED border is the whole signal -- distinct without
+       * being an error state. */
+      --surface-draft: #F5EDDF;
+      --border-draft: #DFCFB6;
+
+      --worry: #F6EDE3;
+      /* Brighter than the ground it sits on -- a slip of paper on a table.
+       * The only surface in Calma that does this. */
+      --surface-worry: #FCF6EF;
+      --border-worry: #E7D6C6;
+      --surface-worry-quiet: #EFDFD0;
+      --border-worry-quiet: #E2CDBB;
+      --surface-clay-quiet: #EFDFD0;
+      --border-clay-quiet: #E2CDBB;
+      /* f4 only. Its caption states an intention the others do not share. */
+      --window-ground: #F7EBDC;
+
+      --sage: #7E8F72;
+      --sage-ring: #A8B39C;
     }
 
     /* ---- DARK -- the primary mode. "The panic that hits at 2am." ------- */
@@ -216,6 +250,34 @@
       --clay-foreground: #E3A98C;
       --clay-fill: rgba(222, 150, 110, 0.13);
       --clay-border: rgba(222, 150, 110, 0.32);
+      --clay-ring: #A96B52;
+      --clay-ink: #DBA78F;
+      --clay-on: #23130C;
+      --clay-placeholder: #A0A5AE;
+
+      /* Warmer than `--background`, not deeper: dark de-blues toward clay
+       * where light warms toward it. Both move the same way emotionally.
+       * All six worry screens agree on this value exactly, which is what
+       * settled the light-mode normalisation. */
+      --write: #151D26;
+      --surface-paper: #1E2731;
+      --border-paper: #2C3742;
+      --surface-draft: #1B242E;
+      --border-draft: #333E4A;
+
+      --worry: #1A1D24;
+      --surface-worry: #242830;
+      --border-worry: #343945;
+      --surface-worry-quiet: #262A33;
+      --border-worry-quiet: #363B46;
+      /* Parts company with `--surface-worry-quiet` here and only here: the
+       * one invitation on the tab warms, the neutral fork does not. */
+      --surface-clay-quiet: #2C2A2C;
+      --border-clay-quiet: #3D383B;
+      --window-ground: #1C1F26;
+
+      --sage: #9AAA8C;
+      --sage-ring: #6E7C63;
     }
   }
 }
@@ -250,6 +312,28 @@
   --color-clay-foreground: var(--clay-foreground);
   --color-clay-fill: var(--clay-fill);
   --color-clay-border: var(--clay-border);
+  --color-clay-ring: var(--clay-ring);
+  --color-clay-ink: var(--clay-ink);
+  --color-clay-on: var(--clay-on);
+  --color-clay-placeholder: var(--clay-placeholder);
+
+  --color-write: var(--write);
+  --color-surface-paper: var(--surface-paper);
+  --color-border-paper: var(--border-paper);
+  --color-surface-draft: var(--surface-draft);
+  --color-border-draft: var(--border-draft);
+
+  --color-worry: var(--worry);
+  --color-surface-worry: var(--surface-worry);
+  --color-border-worry: var(--border-worry);
+  --color-surface-worry-quiet: var(--surface-worry-quiet);
+  --color-border-worry-quiet: var(--border-worry-quiet);
+  --color-surface-clay-quiet: var(--surface-clay-quiet);
+  --color-border-clay-quiet: var(--border-clay-quiet);
+  --color-window-ground: var(--window-ground);
+
+  --color-sage: var(--sage);
+  --color-sage-ring: var(--sage-ring);
 }
 
 @theme {
@@ -274,6 +358,9 @@
    * match the keys passed to `useFonts` in `app/_layout.tsx` exactly. */
   --font-serif: Newsreader;
   --font-serif-medium: Newsreader_500Medium;
+  /* The one italic in the app (f8). A registered face, because `fontStyle:
+   * italic` on a custom family is the same silent failure as `font-medium`. */
+  --font-serif-italic: Newsreader_400Regular_Italic;
   --font-sans: Figtree;
   --font-sans-medium: Figtree_500Medium;
   --font-sans-semibold: Figtree_600SemiBold;
@@ -293,6 +380,11 @@
   --spacing-card-tall: 78px;
   --spacing-min-target: 48px;
   --spacing-panic-fab: 72px;
+  /* The worry flow's two extra heights. `fork` (66) is the tallest button in
+   * the app: f5's two answers are equally weighted, so both are equally easy
+   * to hit. See the note in packages/tokens/src/layout.ts. */
+  --spacing-button-compact: 54px;
+  --spacing-button-fork: 66px;
 
   /* ---- Radii ---------------------------------------------------------- *
    * Namespaced rather than overriding heroui's --radius-* scale, which its
@@ -302,6 +394,8 @@
   --radius-card: 20px;
   --radius-option: 22px;
   --radius-sheet: 24px;
+  /* The worry card. Between sheet and well, used by nothing else. */
+  --radius-note: 26px;
   --radius-well: 28px;
   --radius-hero: 32px;
 }

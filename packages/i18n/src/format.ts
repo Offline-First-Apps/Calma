@@ -66,6 +66,37 @@ export function formatTimeOfDay(time: string, locale: string): string {
   }).format(date);
 }
 
+/**
+ * The worry window's time, as it appears in a sentence.
+ *
+ * Differs from `formatTimeOfDay` in one way: a window on the hour drops its
+ * minutes. "Your window opens at 7 PM" is how the sentence is spoken, and
+ * f1's design writes it "8pm" — ":00" in running prose reads like a timetable.
+ * A window at 19:30 keeps its minutes, because there it is carrying meaning.
+ *
+ * The case is left exactly as `Intl` produces it. f1 and f3 render "8pm"
+ * lowercase, and lowercasing here would be an English typographic habit
+ * applied to every locale in the app by a function that cannot tell whether
+ * the letters it is touching are a meridiem, a script with no case, or a word
+ * that needs its capital. That divergence is recorded in `plans/08` T05.
+ *
+ * @example formatWindowTime('20:00', 'en-US') // '8 PM'
+ * @example formatWindowTime('20:30', 'en-US') // '8:30 PM'
+ * @example formatWindowTime('20:00', 'de-DE') // '20 Uhr'
+ */
+export function formatWindowTime(time: string, locale: string): string {
+  const match = TIME_OF_DAY.exec(time);
+  if (!match) throw new TypeError(`not a time of day: "${time}"`);
+
+  const minutes = Number(match[2]);
+  const date = new Date(2000, 0, 1, Number(match[1]), minutes);
+
+  return new Intl.DateTimeFormat(locale, {
+    hour: 'numeric',
+    minute: minutes === 0 ? undefined : '2-digit',
+  }).format(date);
+}
+
 /** A moment's clock time, for "until 7:00 pm". */
 export function formatTime(value: Date, locale: string): string {
   return new Intl.DateTimeFormat(locale, {

@@ -34,6 +34,18 @@ const variants = {
   heading: 'font-serif text-[32px] leading-[39px] tracking-[-0.32px] text-warm',
   /** Smaller emotional line where a heading must share space. */
   headingSm: 'font-serif text-[27px] leading-[34px] tracking-[-0.27px] text-warm',
+  /**
+   * The worry window's closing line, and nothing else (f8).
+   *
+   * "How does that feel?" is set in italic and has no field under it — the
+   * designer's note is explicit that it is "a pause, not an input". `faint`
+   * rather than `warm` because it is asked quietly and expects no answer.
+   *
+   * `font-serif-italic` names a registered face. Adding `italic` to
+   * `font-serif` would render upright on iOS and fall back to a system serif
+   * on some Android builds, silently — the same trap as `font-medium`.
+   */
+  aside: 'font-serif-italic text-[27px] leading-[36px] text-faint',
 
   /** DOMINANT BODY SIZE — the most used value across all 58 screens. */
   body: 'font-sans text-[21px] leading-[31px] text-foreground',
