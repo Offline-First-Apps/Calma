@@ -34,6 +34,19 @@ export const breathingEntryPointSchema = z.enum([
   'sigh',
   'breathe-tab',
   'journal-prompt',
+  /**
+   * Onboarding's first breath (b7).
+   *
+   * It is a REAL session, recorded and counted, not a demo — that is the
+   * whole argument of `systems/11-onboarding.md`, and it is why this needs
+   * its own entry point rather than borrowing 'sigh': someone looking at
+   * their history a month later should be able to see that the first one
+   * happened before they had finished setting the app up.
+   *
+   * Adding a member to this enum is safe for data already on disk. No
+   * existing record changes shape, so there is no migration.
+   */
+  'onboarding',
 ]);
 
 export type BreathingEntryPoint = z.infer<typeof breathingEntryPointSchema>;
