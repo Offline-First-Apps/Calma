@@ -1,0 +1,57 @@
+{
+  "phase": {
+    "inhale": "Breathe in",
+    "holdFull": "Hold",
+    "exhale": "Breathe out",
+    "holdEmpty": "Rest"
+  },
+  "sigh": {
+    "second": "One more sip of air"
+  },
+  "extend": {
+    "prompt": "Want to keep going?",
+    "yes": "A bit longer",
+    "no": "I'm done"
+  },
+  "stopConfirm": "Stop here?",
+  "patterns": {
+    "478": {
+      "name": "4-7-8",
+      "description": "A long hold and a longer breath out. Good for settling."
+    },
+    "box": {
+      "name": "5-5-5-5",
+      "description": "Even on all four sides. Easiest to follow when it's loud."
+    },
+    "sigh": {
+      "name": "Physiological sigh",
+      "description": "Two breaths in, one long breath out. The quickest of the three."
+    },
+    "custom": {
+      "name": "Your own rhythm",
+      "description": "Build the timing that suits you."
+    }
+  },
+  "panic": {
+    "opening": "Right now, just breathe. Everything else can wait.",
+    "dismiss": "I'm okay",
+    "end": "You're still here. That's enough."
+  },
+  "suds": {
+    "pre": {
+      "prompt": "Where are you right now?",
+      "low": "Steady",
+      "high": "Overwhelming",
+      "skip": "Skip this"
+    },
+    "post": {
+      "prompt": "How are you feeling now?",
+      "better": "Better",
+      "same": "Same",
+      "worse": "Worse",
+      "betterResponse": "Glad that helped.",
+      "sameResponse": "Sometimes writing helps untangle things. Want to try?",
+      "worseResponse": "That sounds really hard. Want to talk it through on paper?"
+    }
+  }
+}

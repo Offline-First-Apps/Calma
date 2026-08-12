@@ -1,0 +1,28 @@
+{
+  "title": "Settings",
+  "name": "What should we call you?",
+  "nameHint": "Only stored on this phone. Leave it blank if you'd rather.",
+  "privacy": "Everything you write stays on this phone. There are no accounts and no servers. Nothing is backed up — if you lose this phone, this is gone too.",
+  "erase": "Erase everything",
+  "eraseConfirm": "This deletes every worry, entry, and session. It can't be undone.",
+  "eraseFinal": "Erase it all",
+  "silentSwitch": "Calma stays quiet when your phone is on silent. Haptics still work.",
+  "language": "Language",
+  "languageSystem": "Match my phone",
+  "languageHint": "Calma follows your phone's language. Change it here if you'd rather.",
+  "sound": "Sound",
+  "haptics": "Haptics",
+  "theme": "Appearance",
+  "themeSystem": "Match my phone",
+  "themeLight": "Light",
+  "themeDark": "Dark",
+  "worryWindow": "Worry window",
+  "worryWindowTime": "Opens at",
+  "worryWindowLength": "Stays open for",
+  "notifications": "Notifications",
+  "notificationsHint": "One reminder before your window. That's all.",
+  "help": {
+    "title": "Need more help?",
+    "body": "Calma is a set of tools, not treatment. If things feel like too much, these lines are staffed by people who can help."
+  }
+}

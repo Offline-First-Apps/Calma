@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "@calma/env": "workspace:*",
+    "@calma/tokens": "workspace:*",
     "@expo/metro-runtime": "~57.0.7",
     "@expo/vector-icons": "^15.1.1",
     "@gorhom/bottom-sheet": "^5.2.14",

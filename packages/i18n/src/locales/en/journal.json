@@ -1,0 +1,22 @@
+{
+  "offer": "That felt intense. Want to write down what was going on?",
+  "offerYes": "Let's write",
+  "offerNo": "Not right now",
+  "situation": "What happened?",
+  "situationHint": "Just the facts, a sentence or two.",
+  "thought": "What went through your mind?",
+  "emotion": "What did you feel?",
+  "intensity": "How strong was it?",
+  "evidenceFor": "What makes that thought feel true?",
+  "evidenceAgainst": "What doesn't quite fit?",
+  "balanced": "If a friend said this to you, what would you tell them?",
+  "reRate": "And now — how strong is it?",
+  "saved": "Saved. That's yours.",
+  "draftSaved": "Kept as a draft. Come back whenever.",
+  "startWriting": "Start writing",
+  "drafts": "Drafts",
+  "past": "Earlier entries",
+  "empty": "Nothing written yet. There's space here when you want it.",
+  "entries_one": "1 entry",
+  "entries_other": "{{count}} entries"
+}

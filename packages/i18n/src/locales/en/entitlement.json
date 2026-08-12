@@ -1,0 +1,24 @@
+{
+  "paywall": {
+    "journal": "You've done 2 entries this week — that's solid. With Calma Plus, you can write as often as you like and look back on your progress over time.",
+    "worry": "That's 3 for today. You can still open your window and work through them. With Calma Plus, you can capture as many as you need.",
+    "history": "This is your week. Calma Plus keeps the whole picture.",
+    "customRatio": "The three presets cover most of it. Calma Plus lets you build your own rhythm.",
+    "primary": "See plans",
+    "secondary": "Not now",
+    "restore": "Restore a purchase"
+  },
+  "plans": {
+    "title": "Calma Plus",
+    "monthly": "Monthly",
+    "annual": "Yearly",
+    "lifetime": "One payment, yours for good",
+    "purchaseFailed": "That didn't go through. Nothing was charged.",
+    "restoreNone": "Nothing to restore on this phone.",
+    "restoreDone": "You're all set."
+  },
+  "inlineLimit": {
+    "worry": "That's 3 for today.",
+    "journal": "That's 2 this week."
+  }
+}

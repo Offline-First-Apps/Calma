@@ -1,0 +1,15 @@
+{
+  "streak_one": "That's day one.",
+  "streak_other": "{{count}} days in a row. You're showing up for yourself.",
+  "thisWeek": "This week",
+  "empty": "We'll start keeping track as you go.",
+  "sessions_one": "1 session",
+  "sessions_other": "{{count}} sessions",
+  "minutes_one": "1 minute",
+  "minutes_other": "{{count}} minutes",
+  "worriesProcessed_one": "1 worry worked through",
+  "worriesProcessed_other": "{{count}} worries worked through",
+  "worriesReleased_one": "1 let go",
+  "worriesReleased_other": "{{count}} let go",
+  "history": "Everything so far"
+}

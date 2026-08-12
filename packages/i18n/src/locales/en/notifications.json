@@ -1,0 +1,14 @@
+{
+  "title": "Calma",
+  "worryWindowSoon_one": "Your worry window opens soon. You have 1 thing waiting.",
+  "worryWindowSoon_other": "Your worry window opens soon. You have {{count}} things waiting.",
+  "worryWindowOpen": "Your window's open whenever you're ready.",
+  "streakNudge_one": "You've shown up 1 day running. There's time yet today.",
+  "streakNudge_other": "You've shown up {{count}} days running. There's time yet today.",
+  "weeklyCheckin": "How was your week? There's space here if you want it.",
+  "permission": {
+    "prompt": "Want a nudge 10 minutes before your window? That's the only thing we'll send.",
+    "yes": "Yes, remind me",
+    "no": "No thanks"
+  }
+}

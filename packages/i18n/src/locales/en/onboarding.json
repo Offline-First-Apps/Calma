@@ -1,0 +1,57 @@
+{
+  "welcome": {
+    "tagline": "Breathe into it."
+  },
+  "crisisExit": "I need this now",
+  "language": {
+    "title": "Is this right?",
+    "hint": "We guessed from your phone. Change it if we got it wrong.",
+    "default": "Detected"
+  },
+  "questions": {
+    "whyHint": "Pick as many as fit.",
+    "why": {
+      "title": "What brings you here?",
+      "night": "Racing thoughts at night",
+      "panic": "Panic that comes out of nowhere",
+      "worry": "Worry I can't put down",
+      "tense": "A tightness that won't leave"
+    },
+    "when": {
+      "title": "When is it hardest?",
+      "night": "Late at night",
+      "morning": "First thing in the morning",
+      "day": "During the day",
+      "unpredictable": "It's hard to say"
+    },
+    "helped": {
+      "title": "Has anything helped before?",
+      "breathing": "Breathing",
+      "writing": "Writing it down",
+      "talking": "Talking to someone",
+      "nothing": "Nothing yet"
+    }
+  },
+  "breath": {
+    "intro": "Let's try one now. Follow the light.",
+    "hint": "You can close your eyes and feel it instead."
+  },
+  "reveal": {
+    "title": "Here's your Calma.",
+    "window": "Your worry window is set for {{time}}. You can change it any time.",
+    "windowUnsure": "We've set your worry window for {{time}} to start with. Move it whenever you like.",
+    "panic": "That button you just used stays with you, on every screen. One tap, whenever you need it.",
+    "privacy": "Everything you put into Calma stays here. On your phone. Nowhere else."
+  },
+  "notifications": {
+    "title": "Want a nudge before your window?",
+    "body": "That's the only thing we'll send.",
+    "yes": "Yes, remind me",
+    "no": "No thanks"
+  },
+  "name": {
+    "title": "What should we call you?",
+    "hint": "Only stored on this phone. Leave it blank if you'd rather."
+  },
+  "closing": "Wherever you are right now — I'm glad you're here."
+}
