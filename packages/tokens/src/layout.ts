@@ -14,6 +14,8 @@ export const radius = {
   md: 14,
   /** Cards, wells, option rows. The most used component radius. */
   lg: 20,
+  /** Multi-select option cards (b4-b6). Two points softer than `lg`. */
+  option: 22,
   /** Larger cards and sheets. */
   xl: 24,
   '2xl': 28,
@@ -37,8 +39,14 @@ export const control = {
    * only buttons ever tapped mid-session, sometimes by a shaking hand.
    */
   buttonImmersive: 64,
-  /** Standard list/option card. */
+  /** Standard list row — the language picker's rows are exactly this (b2). */
   card: 64,
+  /**
+   * Multi-select option card (b4-b6). A FLOOR, never a height: the designer's
+   * note is explicit that these grow with their text so a 40% longer German
+   * string wraps instead of truncating.
+   */
+  optionCard: 76,
   /** Option card with a description line. */
   cardTall: 78,
   /** Minimum tappable target, anywhere. */

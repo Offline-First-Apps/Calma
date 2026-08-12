@@ -38,8 +38,19 @@ const variants = {
   /** DOMINANT BODY SIZE — the most used value across all 58 screens. */
   body: 'font-sans text-[21px] leading-[31px] text-foreground',
   bodyEmphasis: 'font-sans-medium text-[21px] leading-[31px] text-foreground',
+  /**
+   * 19px. The size between `body` and `control`, and it carries two leadings
+   * because the designs do: loose for prose that has to breathe (b7, b9),
+   * tight for option rows whose card padding already supplies the air (b4-b6).
+   * Do not collapse them — the difference only shows once a translation wraps,
+   * which is the moment it matters.
+   */
+  bodySm: 'font-sans text-[19px] leading-[28px] text-foreground',
+  bodySmTight: 'font-sans text-[19px] leading-[26px] text-foreground',
   /** Buttons and control labels. */
   control: 'font-sans-medium text-[18px] leading-[24px] text-foreground',
+  /** Quiet aside beneath the main line. b7's "close your eyes" permission. */
+  footnote: 'font-sans text-[16px] leading-[24px] text-muted',
   /** Supporting copy, hints, secondary rows. */
   callout: 'font-sans text-[17px] leading-[26px] text-muted',
   /** Chip and pill labels. */

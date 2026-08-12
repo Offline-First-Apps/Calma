@@ -55,8 +55,23 @@ export const type = {
   /** DOMINANT BODY SIZE — the most used value in the whole design set. */
   body: { size: 21, lineHeight: 31, family: 'sans', weight: '400', letterSpacing: 0 },
   bodyEmphasis: { size: 21, lineHeight: 31, family: 'sans', weight: '500', letterSpacing: 0 },
+  /**
+   * 19px, the size between `body` and `control`.
+   *
+   * It carries two leadings in the designs and they are not interchangeable:
+   * 1.5 on prose that has to breathe (b7's "Follow the light", b9's three
+   * cards) and 1.35 on option rows (b4-b6), where the card's own 16px padding
+   * already supplies the air and a looser line would push a wrapped German
+   * string past the card. Same size, different job. Session 9's audit found
+   * four values rounded off the scale; this is the fifth, and rounding it to
+   * 18 or 21 would quietly shrink or inflate every question in onboarding.
+   */
+  bodySm: { size: 19, lineHeight: 28, family: 'sans', weight: '400', letterSpacing: 0 },
+  bodySmTight: { size: 19, lineHeight: 26, family: 'sans', weight: '400', letterSpacing: 0 },
   /** Buttons and control labels. */
   control: { size: 18, lineHeight: 24, family: 'sans', weight: '500', letterSpacing: 0 },
+  /** Quiet asides beneath the main line — b7's "close your eyes" permission. */
+  footnote: { size: 16, lineHeight: 24, family: 'sans', weight: '400', letterSpacing: 0 },
   /** Supporting copy, hints, secondary rows. */
   callout: { size: 17, lineHeight: 26, family: 'sans', weight: '400', letterSpacing: 0 },
   /** Chip and pill labels, status bar. */
