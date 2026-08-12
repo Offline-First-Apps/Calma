@@ -1,18 +1,53 @@
 {
   "expo": {
+    "name": "Calma",
+    "slug": "calma",
+    "version": "1.0.0",
+    "orientation": "portrait",
     "scheme": "calma",
     "userInterfaceStyle": "automatic",
-    "orientation": "default",
-    "web": {
-      "bundler": "metro"
+    "owner": "codewithkin",
+    "icon": "./assets/images/icon.png",
+    "ios": {
+      "bundleIdentifier": "app.calma.mobile",
+      "supportsTablet": false,
+      "icon": {
+        "light": "./assets/images/ios-icon-light.png",
+        "dark": "./assets/images/ios-icon-dark.png",
+        "tinted": "./assets/images/ios-icon-tinted.png"
+      }
     },
-    "name": "calma",
-    "slug": "calma",
+    "android": {
+      "package": "app.calma.mobile",
+      "edgeToEdgeEnabled": true,
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/images/adaptive-icon.png",
+        "monochromeImage": "./assets/images/adaptive-icon-monochrome.png",
+        "backgroundColor": "#FFFFFF"
+      }
+    },
+    "web": {
+      "bundler": "metro",
+      "favicon": "./assets/images/favicon.png"
+    },
     "plugins": [
       "expo-font",
       "expo-audio",
       "expo-localization",
-      "expo-router"
+      "expo-router",
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/images/splash-icon.png",
+          "imageWidth": 240,
+          "resizeMode": "contain",
+          "backgroundColor": "#FBF7F1",
+          "dark": {
+            "image": "./assets/images/splash-icon-dark.png",
+            "backgroundColor": "#141C26"
+          }
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true,
@@ -22,10 +57,6 @@
       "eas": {
         "projectId": "f74cd574-565e-4cf4-88e8-9adbbdba54d3"
       }
-    },
-    "owner": "codewithkin",
-    "android": {
-      "package": "com.anonymous.calma"
     }
   }
 }

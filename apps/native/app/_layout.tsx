@@ -11,10 +11,10 @@ import {
   Newsreader_500Medium,
 } from '@expo-google-fonts/newsreader';
 import { useFonts } from 'expo-font';
-import { Stack } from 'expo-router';
+import { Stack, useRouter } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { HeroUINativeProvider } from 'heroui-native';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { KeyboardProvider } from 'react-native-keyboard-controller';
 
@@ -37,6 +37,16 @@ import { useAppStateEffects } from '@/src/lib/appState';
  */
 void SplashScreen.preventAutoHideAsync();
 
+/**
+ * The anchor for back behaviour, and NOT the first-run decision.
+ *
+ * expo-router builds this navigator's screens from the filesystem, and
+ * `unstable_settings.initialRouteName` is what it honours. It is set to
+ * `(tabs)` so that arriving on a deep link has somewhere to go back to.
+ *
+ * WHICH SCREEN A FIRST LAUNCH LANDS ON IS DECIDED BELOW, NOT HERE. See the
+ * long note in `Routes`.
+ */
 export const unstable_settings = { initialRouteName: '(tabs)' };
 
 export default function RootLayout() {
@@ -73,9 +83,25 @@ export default function RootLayout() {
 
   const ready = fontsLoaded && result !== null;
 
+  /**
+   * Set once the first-run redirect has been issued (or was not needed).
+   *
+   * The splash stays up until this is true, so a first launch never shows a
+   * frame of the Home tab before onboarding replaces it. Someone opening this
+   * app for the first time should see the welcome screen, not a flash of a
+   * product they have not been introduced to.
+   */
+  const [routed, setRouted] = useState(false);
+
   const onLayout = useCallback(() => {
-    if (ready) void SplashScreen.hideAsync();
-  }, [ready]);
+    if (ready && routed) void SplashScreen.hideAsync();
+  }, [ready, routed]);
+
+  // The layout callback only fires on layout changes, and `routed` flips a
+  // tick later than the last one. Hiding here too covers that gap.
+  useEffect(() => {
+    if (ready && routed) void SplashScreen.hideAsync();
+  }, [ready, routed]);
 
   if (!ready) return null;
 
@@ -96,7 +122,10 @@ export default function RootLayout() {
               {showDegraded ? (
                 <BootError onContinue={() => setDismissedDegraded(true)} />
               ) : (
-                <Routes firstRun={result.firstRun} />
+                <Routes
+                  firstRun={result.firstRun}
+                  onRouted={() => setRouted(true)}
+                />
               )}
             </StorageProvider>
           </HeroUINativeProvider>
@@ -106,17 +135,63 @@ export default function RootLayout() {
   );
 }
 
-function Routes({ firstRun }: { firstRun: boolean }) {
+/**
+ * THE FIRST-RUN REDIRECT, AND THE BUG IT REPLACES.
+ *
+ * This used to be `initialRouteName={firstRun ? 'onboarding' : '(tabs)'}` as a
+ * prop on `<Stack>`. That prop does not decide anything here. expo-router
+ * derives a layout's screens from the filesystem and takes the initial route
+ * from `unstable_settings`, which is hard-coded to `(tabs)` — so the ternary
+ * read as if it worked, type-checked, and would have sent every first launch
+ * straight to Home.
+ *
+ * The effect of that is worth stating plainly, because it is why this is not
+ * a cosmetic fix: ten onboarding screens, an entire plan's worth of work,
+ * would have been unreachable code behind a flag that never fired. Nobody
+ * would have seen a welcome screen, and nothing would have errored.
+ *
+ * It is replaced with an imperative `replace` — the same mechanism
+ * `OnboardingFlow` already uses to leave — issued once, before the splash
+ * comes down. `replace` rather than `push` so there is no Home underneath to
+ * go back to: onboarding is where the app starts, not somewhere it navigated.
+ *
+ * `onRouted` is what lets the splash wait. Without it a first launch paints
+ * one frame of the Home tab before this runs, which is a glimpse of a product
+ * someone has not been introduced to yet.
+ *
+ * NOT VERIFIED ON A DEVICE. Written in a sandbox that cannot run the app.
+ * This is the first thing to check when it boots: clear prefs, launch, and
+ * confirm you land on "Welcome" with no flash of the tab bar.
+ */
+function Routes({
+  firstRun,
+  onRouted,
+}: {
+  firstRun: boolean;
+  onRouted: () => void;
+}) {
+  const router = useRouter();
   const reduceMotion = useReduceMotion();
   const transition = transitionFor(reduceMotion);
 
   useAppStateEffects();
 
+  const sent = useRef(false);
+
+  useEffect(() => {
+    if (sent.current) return;
+    sent.current = true;
+
+    if (firstRun) router.replace('/onboarding');
+
+    // Reported whether or not a redirect happened — this is "routing has been
+    // decided", not "a navigation occurred", and the splash waits on the
+    // decision.
+    onRouted();
+  }, [firstRun, onRouted, router]);
+
   return (
-    <Stack
-      screenOptions={{ headerShown: false, ...transition }}
-      initialRouteName={firstRun ? 'onboarding' : '(tabs)'}
-    >
+    <Stack screenOptions={{ headerShown: false, ...transition }}>
       <Stack.Screen name="(tabs)" />
 
       {/* Full-screen, no tab bar, no panic FAB. */}
