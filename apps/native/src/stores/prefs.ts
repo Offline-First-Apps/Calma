@@ -13,16 +13,31 @@ import { create } from 'zustand';
 interface PrefsState {
   prefs: Prefs;
   hydrated: boolean;
+  /**
+   * Frozen at boot, deliberately.
+   *
+   * "A later launch" is a statement about launches, so it is evaluated once,
+   * at one. Deriving it live from `prefs` would let the offer appear under
+   * someone mid-session the moment the clock passed midnight, which is both
+   * startling and not what was promised.
+   */
+  reOfferOnboarding: boolean;
   hydrate: (repo: PrefsRepo) => Promise<void>;
   update: (repo: PrefsRepo, patch: Partial<Prefs>) => Promise<void>;
+  setReOfferOnboarding: (value: boolean) => void;
 }
 
 export const usePrefsStore = create<PrefsState>((set) => ({
   prefs: defaultPrefs,
   hydrated: false,
+  reOfferOnboarding: false,
 
   async hydrate(repo) {
     set({ prefs: await repo.get(), hydrated: true });
+  },
+
+  setReOfferOnboarding(value) {
+    set({ reOfferOnboarding: value });
   },
 
   async update(repo, patch) {

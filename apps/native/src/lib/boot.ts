@@ -6,6 +6,7 @@ import {
   type Stores,
 } from '@calma/db';
 import { openStores } from '@calma/db/native';
+import { shouldReOfferOnboarding } from '@calma/domain';
 import { applyLocale, initI18n } from '@calma/i18n';
 import { getLocales } from 'expo-localization';
 
@@ -36,6 +37,14 @@ export interface BootResult {
   degraded: BootDegradation | null;
   /** No prefs on disk — this is the first time the app has ever opened. */
   firstRun: boolean;
+  /**
+   * Whether to make the single, gentle offer to finish onboarding.
+   *
+   * True only for someone who left through the crisis exit, has not been
+   * offered before, and is opening the app on a LATER DAY than the escape.
+   * The day check is the part that matters — see `shouldReOfferOnboarding`.
+   */
+  reOfferOnboarding: boolean;
   locale: string;
 }
 
@@ -69,6 +78,10 @@ export async function boot(): Promise<BootResult> {
   await usePrefsStore.getState().hydrate(repositories.prefs);
   const prefs = usePrefsStore.getState().prefs;
 
+  // Evaluated here and then left alone. See the note on the store field.
+  const reOffer = shouldReOfferOnboarding(prefs);
+  usePrefsStore.getState().setReOfferOnboarding(reOffer);
+
   // 4. Sound and haptics. Preloading here means the first pebble lands on
   //    the same beat as the animation that triggered it rather than a
   //    decode-time later, and it means Settings' two switches take effect
@@ -90,8 +103,20 @@ export async function boot(): Promise<BootResult> {
   return {
     repositories,
     stores,
+    /**
+     * Onboarding shows once, and `onboardingCompletedAt` is what makes that
+     * true. It is set on completion, on skipping to the end, AND on the
+     * crisis exit — so the flow never reappears whatever happened, including
+     * after an app update, because prefs survive one.
+     *
+     * Note this is deliberately not "have they answered the questions". A
+     * person who answered nothing has still been through onboarding, and
+     * showing it to them again would be the app disagreeing with a decision
+     * they already made.
+     */
     degraded,
     firstRun: prefs.onboardingCompletedAt === null,
+    reOfferOnboarding: reOffer,
     locale: await applyLocale(prefs.locale, deviceTags),
   };
 }

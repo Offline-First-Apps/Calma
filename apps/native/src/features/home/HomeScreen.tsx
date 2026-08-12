@@ -1,3 +1,4 @@
+import { leadToolFor } from '@calma/domain';
 import { formatTimeOfDay } from '@calma/i18n';
 import { useRouter } from 'expo-router';
 import { useCallback, useEffect, useState } from 'react';
@@ -5,6 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { View } from 'react-native';
 
 import { PANIC_FAB_CLEARANCE } from '@/src/components/PanicFab';
+import { ReOffer } from '@/src/features/onboarding/ReOffer';
 import { useRepositories } from '@/src/lib/repositories';
 import { usePrefsStore } from '@/src/stores/prefs';
 import { Button } from '@/src/ui/Button';
@@ -24,7 +26,7 @@ import { Text } from '@/src/ui/Text';
  * thing this app promised never to do.
  */
 export function HomeScreen() {
-  const { t, i18n } = useTranslation(['common', 'worry', 'breathing']);
+  const { t, i18n } = useTranslation(['common', 'worry', 'breathing', 'journal']);
   const router = useRouter();
   const repositories = useRepositories();
   const prefs = usePrefsStore((state) => state.prefs);
@@ -45,6 +47,16 @@ export function HomeScreen() {
     router.push('/session/physiological-sigh');
   }, [router]);
 
+  /**
+   * What onboarding's third question changed.
+   *
+   * Derived from the stored answers rather than kept as its own preference:
+   * a second copy is a second thing to keep in step, and deriving means
+   * editing the answer in Settings changes this with no migration and no
+   * write path to get wrong. See `leadToolFor` in `@calma/domain`.
+   */
+  const lead = leadToolFor(prefs.onboardingAnswers);
+
   return (
     <Screen>
       <View className="flex-1 gap-8" style={{ paddingBottom: PANIC_FAB_CLEARANCE }}>
@@ -54,18 +66,38 @@ export function HomeScreen() {
             : t('common:greeting.plain')}
         </Text>
 
-        <View className="gap-3">
-          <Button label={t('common:takeASigh')} onPress={startSigh} />
-          <Text variant="callout">
-            {t('breathing:patterns.sigh.description')}
-          </Text>
-        </View>
+        <ReOffer />
 
-        <Button
-          variant="secondary"
-          label={t('common:breatheFor')}
-          onPress={() => router.push('/breathe')}
-        />
+        {lead === 'journal' ? (
+          <>
+            <View className="gap-3">
+              <Button
+                label={t('journal:startWriting')}
+                onPress={() => router.push('/(tabs)/write')}
+              />
+            </View>
+            <Button
+              variant="secondary"
+              label={t('common:takeASigh')}
+              onPress={startSigh}
+            />
+          </>
+        ) : (
+          <>
+            <View className="gap-3">
+              <Button label={t('common:takeASigh')} onPress={startSigh} />
+              <Text variant="callout">
+                {t('breathing:patterns.sigh.description')}
+              </Text>
+            </View>
+
+            <Button
+              variant="secondary"
+              label={t('common:breatheFor')}
+              onPress={() => router.push('/breathe')}
+            />
+          </>
+        )}
 
         {/* Only ever rendered when there is something waiting. Silence is the
             correct state, not an empty one. */}
