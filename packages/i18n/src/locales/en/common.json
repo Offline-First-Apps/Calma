@@ -1,4 +1,17 @@
 {
+  "tabs": {
+    "home": "Home",
+    "breathe": "Breathe",
+    "write": "Write",
+    "worries": "Worries",
+    "progress": "Progress"
+  },
+  "greeting": {
+    "plain": "You're here.",
+    "named": "You're here, {{name}}."
+  },
+  "takeASigh": "Take a sigh now",
+  "breatheFor": "Breathe for a few minutes",
   "continue": "Continue",
   "skip": "Skip",
   "back": "Back",
