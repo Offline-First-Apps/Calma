@@ -14,6 +14,7 @@
 
 export * from './entities';
 export * from './breathing';
+export * from './breathing.machine';
 export * from './id';
 export * from './streak';
 export * from './tier';
