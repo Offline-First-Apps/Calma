@@ -41,8 +41,17 @@ import { Text } from './Text';
 const variants = {
   /** Amber gradient. The one obvious action on a screen. */
   primary: 'active:opacity-90',
-  /** Sand fill. Used where nothing is allowed to out-shout the orb. */
-  secondary: 'bg-surface border border-border active:bg-border-strong',
+  /**
+   * Sand fill. Used where nothing is allowed to out-shout the orb.
+   *
+   * `surface-quiet`, NOT `surface`. This was `bg-surface` until session 10,
+   * on the reasonable-sounding theory that a card and a quiet button are the
+   * same material. The designs disagree on every screen that has one (b1,
+   * b10, b11, e4, f8, h1, h5, j4): a button sits a step forward of a card and
+   * gets its own, warmer pair. Nothing downstream noticed, because everything
+   * downstream agreed with itself.
+   */
+  secondary: 'bg-surface-quiet border border-border-quiet active:bg-border-strong',
   /**
    * Secondary, but standing on the immersive ground.
    *

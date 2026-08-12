@@ -52,6 +52,24 @@
       --surface-immersive: #EADCC7;
       --border-immersive: #DFCEB4;
 
+      /* Secondary and quiet BUTTONS, which are not cards. Session 9 gave
+       * them `--surface` and the designs give them their own, warmer pair on
+       * every screen that has one. */
+      --surface-quiet: #EFE5D8;
+      --border-quiet: #E2D5C3;
+
+      /* The third ground: a step warmer than `--background`, nowhere near
+       * `--immersive`. Used where the app is saying something back to the
+       * person rather than asking for anything (b9, f8, h3). */
+      --lift: #FBF4E9;
+      --surface-lift: #F6EADA;
+      --border-lift: #EBDBC4;
+
+      /* The unfilled mark on an option row. Darker than the card edge on
+       * purpose, so it reads as an empty control and not as a hairline. */
+      --option-mark: #D8CAB6;
+      --hairline-track: rgba(42, 54, 66, 0.09);
+
       --overlay: #FDFCFA;
       --overlay-foreground: #2A3642;
       --backdrop: rgba(42, 54, 66, 0.28);
@@ -107,6 +125,13 @@
       --accent-softer: #F0BE7E;
       /* Ring around an amber control standing on an amber surface (d2). */
       --accent-ring: #D08A45;
+      /* Selection is a wash PLUS an edge -- never brightness alone, so it
+       * survives a dimmed screen and greyscale (the designer's note on b2). */
+      --accent-wash: #F9EDDC;
+      --accent-wash-border: #E39A45;
+      /* Amber as text. `--accent` is a fill colour and fails contrast at
+       * body size on every one of our grounds. */
+      --accent-ink: #9A6220;
 
       --clay: #BE7458;
       --clay-foreground: #8A4E36;
@@ -128,6 +153,19 @@
 
       --surface-immersive: #1C2733;
       --border-immersive: #2A3644;
+
+      --surface-quiet: #212C39;
+      --border-quiet: #2E3B4A;
+
+      /* Note the direction reverses: light warms upward from its background,
+       * dark LIFTS off navy rather than sinking below it the way
+       * `--immersive` does. */
+      --lift: #16202B;
+      --surface-lift: #1F2A36;
+      --border-lift: #2C3846;
+
+      --option-mark: #3B4857;
+      --hairline-track: rgba(234, 226, 215, 0.12);
 
       --overlay: #2C3844;
       --overlay-foreground: #C9D2DA;
@@ -167,6 +205,12 @@
       --accent-soft: #DFA55B;
       --accent-softer: #E7C089;
       --accent-ring: #C08347;
+      /* Translucent here, flat in light mode -- that is the designs, not an
+       * oversight. A solid tint over navy reads as a second surface. */
+      --accent-wash: rgba(209, 146, 73, 0.13);
+      /* Duller than `--accent`, so a selected edge does not glow at 2am. */
+      --accent-wash-border: #A9743A;
+      --accent-ink: #DFAE73;
 
       --clay: #D48C6A;
       --clay-foreground: #E3A98C;
@@ -185,12 +229,22 @@
   --color-immersive: var(--immersive);
   --color-surface-immersive: var(--surface-immersive);
   --color-border-immersive: var(--border-immersive);
+  --color-surface-quiet: var(--surface-quiet);
+  --color-border-quiet: var(--border-quiet);
+  --color-lift: var(--lift);
+  --color-surface-lift: var(--surface-lift);
+  --color-border-lift: var(--border-lift);
+  --color-option-mark: var(--option-mark);
+  --color-hairline-track: var(--hairline-track);
 
   --color-border-strong: var(--border-strong);
   --color-accent-pressed: var(--accent-pressed);
   --color-accent-soft-fill: var(--accent-soft);
   --color-accent-softer: var(--accent-softer);
   --color-accent-ring: var(--accent-ring);
+  --color-accent-wash: var(--accent-wash);
+  --color-accent-wash-border: var(--accent-wash-border);
+  --color-accent-ink: var(--accent-ink);
 
   --color-clay: var(--clay);
   --color-clay-foreground: var(--clay-foreground);
@@ -233,6 +287,9 @@
    * ever tapped mid-session, sometimes by a shaking hand (d4, d5). */
   --spacing-button-immersive: 64px;
   --spacing-card: 64px;
+  /* A FLOOR, not a height. Option cards grow with their text so a 40%
+   * longer German string wraps instead of truncating (b4). */
+  --spacing-option-card: 76px;
   --spacing-card-tall: 78px;
   --spacing-min-target: 48px;
   --spacing-panic-fab: 72px;
@@ -243,6 +300,7 @@
   --radius-tight: 8px;
   --radius-input: 14px;
   --radius-card: 20px;
+  --radius-option: 22px;
   --radius-sheet: 24px;
   --radius-well: 28px;
   --radius-hero: 32px;

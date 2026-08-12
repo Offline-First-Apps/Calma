@@ -37,8 +37,25 @@ export const light = {
   bgImmersive: '#F2E7D6',
   /** Highest surface — sheets, elevated cards. */
   surfaceRaised: '#FDFCFA',
-  /** Cards, wells, secondary button fill. */
+  /** Cards and wells. */
   surface: '#F3EBE0',
+  /**
+   * Secondary and quiet BUTTON fill. Not `surface`.
+   *
+   * Session 9 built `Button variant="secondary"` as `bg-surface`, on the
+   * reasonable-sounding theory that a card and a quiet button are the same
+   * material. The designs disagree: every secondary button standing on the
+   * ordinary ground is this warmer, slightly deeper pair (b1, b10, b11 in
+   * light; e4, f8, h1, h5, j4 and the same three in dark). A card is
+   * something to read; a button is something to press, and it sits a step
+   * further forward. Same class of mistake as `surface` vs `surfaceImmersive`
+   * — the value agreed with itself everywhere downstream and matched nothing.
+   *
+   * Note this pair is mixed against `bg`. On the `bgLift` ground the designs
+   * shift it again (f8 uses #F1E7D8/#E6D9C4); nothing needs that yet.
+   */
+  surfaceQuiet: '#EFE5D8',
+  borderQuiet: '#E2D5C3',
   /**
    * Cards and buttons sitting ON the immersive ground.
    *
@@ -47,6 +64,42 @@ export const light = {
    */
   surfaceImmersive: '#EADCC7',
   borderImmersive: '#DFCEB4',
+
+  /**
+   * THE THIRD GROUND. A step warmer than `bg`, a long way short of
+   * `bgImmersive`.
+   *
+   * Used where a screen is saying something good back to the person rather
+   * than asking them for anything: the onboarding reveal (b9, "warmest ground
+   * in onboarding"), the worry-window summary (f8) and the streak moment
+   * (h3). Note the direction reverses between themes — light warms upward
+   * from #FBF7F1, dark *lifts* off navy rather than sinking below it, which
+   * is the opposite of what `bgImmersive` does. The designer's note on b3 is
+   * where the word comes from: "ground lifts a step off navy".
+   */
+  bgLift: '#FBF4E9',
+  /** Cards standing on the lift ground. Mixed against it, like the immersive pair. */
+  surfaceLift: '#F6EADA',
+  borderLift: '#EBDBC4',
+
+  /**
+   * The empty mark on an unselected option row (b4, b5, b6).
+   *
+   * Deliberately not `border`: the ring has to read as an unfilled control
+   * rather than as a hairline, so it is a touch darker than the card edge it
+   * sits inside.
+   */
+  optionMark: '#D8CAB6',
+
+  /**
+   * Track behind onboarding's progress hairline.
+   *
+   * A tint of the text colour, not a border colour — it has to disappear
+   * almost entirely against the ground so that only the amber travelled
+   * portion registers.
+   */
+  hairlineTrack: 'rgba(42,54,66,0.09)',
+
   /** Warmer card variant used on paper-feeling screens (journal, founder note). */
   surfaceWarm: '#FDFAF3',
   /** Hairlines and card borders. */
@@ -74,9 +127,18 @@ export const dark = {
   bgImmersive: '#101823',
   surfaceRaised: '#2C3844',
   surface: '#1D2733',
+  /** Secondary and quiet button fill. See the note on `light.surfaceQuiet`. */
+  surfaceQuiet: '#212C39',
+  borderQuiet: '#2E3B4A',
   /** Cards and buttons on the immersive ground (d4, d5). */
   surfaceImmersive: '#1C2733',
   borderImmersive: '#2A3644',
+  /** The third ground. Lifts off navy; light's equivalent warms. See above. */
+  bgLift: '#16202B',
+  surfaceLift: '#1F2A36',
+  borderLift: '#2C3846',
+  optionMark: '#3B4857',
+  hairlineTrack: 'rgba(234,226,215,0.12)',
   surfaceWarm: '#1E2731',
   border: '#2B3745',
   borderStrong: '#2C3742',
@@ -113,6 +175,27 @@ export const amber = {
     ring: '#D08A45',
     /** Label colour on an amber fill. */
     on: '#33230F',
+    /**
+     * SELECTION. A warm wash plus a border, never brightness alone.
+     *
+     * The designer's note on b2-dark says why: selection carried by a
+     * brightness step vanishes at low display brightness and in greyscale,
+     * which are precisely the conditions of the 2am user. So a selected
+     * option row is a fill AND a 1.5px edge, and it survives being unable to
+     * see colour at all.
+     *
+     * `wash` is a flat colour in light mode and a translucent one in dark —
+     * that is the designs, not an inconsistency: over navy a solid tint reads
+     * as a second surface, over sand it does not.
+     */
+    wash: '#F9EDDC',
+    washBorder: '#E39A45',
+    /**
+     * Amber as TEXT, not as a fill. The one emphasised phrase on the
+     * onboarding reveal (b9). Darkened well past `base`, which is a fill
+     * colour and fails contrast at body size on any of our grounds.
+     */
+    ink: '#9A6220',
   },
   dark: {
     /** Lower intensity than light mode. This is the 2am rule, in a token. */
@@ -122,6 +205,10 @@ export const amber = {
     softer: '#E7C089',
     ring: '#C08347',
     on: '#221708',
+    wash: 'rgba(209,146,73,0.13)',
+    /** Not `base`. The selected edge is duller here so it does not glow. */
+    washBorder: '#A9743A',
+    ink: '#DFAE73',
   },
 } as const;
 

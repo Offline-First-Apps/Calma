@@ -54,6 +54,15 @@ export const themedColors: readonly ThemedVar[] = [
   { cssVar: 'surface-tertiary', lightValue: light.surfaceWarm, darkValue: dark.surfaceWarm },
   { cssVar: 'surface-immersive', lightValue: light.surfaceImmersive, darkValue: dark.surfaceImmersive },
   { cssVar: 'border-immersive', lightValue: light.borderImmersive, darkValue: dark.borderImmersive },
+  /** Buttons, not cards. See the note on `light.surfaceQuiet`. */
+  { cssVar: 'surface-quiet', lightValue: light.surfaceQuiet, darkValue: dark.surfaceQuiet },
+  { cssVar: 'border-quiet', lightValue: light.borderQuiet, darkValue: dark.borderQuiet },
+  /** The third ground and the cards that stand on it (b9, f8, h3). */
+  { cssVar: 'lift', lightValue: light.bgLift, darkValue: dark.bgLift },
+  { cssVar: 'surface-lift', lightValue: light.surfaceLift, darkValue: dark.surfaceLift },
+  { cssVar: 'border-lift', lightValue: light.borderLift, darkValue: dark.borderLift },
+  { cssVar: 'option-mark', lightValue: light.optionMark, darkValue: dark.optionMark },
+  { cssVar: 'hairline-track', lightValue: light.hairlineTrack, darkValue: dark.hairlineTrack },
   { cssVar: 'muted', lightValue: light.textMuted, darkValue: dark.textMuted },
   { cssVar: 'border', lightValue: light.border, darkValue: dark.border },
   { cssVar: 'separator', lightValue: light.border, darkValue: dark.border },
@@ -65,6 +74,11 @@ export const themedColors: readonly ThemedVar[] = [
   { cssVar: 'accent-soft', lightValue: amber.light.soft, darkValue: amber.dark.soft },
   { cssVar: 'accent-softer', lightValue: amber.light.softer, darkValue: amber.dark.softer },
   { cssVar: 'accent-ring', lightValue: amber.light.ring, darkValue: amber.dark.ring },
+  /** Selection: a wash plus an edge, so it survives greyscale (b2-dark). */
+  { cssVar: 'accent-wash', lightValue: amber.light.wash, darkValue: amber.dark.wash },
+  { cssVar: 'accent-wash-border', lightValue: amber.light.washBorder, darkValue: amber.dark.washBorder },
+  /** Amber as text rather than as a fill. */
+  { cssVar: 'accent-ink', lightValue: amber.light.ink, darkValue: amber.dark.ink },
 
   /** Light mode has one text colour; dark mode's cream is the whole reason. */
   { cssVar: 'warm', lightValue: light.text, darkValue: dark.textWarm },
@@ -118,6 +132,7 @@ export const spacingVars: Readonly<Record<string, string>> = {
   'spacing-button': `${control.button}px`,
   'spacing-button-immersive': `${control.buttonImmersive}px`,
   'spacing-card': `${control.card}px`,
+  'spacing-option-card': `${control.optionCard}px`,
   'spacing-card-tall': `${control.cardTall}px`,
   'spacing-min-target': `${control.minTarget}px`,
   'spacing-panic-fab': `${control.panicFab}px`,
@@ -134,6 +149,7 @@ export const radiusVars: Readonly<Record<string, string>> = {
   'radius-tight': `${radius.sm}px`,
   'radius-input': `${radius.md}px`,
   'radius-card': `${radius.lg}px`,
+  'radius-option': `${radius.option}px`,
   'radius-sheet': `${radius.xl}px`,
   'radius-well': `${radius['2xl']}px`,
   'radius-hero': `${radius['3xl']}px`,
