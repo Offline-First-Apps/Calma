@@ -16,20 +16,24 @@
   "stopConfirm": "Stop here?",
   "patterns": {
     "478": {
-      "name": "4-7-8",
-      "description": "A long hold and a longer breath out. Good for settling."
+      "name": "Four, seven, eight",
+      "description": "A long hold and a longer breath out. Good for settling.",
+      "purpose": "for winding down"
     },
     "box": {
-      "name": "5-5-5-5",
-      "description": "Even on all four sides. Easiest to follow when it's loud."
+      "name": "Even breathing",
+      "description": "Even on all four sides. Easiest to follow when it's loud.",
+      "purpose": "for steadying yourself"
     },
     "sigh": {
-      "name": "Physiological sigh",
-      "description": "Two breaths in, one long breath out. The quickest of the three."
+      "name": "The sigh",
+      "description": "Two breaths in, one long breath out. The quickest of the three.",
+      "purpose": "for right now"
     },
     "custom": {
       "name": "Your own rhythm",
-      "description": "Build the timing that suits you."
+      "description": "Build the timing that suits you.",
+      "purpose": "yours to set, with Plus"
     }
   },
   "panic": {
@@ -53,7 +57,16 @@
       "worse": "Worse",
       "betterResponse": "Glad that helped.",
       "sameResponse": "Sometimes writing helps untangle things. Want to try?",
-      "worseResponse": "That sounds really hard. Want to talk it through on paper?"
+      "worseResponse": "That sounds really hard. Want to talk it through on paper?",
+      "writeAbout": "Write about it"
     }
+  },
+  "picker": {
+    "title": "Which one, right now?",
+    "subtitle": "No wrong answer."
+  },
+  "stop": {
+    "keepGoing": "Keep going",
+    "stop": "Stop"
   }
 }
