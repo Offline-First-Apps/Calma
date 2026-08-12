@@ -15,6 +15,12 @@
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
-    }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "f74cd574-565e-4cf4-88e8-9adbbdba54d3"
+      }
+    },
+    "owner": "codewithkin"
   }
 }
