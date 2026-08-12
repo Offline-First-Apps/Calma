@@ -39,7 +39,12 @@ function buildResources(includePseudo: boolean) {
   return {
     ...resources,
     [PSEUDO_LOCALE]: pseudoResources(
-      en as unknown as Record<string, Record<string, unknown>>,
+      // `Bundle` is recursive and not exported, so the cast is expressed
+      // in terms of the function's own parameter rather than a
+      // hand-written approximation of it: `Record<string, unknown>` is
+      // not assignable to `Bundle`, because `unknown` is not
+      // `string | Bundle`.
+      en as unknown as Parameters<typeof pseudoResources>[0],
     ),
   };
 }
