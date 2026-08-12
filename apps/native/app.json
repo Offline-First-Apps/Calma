@@ -8,7 +8,10 @@
     },
     "name": "calma",
     "slug": "calma",
-    "plugins": ["expo-font"],
+    "plugins": [
+      "expo-font",
+      "expo-audio"
+    ],
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
