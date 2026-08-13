@@ -53,11 +53,6 @@ lerna-debug.log*
 coverage
 .nyc_output
 
-# Planning & system docs (local working notes)
-plans/
-systems/
-progress/
-
 # Misc
 *.tgz
 .cache
