@@ -27,6 +27,7 @@
     "@gorhom/bottom-sheet": "^5.2.14",
     "dotenv": "catalog:",
     "expo": "~57.0.12",
+    "expo-asset": "~57.0.10",
     "expo-audio": "~57.0.3",
     "expo-constants": "~57.0.10",
     "expo-crypto": "~57.0.1",

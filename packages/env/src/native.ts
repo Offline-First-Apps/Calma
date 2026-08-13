@@ -19,11 +19,24 @@ import { z } from "zod";
  * paywall suppressed (systems/05-entitlements.md). Making these required
  * would mean the app could not boot at all without a billing account, which
  * for an app whose whole relief path is free would be the wrong dependency.
+ *
+ * `EXPO_PUBLIC_SERVER_URL` USED TO BE HERE, REQUIRED, AND IT WAS A BOOT CRASH.
+ *
+ * It arrived with the Better-T-Stack template and nothing in the repo ever
+ * read it -- but `createEnv` validates at module-eval time, so the first
+ * import of `purchases.ts` threw `Invalid environment variables` on any
+ * machine without a `.env`. `.env` is gitignored, which means every fresh
+ * clone, every CI run and every EAS build was one of those machines. The one
+ * place it did work was a developer's own checkout, which is exactly the
+ * shape of failure that ships.
+ *
+ * The paragraph above is the rule this violated: a key the app does not need
+ * must never be able to stop it booting. Calma has no network layer, so there
+ * is no server URL to require.
  */
 export const env = createEnv({
   clientPrefix: "EXPO_PUBLIC_",
   client: {
-    EXPO_PUBLIC_SERVER_URL: z.url(),
     EXPO_PUBLIC_REVENUECAT_IOS_KEY: z.string().min(1).optional(),
     EXPO_PUBLIC_REVENUECAT_ANDROID_KEY: z.string().min(1).optional(),
   },

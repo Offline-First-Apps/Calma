@@ -4,6 +4,13 @@ packages:
 allowBuilds:
   esbuild: true
   sharp: true
+# A native build links exactly one copy of any native module, and Metro will
+# happily bundle two copies of React. react-native-mmkv's peer range resolved
+# its own react@19.2.8 alongside the app's 19.2.3 under the isolated linker,
+# which is the "Invalid hook call" crash waiting to happen. Pin the one copy.
+overrides:
+  react: 19.2.3
+  react-dom: 19.2.3
 catalog:
   dotenv: ^17.4.2
   zod: ^4.4.3
