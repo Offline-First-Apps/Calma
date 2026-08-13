@@ -184,10 +184,36 @@
        * breathing, neutral for the longer view, clay for worry. */
       --surface-tile-accent: #F7E9D5;
       --border-tile-accent: #EBD6B6;
-      --surface-tile-neutral: #F1EEE7;
-      --border-tile-neutral: #E2DCD1;
+      /* These two were #F1EEE7/#E2DCD1 until session 14 and neither hex
+       * occurs anywhere in the 116 delivered screens. See `colors.ts`. */
+      --surface-tile-neutral: #F3EEE3;
+      --border-tile-neutral: #E4DBC9;
       --surface-tile-clay: #F6E7DF;
       --border-tile-clay: #E8D0C2;
+
+      /* ---- PROGRESS (h1-h5) --------------------------------------- */
+      /* Supporting copy on a CARD. `--secondary` (#454F5A) is the version
+       * mixed against the ground; the designs carry both, on one screen. */
+      --card-secondary: #4C5A66;
+      /* The selected pill is a hole punched in the track, not a raised
+       * button -- which is why it is `--background` and has no shadow. */
+      --segment-track: #F1E6D7;
+      --segment-border: #E8DAC6;
+      --segment-selected: #FBF7F1;
+      /* A day with no session. Neutral, never a dimmed amber. */
+      --bar-track: #EADCC7;
+      --surface-tile-sage: #E6EBE0;
+      --border-tile-sage: #D2DAC9;
+      /* 2px strokes, a step lighter than each feature's ink colour. */
+      --glyph-accent: #C07E2E;
+      --glyph-clay: #A5583C;
+      --glyph-neutral: #6B6155;
+      --glyph-sage: #4E5B44;
+      --plus-label: #55613F;
+      --sage-mark: #8FA383;
+      --sage-mark-core: #C7D3BC;
+      --surface-streak-note: #F3F3EC;
+      --border-streak-note: #DEE3D6;
       /* i2. Sage, because sage is what Calma uses for something settled.
        * Amber here would be the app being pleased about a transaction. */
       --surface-plus: #F1F2EB;
@@ -345,6 +371,25 @@
       --border-tile-neutral: #333C46;
       --surface-tile-clay: rgba(196, 129, 106, 0.16);
       --border-tile-clay: #3D3430;
+
+      /* ---- PROGRESS (h1-h5) --------------------------------------- */
+      /* Collapses onto `--secondary` here. In light it does not. */
+      --card-secondary: #A8B4BF;
+      --segment-track: #182028;
+      --segment-border: #2E3B4A;
+      --segment-selected: #212C39;
+      --bar-track: #2A3543;
+      --surface-tile-sage: #232C24;
+      --border-tile-sage: #333D32;
+      --glyph-accent: #DFAE73;
+      --glyph-clay: #DBA78F;
+      --glyph-neutral: #B9C2CB;
+      --glyph-sage: #B7C6AB;
+      --plus-label: #A2B296;
+      --sage-mark: #7E9070;
+      --sage-mark-core: #A8B89C;
+      --surface-streak-note: #1F2721;
+      --border-streak-note: #2E3729;
       --surface-plus: #1E2620;
       --border-plus: #2C3529;
       --plus-foreground: #DDE6D3;
@@ -439,6 +484,22 @@
   --color-border-plus: var(--border-plus);
   --color-plus-foreground: var(--plus-foreground);
   --color-plus-muted: var(--plus-muted);
+  --color-card-secondary: var(--card-secondary);
+  --color-segment-track: var(--segment-track);
+  --color-segment-border: var(--segment-border);
+  --color-segment-selected: var(--segment-selected);
+  --color-bar-track: var(--bar-track);
+  --color-surface-tile-sage: var(--surface-tile-sage);
+  --color-border-tile-sage: var(--border-tile-sage);
+  --color-glyph-accent: var(--glyph-accent);
+  --color-glyph-clay: var(--glyph-clay);
+  --color-glyph-neutral: var(--glyph-neutral);
+  --color-glyph-sage: var(--glyph-sage);
+  --color-plus-label: var(--plus-label);
+  --color-sage-mark: var(--sage-mark);
+  --color-sage-mark-core: var(--sage-mark-core);
+  --color-surface-streak-note: var(--surface-streak-note);
+  --color-border-streak-note: var(--border-streak-note);
   --color-separator-row: var(--separator-row);
   --color-surface-stepper: var(--surface-stepper);
   --color-stepper-glyph: var(--stepper-glyph);

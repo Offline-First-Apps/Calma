@@ -223,10 +223,108 @@ export const light = {
    */
   surfaceTileAccent: '#F7E9D5',
   borderTileAccent: '#EBD6B6',
-  surfaceTileNeutral: '#F1EEE7',
-  borderTileNeutral: '#E2DCD1',
+  /**
+   * THESE TWO WERE WRONG FOR FIVE SESSIONS AND MATCHED NOTHING.
+   *
+   * They were transcribed as #F1EEE7/#E2DCD1 when i1 was built. Neither hex
+   * occurs anywhere in the 116 delivered screen files -- not once, in either
+   * theme. The delivered values are below, and they are the same on i1's
+   * neutral feature tile and on h1's and h4's "Writing" tile.
+   *
+   * Nothing caught it because the parity test compares `colors.ts` against
+   * `global.css`, and both carried the same invented value. That is Pillar 6's
+   * exact failure mode: two layers agreeing with each other while disagreeing
+   * with reality. A check that spans to the *designs* is the one that was
+   * missing, and `designs.test.ts` is now it.
+   */
+  surfaceTileNeutral: '#F3EEE3',
+  borderTileNeutral: '#E4DBC9',
   surfaceTileClay: '#F6E7DF',
   borderTileClay: '#E8D0C2',
+
+  /* ---- PROGRESS (h1-h5) ------------------------------------------- */
+
+  /**
+   * Supporting copy standing ON a card, as opposed to on the ground.
+   *
+   * Not `textSecondary` (#454F5A) -- the designs carry both, on the same
+   * screens, and h1 uses this one seven times. 39 in-app uses across h1, h4,
+   * h5, f4, f5, f7, g3, i1, i2, j2, j3, k1, k2, k4 and k6, and it has never
+   * had a name. It is the same relationship as `surface` vs `surfaceQuiet`:
+   * a value mixed against a card reads differently from one mixed against
+   * the ground, and the designs have always known that.
+   *
+   * In dark it collapses onto `textSecondary`; in light it does not. Keeping
+   * one name for both is what lets that asymmetry be expressed at all.
+   */
+  cardSecondary: '#4C5A66',
+
+  /**
+   * The Week/Longer and 6 months/Year segmented control (h1, h5).
+   *
+   * `segmentSelected` is the screen's own background: the selected pill is a
+   * hole punched in the track, not a raised button. That is why there is no
+   * shadow on it and why it must track `bg` if `bg` ever moves.
+   */
+  segmentTrack: '#F1E6D7',
+  segmentBorder: '#E8DAC6',
+  segmentSelected: '#FBF7F1',
+
+  /**
+   * A day with no session, in the week bars (h1, h4).
+   *
+   * Drawn as a 6px stub rather than as nothing, and in a neutral rather than
+   * a dimmed amber. The bar chart has to be able to say "not that day"
+   * without it reading as a gap in a row of things you were supposed to do.
+   * There is no zero label anywhere near it.
+   */
+  barTrack: '#EADCC7',
+
+  /**
+   * The sage tile's medallion (h1's "Showing up"), on `surfacePlus`.
+   *
+   * Sage is the only hue in Calma that means "settled", so the streak tile is
+   * the one tile that does not use the neutral pair.
+   */
+  surfaceTileSage: '#E6EBE0',
+  borderTileSage: '#D2DAC9',
+
+  /**
+   * The four medallion glyph strokes.
+   *
+   * Each is a step lighter than its feature's ink colour, because these are
+   * 2px strokes at 16-20px rather than text: `clay.ink` (#7A4633) at that
+   * weight closes up into a blob, and `amber.ink` (#9A6220) stops reading as
+   * amber at all. They are line colours and they are not interchangeable
+   * with the text colours they sit beside.
+   */
+  glyphAccent: '#C07E2E',
+  glyphClay: '#A5583C',
+  glyphNeutral: '#6B6155',
+  glyphSage: '#4E5B44',
+
+  /**
+   * The 11px label on the sage tile ("Showing up").
+   *
+   * Not `textPlusMuted` (#46523C), which is i2's body copy. A caption-size
+   * label needs to sit back further than a sentence does, and the designs
+   * give it its own value in both themes.
+   */
+  textPlusLabel: '#55613F',
+
+  /**
+   * h2's six streak marks, and the outer stop of h3's medallion.
+   *
+   * A lighter sage than `sage.base` (#7E8F72). h3's caption is the reason
+   * this is a dot at all: "six small sage marks rather than a numeral, and
+   * no flame, no trophy, no gold".
+   */
+  sageMark: '#8FA383',
+  /** The inner stop of h3's medallion radial. */
+  sageMarkCore: '#C7D3BC',
+  /** h3's card, which stands on `bgLift` and is the app's only sage card. */
+  surfaceStreakNote: '#F3F3EC',
+  borderStreakNote: '#DEE3D6',
 
   /**
    * i2's "your Plus is active" panel.
@@ -413,6 +511,26 @@ export const dark = {
   borderTileNeutral: '#333C46',
   surfaceTileClay: 'rgba(196,129,106,0.16)',
   borderTileClay: '#3D3430',
+
+  /* ---- PROGRESS (h1-h5). See the light block for the reasoning. ---- */
+  /** Collapses onto `textSecondary` here. In light it does not. */
+  cardSecondary: '#A8B4BF',
+  segmentTrack: '#182028',
+  segmentBorder: '#2E3B4A',
+  /** Equals `surfaceQuiet` in dark; the designs converge, as they do on g4. */
+  segmentSelected: '#212C39',
+  barTrack: '#2A3543',
+  surfaceTileSage: '#232C24',
+  borderTileSage: '#333D32',
+  glyphAccent: '#DFAE73',
+  glyphClay: '#DBA78F',
+  glyphNeutral: '#B9C2CB',
+  glyphSage: '#B7C6AB',
+  textPlusLabel: '#A2B296',
+  sageMark: '#7E9070',
+  sageMarkCore: '#A8B89C',
+  surfaceStreakNote: '#1F2721',
+  borderStreakNote: '#2E3729',
   surfacePlus: '#1E2620',
   borderPlus: '#2C3529',
   textPlus: '#DDE6D3',
@@ -620,6 +738,50 @@ export const clay = {
  * dismissal either, so it gets the same treatment in the feature's own
  * colour. Same three-stop shape and the same offsets as the amber button.
  */
+/**
+ * The bars on h1, h4 and h5.
+ *
+ * Vertical (180deg) two-stop, not the 158deg three-stop of a button: a bar is
+ * a quantity, not a control, and giving it the button's fill would make a
+ * chart look pressable. Light runs `accent.softer -> accent.base`; dark is
+ * NOT `accent.softer -> accent.base` but its own slightly deeper pair, which
+ * is the 2am rule applying to a shape that can occupy a third of the screen.
+ *
+ * `clay` and `sage` exist because h5 colours its bars by band rather than by
+ * feature -- see the note on `chartBand` below.
+ */
+export const barGradient = {
+  light: {
+    accent: ['#F0BE7E', '#E39A45'],
+    clay: ['#DDA184', '#BE7458'],
+    sage: ['#B9C7AF', '#8FA383'],
+  },
+  dark: {
+    accent: ['#D9A662', '#B87A3A'],
+    clay: ['#C08A72', '#A0654D'],
+    sage: ['#9AAB8E', '#718262'],
+  },
+} as const;
+
+/**
+ * WHY h5's BARS ARE THREE COLOURS, AND WHY SAGE IS ALLOWED OUT OF f6.
+ *
+ * `sage` is documented below as belonging to the action step and nowhere
+ * else. h5 is the registered exception, and it is the designs' call: the
+ * legend reads "Often / Rarely", so the hue is carrying the band, and the
+ * H-group caption is explicit that sage is "only for things that went well".
+ *
+ * The rule that survives is the one that mattered: sage never means "correct"
+ * and never appears as a tick. Here it means "a quiet month", which the
+ * caption also insists is "a fine week" -- so the quiet end of the scale is
+ * deliberately NOT the dimmer or greyer end. That is the whole reason the
+ * chart is not a single hue at two opacities.
+ *
+ * There is no threshold in the design and none is invented here; see
+ * `chartBandFor` in the progress feature for how a month is banded.
+ */
+export type ChartBand = 'often' | 'middle' | 'rarely';
+
 export const clayGradient = {
   light: {
     button: ['#D4906F', '#BE7458', '#A9634A'],
