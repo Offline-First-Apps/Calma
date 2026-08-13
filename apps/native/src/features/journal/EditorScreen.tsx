@@ -14,6 +14,7 @@ import { Button } from '@/src/ui/Button';
 import { Text } from '@/src/ui/Text';
 
 import { IntensityScale } from './IntensityScale';
+import { SaveConfirmation } from './SaveConfirmation';
 import { STEPS, valueFor, type Step } from './steps';
 import { firstEmptyStep, useJournalStore } from './store';
 import { useAutosave } from './useAutosave';
@@ -51,6 +52,7 @@ export function EditorScreen({ id }: { id: string }) {
 
   const [entry, setEntry] = useState<JournalEntry | null>(null);
   const [index, setIndex] = useState(0);
+  const [saved, setSaved] = useState(false);
   const lastSave = useRef(0);
 
   useEffect(() => {
@@ -93,13 +95,26 @@ export function EditorScreen({ id }: { id: string }) {
     flush();
     void finish(repositories.journal, id);
 
+    // The pencil and a selection haptic, together (T08). One event, not two
+    // things scheduled to agree -- the same rule the breath haptics follow.
     hapticJournalSaved();
     void playSound('journalSaved');
 
-    // Straight home. No summary, no analysis, no "you've written 3 this week",
-    // and no suggestion to write another (T08).
-    router.dismissAll();
-  }, [finish, flush, id, repositories.journal, router]);
+    setSaved(true);
+  }, [finish, flush, id, repositories.journal]);
+
+  /**
+   * Home, and nowhere else.
+   *
+   * `dismissAll` rather than `back`, because the editor can be reached from
+   * the tab, from a draft, or from a post-session offer, and none of those is
+   * a place to be returned to holding an entry that is now finished. There is
+   * no summary screen, no analysis, no "you've written 3 this week" and no
+   * suggestion to write another (T08, D-015).
+   */
+  const leave = useCallback(() => router.dismissAll(), [router]);
+
+  if (saved) return <SaveConfirmation onDone={leave} />;
 
   if (entry === null || step === undefined) {
     return <View className="flex-1 bg-write" />;

@@ -1,31 +1,21 @@
-import { useEffect } from 'react';
-
-import { SessionScreen } from '@/src/features/breathing/SessionScreen';
-import { hapticPanic } from '@/src/lib/haptics';
+import { PanicSession } from '@/src/features/breathing/PanicSession';
 
 /**
- * The panic session.
+ * The panic route.
  *
  * The physiological sigh, because it is the fastest of the three to do
  * anything at all -- two breaths in and one long breath out, and the nervous
- * system has already started to move. Sixty seconds, because a session has to
- * end before someone gives up on it.
+ * system has already started to move.
  *
- * NOTHING IS ASKED HERE. No intensity slider, no permission prompt, no
- * paywall, no modal, ever (D-006). Someone who has just pressed the panic
- * button is not going to rate their distress out of ten first, and being
- * asked would be its own small cruelty.
+ * The activation drum and the Heavy haptic do NOT fire here. They fire on the
+ * touch, inside `PanicFab`, one frame before this route is even asked for
+ * (plan 07 T07): the acknowledgement must never be the *result* of the
+ * navigation. A button that hesitates gets tapped again, and the person doing
+ * the tapping is having a panic attack.
  *
- * Dismissible at any moment with a single visible button.
+ * Everything else lives in `PanicSession`, including the rule that nothing is
+ * ever asked on this path.
  */
 export default function Panic() {
-  useEffect(() => {
-    // Fires on activation, then the phone is silent for the whole minute.
-    // The heaviest haptic in the app: it has to land through a shaking hand.
-    hapticPanic();
-  }, []);
-
-  return (
-    <SessionScreen pattern="physiological-sigh" entryPoint="panic" panic />
-  );
+  return <PanicSession />;
 }
