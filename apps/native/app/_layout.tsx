@@ -15,15 +15,17 @@ import { Stack, useRouter } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { HeroUINativeProvider } from 'heroui-native';
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { AppState } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { KeyboardProvider } from 'react-native-keyboard-controller';
 
 import { AppThemeProvider } from '@/contexts/app-theme-context';
 import { BootError } from '@/src/components/BootError';
+import { useEntitlementStore } from '@/src/features/entitlement/store';
+import { useAppStateEffects } from '@/src/lib/appState';
 import { boot, type BootResult } from '@/src/lib/boot';
 import { transitionFor, useReduceMotion } from '@/src/lib/motion';
-import { StorageProvider } from '@/src/lib/repositories';
-import { useAppStateEffects } from '@/src/lib/appState';
+import { StorageProvider, useStorage } from '@/src/lib/repositories';
 
 /**
  * The boot gate.
@@ -175,6 +177,7 @@ function Routes({
   const transition = transitionFor(reduceMotion);
 
   useAppStateEffects();
+  useEntitlement();
 
   const sent = useRef(false);
 
@@ -203,16 +206,59 @@ function Routes({
           a tab bar under it offering somewhere else to be. */}
       <Stack.Screen name="journal/[id]" />
 
-      {/* The one sheet. A paywall is not a place you arrive at. */}
+      <Stack.Screen name="journal/drafts" />
+      <Stack.Screen name="journal/search" />
+      {/* Set outside a session, never during one -- see CustomRatio.tsx. */}
+      <Stack.Screen name="custom-rhythm" />
+
+      {/*
+        The one sheet. A paywall is not a place you arrive at.
+
+        The detent was 0.55 while `paywall.tsx` was a title and two buttons.
+        i1 is a full screen -- reassurance, three features, three prices and
+        two ways out -- so it needs the height. It stays a sheet rather than
+        becoming a route because what is underneath must remain visible:
+        someone reads a price with the thing they were doing still behind it,
+        and "Not now" puts them straight back into it.
+      */}
       <Stack.Screen
         name="paywall"
         options={{
           presentation: 'formSheet',
-          sheetAllowedDetents: [0.55],
+          sheetAllowedDetents: [0.92],
           sheetCornerRadius: 28,
           sheetGrabberVisible: true,
         }}
       />
     </Stack>
   );
+}
+
+/**
+ * Hydrates the entitlement and refreshes it on foreground (plan 11 T02).
+ *
+ * Deliberately NOT part of `boot()`. Boot decides whether the app can open at
+ * all; a billing SDK has no business in that chain, and someone opening this
+ * at 3am is not waiting on a network call to RevenueCat. Everything here
+ * fails toward "free tier, paywalls suppressed", which is a state the app
+ * works perfectly well in -- every relief tool is free.
+ *
+ * The refresh is throttled to once an hour inside the store, so calling it on
+ * every foreground is not the same as polling.
+ */
+function useEntitlement(): void {
+  const { stores } = useStorage();
+  const hydrate = useEntitlementStore((state) => state.hydrate);
+  const refresh = useEntitlementStore((state) => state.refresh);
+
+  useEffect(() => {
+    hydrate(stores.cache);
+    void refresh(stores.cache);
+
+    const subscription = AppState.addEventListener('change', (next) => {
+      if (next === 'active') void refresh(stores.cache);
+    });
+
+    return () => subscription.remove();
+  }, [hydrate, refresh, stores.cache]);
 }
