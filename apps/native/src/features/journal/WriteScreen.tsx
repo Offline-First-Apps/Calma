@@ -1,4 +1,4 @@
-import { formatDate } from '@calma/i18n';
+import Ionicons from '@expo/vector-icons/Ionicons';
 import { radius } from '@calma/tokens';
 import { useRouter } from 'expo-router';
 import { useEffect } from 'react';
@@ -11,7 +11,20 @@ import { useRepositories } from '@/src/lib/repositories';
 import { Button } from '@/src/ui/Button';
 import { Text } from '@/src/ui/Text';
 
+import { DraftCard } from './DraftList';
+import { EntryList } from './EntryList';
 import { selectDrafts, useJournalStore } from './store';
+
+/**
+ * How many drafts the tab shows before handing off to g5.
+ *
+ * g0 draws its drafts section with room for a couple; the full list is its
+ * own screen. The cutoff exists so the archive cannot be pushed below the
+ * fold by someone who starts a lot of entries -- not because there is
+ * anything wrong with having eleven drafts, which is why the screen it links
+ * to says so out loud.
+ */
+const DRAFTS_ON_TAB = 2;
 
 /**
  * The Write tab (g0).
@@ -32,7 +45,7 @@ import { selectDrafts, useJournalStore } from './store';
  * not written.
  */
 export function WriteScreen() {
-  const { t, i18n } = useTranslation('journal');
+  const { t } = useTranslation('journal');
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const repositories = useRepositories();
@@ -82,40 +95,52 @@ export function WriteScreen() {
 
       {drafts.length > 0 ? (
         <View className="mt-[26px] gap-3">
-          <SectionLabel>{t('drafts')}</SectionLabel>
+          {/* The label is the way to the full list (g5). A section heading
+              that navigates is a smaller target than a row, so it carries the
+              button role and the whole line is tappable. */}
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel={t('drafts')}
+            onPress={() => router.push('/journal/drafts')}
+            className="active:opacity-70"
+          >
+            <SectionLabel>{t('drafts')}</SectionLabel>
+          </Pressable>
 
-          {drafts.map((draft) => (
-            <Pressable
-              key={draft.id}
-              accessibilityRole="button"
-              accessibilityLabel={draft.situation.trim() || t('untitled')}
-              onPress={() => router.push(`/journal/${draft.id}`)}
-              // Dashed, and that is the only difference. A draft is something
-              // left open, not something wrong -- no amber, no badge, no
-              // "unfinished" label (T11).
-              className="border border-dashed border-border-draft bg-surface-draft px-5 py-[18px] active:opacity-80"
-              style={{ borderRadius: radius.option }}
-            >
-              <Text variant="bodySm" className="text-[18px] leading-[26px]">
-                {formatDate(new Date(draft.updatedAt), i18n.language)}
-              </Text>
-              {draft.situation.trim().length > 0 ? (
-                <Text variant="callout" className="mt-1 text-[16px] leading-[23px]">
-                  {draft.situation.trim()}
-                </Text>
-              ) : null}
-            </Pressable>
+          {drafts.slice(0, DRAFTS_ON_TAB).map((draft) => (
+            <DraftCard key={draft.id} draft={draft} />
           ))}
         </View>
       ) : null}
 
-      {/* The archive comes last and is never the first thing. Plan 09 T11
-          builds the paginated list behind this. */}
+      {/* The archive comes last and is never the first thing (T12, D-015). */}
       <View className="mt-6">
-        <SectionLabel>{t('past')}</SectionLabel>
-        <Text variant="callout" className="mt-3">
-          {t('empty')}
-        </Text>
+        <View className="flex-row items-center justify-between">
+          <SectionLabel>{t('past')}</SectionLabel>
+
+          {/*
+            The way into search (g7).
+            No design shows one -- g7 exists and nothing draws its entrance.
+            Put here rather than in a header bar because the Write tab has no
+            header, and beside "Earlier" because that is the only place on the
+            screen where looking backwards is what someone is doing. A glyph
+            with an accessible name rather than a labelled button, so it
+            cannot start competing with "Start writing" for attention (T12's
+            rule that writing is always the most prominent thing).
+            Recorded in plans/09 T14.
+          */}
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel={t('search')}
+            onPress={() => router.push('/journal/search')}
+            hitSlop={12}
+            className="h-11 w-11 items-center justify-end pb-1 active:opacity-70"
+          >
+            <Ionicons name="search-outline" size={18} color="#8A939C" />
+          </Pressable>
+        </View>
+
+        <EntryList />
       </View>
     </ScrollView>
   );

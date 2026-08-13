@@ -40,6 +40,15 @@ export interface SessionOutcome {
   completed: boolean;
   preSuds: number | null;
   postFeeling: PostFeeling | null;
+  /**
+   * The stored session's id, or `null` when the write failed (T10).
+   *
+   * An entry written from the offer is linked to the session that prompted
+   * it. `null` rather than a placeholder when storage was unavailable,
+   * because a link to a session that was never written is worse than no link:
+   * it is a claim the app cannot honour later.
+   */
+  sessionId: string | null;
 }
 
 /**
@@ -107,6 +116,7 @@ export function useSession() {
         completed,
         preSuds: details.preSuds,
         postFeeling,
+        sessionId: null,
       };
 
       setSaving(true);
@@ -123,6 +133,7 @@ export function useSession() {
           completed: outcome.completed,
         });
         offeredFor.current = saved.id;
+        outcome.sessionId = saved.id;
       } catch {
         // See above. A session that failed to save still happened.
         offeredFor.current = `unsaved:${started}`;

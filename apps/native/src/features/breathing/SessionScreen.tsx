@@ -12,12 +12,15 @@ import {
 } from '@calma/domain';
 import { useNavigation, useRouter } from 'expo-router';
 import { useKeepAwake } from 'expo-keep-awake';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { View } from 'react-native';
 
+import { JournalOffer } from '@/src/features/journal/JournalOffer';
+import { useJournalStore } from '@/src/features/journal/store';
 import { playSound, setBreathingSessionActive } from '@/src/lib/audio';
 import { useReduceMotion } from '@/src/lib/motion';
+import { useRepositories } from '@/src/lib/repositories';
 import { Button } from '@/src/ui/Button';
 import { Screen } from '@/src/ui/Screen';
 import { Text } from '@/src/ui/Text';
@@ -47,8 +50,6 @@ import { shouldOfferJournaling, useSession } from './useSession';
 
 /** Default session length when the caller does not specify. */
 const DEFAULT_SECONDS = 180;
-/** The panic session. Short, because it has to end before someone gives up on it. */
-const PANIC_SECONDS = 60;
 /** One tap of "A bit longer" adds this much, once. */
 const EXTENSION_SECONDS = 60;
 
@@ -75,15 +76,19 @@ export interface SessionScreenProps {
   entryPoint: BreathingEntryPoint;
   /** Target length. Rounded DOWN to whole cycles by `cyclesForDuration`. */
   targetSeconds?: number;
-  /**
-   * The panic path. Turns off the intensity question, shortens the session,
-   * and puts an opening line above the orb.
+  /*
+   * THERE IS NO `panic` PROP, DELIBERATELY.
    *
-   * There is no paywall, no permission prompt and no modal on this path, ever
-   * (D-006). If you are adding something to this screen, that rule is the
-   * first thing to check it against.
+   * There was one until session 12, and every stage this screen grew reached
+   * the panic path by default: the exit routed through "Stop here?", and
+   * finishing ran the feeling check and then a journaling offer -- all three
+   * forbidden by plan 07 and by e2/e3/e4's captions. The flag made each of
+   * them a one-line oversight rather than a decision.
+   *
+   * The panic session is `features/breathing/PanicSession.tsx`. It shares the
+   * orb, the timeline and the haptics -- the parts that are genuinely the
+   * same -- and nothing that asks a question.
    */
-  panic?: boolean;
 }
 
 export function SessionScreen({
@@ -91,13 +96,14 @@ export function SessionScreen({
   customRatio,
   entryPoint,
   targetSeconds,
-  panic = false,
 }: SessionScreenProps) {
-  const { t } = useTranslation(['breathing', 'common']);
+  const { t } = useTranslation(['breathing', 'journal', 'common']);
   const router = useRouter();
   const navigation = useNavigation();
   const reduceMotion = useReduceMotion();
   const session = useSession();
+  const repositories = useRepositories();
+  const startDraft = useJournalStore((state) => state.startDraft);
 
   // The screen must not sleep mid-breath. Someone following the orb is not
   // touching the screen, which is exactly what the idle timer watches for.
@@ -108,15 +114,16 @@ export function SessionScreen({
     [pattern, customRatio],
   );
 
-  const seconds = targetSeconds ?? (panic ? PANIC_SECONDS : DEFAULT_SECONDS);
+  const seconds = targetSeconds ?? DEFAULT_SECONDS;
 
   const [timeline, setTimeline] = useState<BreathTimeline | null>(null);
-  const [stage, setStage] = useState<Stage>(panic ? 'breathing' : 'intensity');
+  const [stage, setStage] = useState<Stage>('intensity');
   const [label, setLabel] = useState<BreathLabel | null>(null);
   const [preSuds, setPreSuds] = useState<number | null>(null);
   const [postFeeling, setPostFeeling] = useState<PostFeeling | null>(null);
   const [confirmingStop, setConfirmingStop] = useState(false);
   const [extended, setExtended] = useState(false);
+  const [sessionId, setSessionId] = useState<string | null>(null);
 
   const haptics = useBreathHaptics(timeline);
 
@@ -162,19 +169,6 @@ export function SessionScreen({
     },
     [breathingPattern, seconds, session, pattern, customRatio, entryPoint],
   );
-
-  // Panic never asks, so it starts the moment the screen mounts.
-  //
-  // Guarded by a ref rather than an empty dependency array: `startBreathing`
-  // is not referentially stable, and re-running this effect would rebuild the
-  // timeline and restart the breath from zero underneath someone who is
-  // already following it.
-  const started = useRef(false);
-  useEffect(() => {
-    if (!panic || started.current) return;
-    started.current = true;
-    startBreathing(null);
-  }, [panic, startBreathing]);
 
   // Nothing in the app makes a sound while a session is running, except the
   // bowl that ends it. Flagged centrally so no call site has to know.
@@ -228,7 +222,13 @@ export function SessionScreen({
       setPostFeeling(feeling);
 
       if (timeline !== null) {
-        await session.finish(timeline, timeline.duration, true, feeling);
+        const outcome = await session.finish(
+          timeline,
+          timeline.duration,
+          true,
+          feeling,
+        );
+        setSessionId(outcome?.sessionId ?? null);
       }
 
       if (shouldOfferJournaling({ preSuds, postFeeling: feeling })) {
@@ -239,6 +239,22 @@ export function SessionScreen({
     },
     [timeline, session, preSuds, close],
   );
+
+  /**
+   * "Let's write" (T09, T10).
+   *
+   * The draft is created HERE rather than on the Write tab, and it carries
+   * `sessionId`. Two reasons. The entry exists on disk before the editor
+   * mounts, so the usual guarantee holds -- there is no window in which
+   * someone's writing lives only in component state. And the link is set at
+   * the one moment the app actually knows the entry came from a session;
+   * inferring it later from timestamps would be a guess dressed as a fact.
+   */
+  const acceptOffer = useCallback(async () => {
+    const entry = await startDraft(repositories.journal, sessionId);
+    close();
+    router.push(`/journal/${entry.id}`);
+  }, [startDraft, repositories.journal, sessionId, close, router]);
 
   // --- back and swipe-down ----------------------------------------------
 
@@ -276,27 +292,29 @@ export function SessionScreen({
   }
 
   if (stage === 'offer') {
-    const response =
-      postFeeling === 'worse' ? 'suds.post.worseResponse' : 'suds.post.sameResponse';
+    /*
+     * The response-specific copy (T09).
+     *
+     * "Same" and "worse" each get their own sentence, because they are not
+     * the same thing to hear. The third case -- arrived at 7 or above but
+     * came out better -- gets g1's own line, which acknowledges the intensity
+     * without contradicting someone who has just said they feel better.
+     */
+    const prompt =
+      postFeeling === 'worse'
+        ? t('breathing:suds.post.worseResponse')
+        : postFeeling === 'same'
+          ? t('breathing:suds.post.sameResponse')
+          : t('journal:offer');
 
     return (
-      <Screen>
-        <View className="flex-1 justify-center gap-8">
-          <Text variant="heading">{t(`breathing:${response}`)}</Text>
-          <View className="gap-1">
-            <Button
-              label={t('breathing:suds.post.writeAbout')}
-              onPress={() => {
-                close();
-                router.push('/(tabs)/write');
-              }}
-            />
-            {/* Dismissible without friction, and never re-prompted for the
-                same session -- the stage machine has no route back here. */}
-            <Button variant="quiet" label={t('common:notNow')} onPress={close} />
-          </View>
-        </View>
-      </Screen>
+      <JournalOffer
+        prompt={prompt}
+        onAccept={() => void acceptOffer()}
+        // Dismissible without friction, and never re-prompted for the same
+        // session -- the stage machine has no route back here.
+        onDismiss={close}
+      />
     );
   }
 
@@ -313,12 +331,6 @@ export function SessionScreen({
         className="flex-1 items-center justify-center"
         style={{ gap: layout.gap }}
       >
-        {panic && stage === 'breathing' && !confirmingStop ? (
-          <Text variant="title" className="text-center">
-            {t('breathing:panic.opening')}
-          </Text>
-        ) : null}
-
         <Orb
           animation={animation}
           size={layout.orb}
@@ -364,7 +376,7 @@ export function SessionScreen({
       {!confirmingStop && stage === 'breathing' ? (
         <Button
           variant="quiet"
-          label={panic ? t('breathing:panic.dismiss') : t('breathing:extend.no')}
+          label={t('breathing:extend.no')}
           onPress={() => setConfirmingStop(true)}
         />
       ) : null}

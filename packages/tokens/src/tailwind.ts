@@ -116,8 +116,42 @@ export const themedColors: readonly ThemedVar[] = [
   /** A draft. Dashed border, never an error colour. */
   { cssVar: 'surface-draft', lightValue: light.surfaceDraft, darkValue: dark.surfaceDraft },
   { cssVar: 'border-draft', lightValue: light.borderDraft, darkValue: dark.borderDraft },
+  { cssVar: 'saved', lightValue: light.bgSaved, darkValue: dark.bgSaved },
+  { cssVar: 'offer', lightValue: light.bgOffer, darkValue: dark.bgOffer },
+  { cssVar: 'surface-offer', lightValue: light.surfaceOffer, darkValue: dark.surfaceOffer },
+  { cssVar: 'border-offer', lightValue: light.borderOffer, darkValue: dark.borderOffer },
+  { cssVar: 'highlight', lightValue: light.highlight, darkValue: dark.highlight },
+  { cssVar: 'surface-price', lightValue: light.surfacePrice, darkValue: dark.surfacePrice },
+  { cssVar: 'border-price', lightValue: light.borderPrice, darkValue: dark.borderPrice },
+  { cssVar: 'surface-tile-accent', lightValue: light.surfaceTileAccent, darkValue: dark.surfaceTileAccent },
+  { cssVar: 'border-tile-accent', lightValue: light.borderTileAccent, darkValue: dark.borderTileAccent },
+  { cssVar: 'surface-tile-neutral', lightValue: light.surfaceTileNeutral, darkValue: dark.surfaceTileNeutral },
+  { cssVar: 'border-tile-neutral', lightValue: light.borderTileNeutral, darkValue: dark.borderTileNeutral },
+  { cssVar: 'surface-tile-clay', lightValue: light.surfaceTileClay, darkValue: dark.surfaceTileClay },
+  { cssVar: 'border-tile-clay', lightValue: light.borderTileClay, darkValue: dark.borderTileClay },
+  { cssVar: 'surface-plus', lightValue: light.surfacePlus, darkValue: dark.surfacePlus },
+  { cssVar: 'border-plus', lightValue: light.borderPlus, darkValue: dark.borderPlus },
+  { cssVar: 'plus-foreground', lightValue: light.textPlus, darkValue: dark.textPlus },
+  { cssVar: 'plus-muted', lightValue: light.textPlusMuted, darkValue: dark.textPlusMuted },
+  { cssVar: 'separator-row', lightValue: light.separatorRow, darkValue: dark.separatorRow },
+  { cssVar: 'surface-stepper', lightValue: light.surfaceStepper, darkValue: dark.surfaceStepper },
+  { cssVar: 'stepper-glyph', lightValue: light.stepperGlyph, darkValue: dark.stepperGlyph },
 
   { cssVar: 'worry', lightValue: light.bgWorry, darkValue: dark.bgWorry },
+  /**
+   * THE PANIC PATH (e2, e3) and THE PANIC ENDING (e4).
+   *
+   * `panic` is NOT `immersive`. Two dim warm sands that are not the same dim
+   * warm sand -- the exact shape of mistake this map exists to make visible.
+   */
+  { cssVar: 'panic', lightValue: light.bgPanic, darkValue: dark.bgPanic },
+  { cssVar: 'panic-foreground', lightValue: light.textPanic, darkValue: dark.textPanic },
+  { cssVar: 'surface-panic-exit', lightValue: light.surfacePanicExit, darkValue: dark.surfacePanicExit },
+  { cssVar: 'border-panic-exit', lightValue: light.borderPanicExit, darkValue: dark.borderPanicExit },
+  { cssVar: 'panic-exit-foreground', lightValue: light.textPanicExit, darkValue: dark.textPanicExit },
+  { cssVar: 'ending', lightValue: light.bgEnding, darkValue: dark.bgEnding },
+  { cssVar: 'surface-ending', lightValue: light.surfaceEnding, darkValue: dark.surfaceEnding },
+  { cssVar: 'border-ending', lightValue: light.borderEnding, darkValue: dark.borderEnding },
   { cssVar: 'surface-worry', lightValue: light.surfaceWorry, darkValue: dark.surfaceWorry },
   { cssVar: 'border-worry', lightValue: light.borderWorry, darkValue: dark.borderWorry },
   { cssVar: 'surface-worry-quiet', lightValue: light.surfaceWorryQuiet, darkValue: dark.surfaceWorryQuiet },

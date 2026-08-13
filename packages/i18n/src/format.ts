@@ -149,3 +149,88 @@ export function daysBetweenKeys(from: string, to: string): number {
 export function formatCount(value: number, locale: string): string {
   return new Intl.NumberFormat(locale).format(value);
 }
+
+/* ------------------------------------------------------------------ *
+ * Days, as days
+ * ------------------------------------------------------------------ */
+
+/**
+ * "Friday night", "Last Sunday", "Two weeks ago".
+ *
+ * G5, G6 and G7 all label entries this way, and g6's caption says why:
+ * "Days feel like days -- 'Tuesday evening', not a timestamp." A journal is
+ * not a log. Someone scrolling their own writing is looking for the night
+ * they remember, not for 2026-02-13T21:44:10Z, and a precise timestamp on a
+ * bad evening reads back like evidence.
+ *
+ * WHY THIS RETURNS A DESCRIPTOR RATHER THAN A STRING.
+ *
+ * The phrasing is translatable copy and belongs in `journal.json`, but the
+ * *branching* -- which of the six shapes applies -- is calendar logic that
+ * has to be identical in every locale and testable in Node. Returning
+ * `{ kind, ... }` keeps the two apart: this function never concatenates a
+ * sentence, and the JSON never decides what "last week" means.
+ *
+ * The one thing it does render is the weekday name, because that is
+ * `Intl.DateTimeFormat`'s job and no translation file should be carrying a
+ * list of weekdays.
+ */
+export type PartOfDay = 'morning' | 'afternoon' | 'evening' | 'night';
+
+export type DayLabel =
+  | { kind: 'today'; partOfDay: PartOfDay }
+  | { kind: 'yesterday' }
+  | { kind: 'thisWeek'; weekday: string; partOfDay: PartOfDay }
+  | { kind: 'lastWeek'; weekday: string }
+  | { kind: 'weeksAgo'; weeks: number }
+  | { kind: 'date'; date: string };
+
+/**
+ * Boundaries chosen so the word matches what someone would say, not what a
+ * clock would: 9pm is "tonight" and 5am is still "night", because at 3am
+ * nobody describes the thing they just wrote as having happened "this
+ * morning".
+ */
+export function partOfDay(value: Date): PartOfDay {
+  const hour = value.getHours();
+  if (hour < 5) return 'night';
+  if (hour < 12) return 'morning';
+  if (hour < 17) return 'afternoon';
+  if (hour < 21) return 'evening';
+  return 'night';
+}
+
+/** Whole days between two moments, by calendar day and not by elapsed hours. */
+function calendarDaysApart(from: Date, to: Date): number {
+  const a = new Date(from.getFullYear(), from.getMonth(), from.getDate()).getTime();
+  const b = new Date(to.getFullYear(), to.getMonth(), to.getDate()).getTime();
+  return Math.round((b - a) / 86_400_000);
+}
+
+/**
+ * How a moment should be described, relative to now.
+ *
+ * Past four weeks it becomes a plain date. "Nine weeks ago" is arithmetic
+ * about someone's life rather than a memory of it, and by that distance a
+ * date is the more useful of the two anyway.
+ */
+export function describeDay(
+  value: Date,
+  locale: string,
+  now: Date = new Date(),
+): DayLabel {
+  const days = calendarDaysApart(value, now);
+
+  if (days <= 0) return { kind: 'today', partOfDay: partOfDay(value) };
+  if (days === 1) return { kind: 'yesterday' };
+
+  const weekday = formatWeekday(value, locale);
+
+  // Within the last six days it is still "Friday night" -- close enough that
+  // the weekday alone locates it.
+  if (days < 7) return { kind: 'thisWeek', weekday, partOfDay: partOfDay(value) };
+  if (days < 14) return { kind: 'lastWeek', weekday };
+  if (days < 28) return { kind: 'weeksAgo', weeks: Math.floor(days / 7) };
+
+  return { kind: 'date', date: formatDate(value, locale) };
+}

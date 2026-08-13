@@ -35,5 +35,18 @@ export interface JournalRepo {
    * (systems/02-data-layer.md § Query strategy).
    */
   search(query: string): Promise<JournalEntry[]>;
+  /**
+   * Clears `linkedSessionId` on every entry pointing at a session.
+   *
+   * Called when a breathing session is deleted (plan 09 T10). The entry is
+   * left completely intact -- only the link goes. Deleting someone's writing
+   * because they cleared their session history would be the single worst
+   * cascade this app could contain, and an entry left pointing at a session
+   * that no longer exists is a dangling reference that reads as data loss the
+   * first time something tries to follow it.
+   *
+   * Returns the number of entries changed, so a caller can assert on it.
+   */
+  unlinkSession(sessionId: string): Promise<number>;
   delete(id: string): Promise<void>;
 }

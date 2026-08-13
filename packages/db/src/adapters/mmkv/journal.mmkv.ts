@@ -174,6 +174,26 @@ export function createJournalRepo(
         .sort((a, b) => b.createdAt - a.createdAt);
     },
 
+    async unlinkSession(sessionId) {
+      const linked = days()
+        .flatMap((day) => readDay(day))
+        .filter((entry) => entry.linkedSessionId === sessionId);
+
+      for (const entry of linked) {
+        // A plain record write, exactly as `update` does: the day index keys
+        // off `createdAt` and nothing here moves it. `updatedAt` is left
+        // alone deliberately -- the app cleaning up its own reference is not
+        // the person having touched their entry, and the draft list sorts on
+        // that field.
+        store.set(
+          journalKey(entry.id),
+          JSON.stringify({ ...entry, linkedSessionId: null }),
+        );
+      }
+
+      return linked.length;
+    },
+
     async delete(id) {
       const entry = readRecord(store, journalKey(id), journalEntrySchema);
 

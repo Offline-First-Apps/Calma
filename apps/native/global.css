@@ -157,6 +157,48 @@
       --surface-draft: #F5EDDF;
       --border-draft: #DFCFB6;
 
+      /* g4, and nothing else. Within two points of --lift and --ending, which
+       * is precisely why it has its own name: g4 is a notebook closing, and
+       * tying it to the panic ending would make fixing one move the other. */
+      --saved: #FBF4E7;
+
+      /* g1. The breathing screen dimming, not the Write tab opening -- the
+       * session is still faintly visible above the card. The sheet is
+       * brighter than its ground, as --surface-worry and --surface-paper are. */
+      --offer: #F5EDE0;
+      --surface-offer: #FDF8EF;
+      --border-offer: #EADFC9;
+
+      /* The matched term in search (g7). A highlighter, not the accent:
+       * --accent at full strength across body text reads as an alert. */
+      --highlight: #F7E3C4;
+
+      /* ---- PLUS (i1, i2) AND THE RHYTHM BUILDER (d7) --------------- *
+       * i1 carries ONE price surface and no highlighted variant of it.
+       * "No annual-vs-monthly savings maths, no strike-through, no timer,
+       * no most popular" is the caption, and a --surface-price-featured
+       * appearing here later would be the bug. */
+      --surface-price: #F8F0E3;
+      --border-price: #E9DAC2;
+      /* i1's feature tiles, tinted by the feature each one names: amber for
+       * breathing, neutral for the longer view, clay for worry. */
+      --surface-tile-accent: #F7E9D5;
+      --border-tile-accent: #EBD6B6;
+      --surface-tile-neutral: #F1EEE7;
+      --border-tile-neutral: #E2DCD1;
+      --surface-tile-clay: #F6E7DF;
+      --border-tile-clay: #E8D0C2;
+      /* i2. Sage, because sage is what Calma uses for something settled.
+       * Amber here would be the app being pleased about a transaction. */
+      --surface-plus: #F1F2EB;
+      --border-plus: #DDE2D5;
+      --plus-foreground: #36402E;
+      --plus-muted: #46523C;
+      --separator-row: #ECE2D4;
+      /* d7's steppers. Keys on an instrument, not secondary buttons. */
+      --surface-stepper: #EADCC7;
+      --stepper-glyph: #7A6552;
+
       --worry: #F6EDE3;
       /* Brighter than the ground it sits on -- a slip of paper on a table.
        * The only surface in Calma that does this. */
@@ -171,6 +213,29 @@
 
       --sage: #7E8F72;
       --sage-ring: #A8B39C;
+
+      /* ---- THE PANIC PATH (e2, e3) ---------------------------------- *
+       * NOT --immersive. e2's caption: "even in light mode this is the
+       * dimmest surface in the app". The ground drops two further steps
+       * for the panic session. Using --immersive here renders it a whole
+       * step brighter than someone at 3am was promised. */
+      --panic: #EADCC6;
+      --panic-foreground: #33291C;
+      /* "I'm okay" -- a translucent wash, not a fill. Present from the
+       * first second, never faded in, never asking to confirm. */
+      --surface-panic-exit: rgba(51,41,28,0.07);
+      --border-panic-exit: rgba(51,41,28,0.18);
+      --panic-exit-foreground: #3A2E1F;
+
+      /* ---- THE PANIC ENDING (e4) ------------------------------------ *
+       * "Light coming back up in a room, slowly, from above." The one
+       * ground in the app that lifts at the end instead of settling. */
+      --ending: #FBF3E6;
+      /* Warmer than --surface-quiet (#EFE5D8). A button on this ground is
+       * not the same material as a button on --background. */
+      --surface-ending: #F1E7D6;
+      --border-ending: #E5D6BE;
+
     }
 
     /* ---- DARK -- the primary mode. "The panic that hits at 2am." ------- */
@@ -265,6 +330,29 @@
       --surface-draft: #1B242E;
       --border-draft: #333E4A;
 
+      --saved: #17202A;
+      --offer: #131B24;
+      --surface-offer: #1E2731;
+      --border-offer: #2D3844;
+      /* Translucent here, flat in light -- the split --accent-wash makes. */
+      --highlight: rgba(209, 146, 73, 0.26);
+
+      --surface-price: #1B242E;
+      --border-price: #2A3542;
+      --surface-tile-accent: rgba(209, 146, 73, 0.14);
+      --border-tile-accent: #3D3A33;
+      --surface-tile-neutral: #242D36;
+      --border-tile-neutral: #333C46;
+      --surface-tile-clay: rgba(196, 129, 106, 0.16);
+      --border-tile-clay: #3D3430;
+      --surface-plus: #1E2620;
+      --border-plus: #2C3529;
+      --plus-foreground: #DDE6D3;
+      --plus-muted: #B7C6AB;
+      --separator-row: #232E3A;
+      --surface-stepper: #26313E;
+      --stepper-glyph: #A9B4BF;
+
       --worry: #1A1D24;
       --surface-worry: #242830;
       --border-worry: #343945;
@@ -278,6 +366,18 @@
 
       --sage: #9AAA8C;
       --sage-ring: #6E7C63;
+
+      /* The panic ground in dark. Still not black -- nothing here is. */
+      --panic: #0D141C;
+      --panic-foreground: #DDD3C6;
+      --surface-panic-exit: rgba(221,211,198,0.07);
+      --border-panic-exit: rgba(221,211,198,0.2);
+      --panic-exit-foreground: #D6CCBE;
+
+      /* Lifts OFF the navy -- the same direction reversal --lift makes. */
+      --ending: #18212B;
+      --surface-ending: #212C39;
+      --border-ending: #2E3B4A;
     }
   }
 }
@@ -322,6 +422,35 @@
   --color-border-paper: var(--border-paper);
   --color-surface-draft: var(--surface-draft);
   --color-border-draft: var(--border-draft);
+  --color-saved: var(--saved);
+  --color-offer: var(--offer);
+  --color-surface-offer: var(--surface-offer);
+  --color-border-offer: var(--border-offer);
+  --color-highlight: var(--highlight);
+  --color-surface-price: var(--surface-price);
+  --color-border-price: var(--border-price);
+  --color-surface-tile-accent: var(--surface-tile-accent);
+  --color-border-tile-accent: var(--border-tile-accent);
+  --color-surface-tile-neutral: var(--surface-tile-neutral);
+  --color-border-tile-neutral: var(--border-tile-neutral);
+  --color-surface-tile-clay: var(--surface-tile-clay);
+  --color-border-tile-clay: var(--border-tile-clay);
+  --color-surface-plus: var(--surface-plus);
+  --color-border-plus: var(--border-plus);
+  --color-plus-foreground: var(--plus-foreground);
+  --color-plus-muted: var(--plus-muted);
+  --color-separator-row: var(--separator-row);
+  --color-surface-stepper: var(--surface-stepper);
+  --color-stepper-glyph: var(--stepper-glyph);
+
+  --color-panic: var(--panic);
+  --color-panic-foreground: var(--panic-foreground);
+  --color-surface-panic-exit: var(--surface-panic-exit);
+  --color-border-panic-exit: var(--border-panic-exit);
+  --color-panic-exit-foreground: var(--panic-exit-foreground);
+  --color-ending: var(--ending);
+  --color-surface-ending: var(--surface-ending);
+  --color-border-ending: var(--border-ending);
 
   --color-worry: var(--worry);
   --color-surface-worry: var(--surface-worry);

@@ -41,6 +41,28 @@ export interface Repositories {
   prefs: PrefsRepo;
 }
 
+/**
+ * Deletes a breathing session and detaches anything that pointed at it.
+ *
+ * Exported as a function over the repositories rather than as a method on
+ * `BreathingRepo`, because a repository that reaches into another repository
+ * is how a storage layer stops being swappable. It lives here so that every
+ * future caller -- Settings' "delete everything", a per-session delete on the
+ * Progress tab -- gets the unlink for free instead of each remembering it
+ * (plan 09 T10).
+ *
+ * Order matters: unlink first, then delete. If the process dies between the
+ * two, the entry has lost a link it can live without. The other order leaves
+ * an entry pointing at a session that is gone.
+ */
+export async function deleteBreathingSession(
+  repositories: Repositories,
+  sessionId: string,
+): Promise<void> {
+  await repositories.journal.unlinkSession(sessionId);
+  await repositories.breathing.delete(sessionId);
+}
+
 export interface RepositoryOptions {
   now?: () => number;
   createId?: () => string;

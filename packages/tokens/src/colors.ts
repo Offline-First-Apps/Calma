@@ -66,6 +66,46 @@ export const light = {
   borderImmersive: '#DFCEB4',
 
   /**
+   * THE SIXTH GROUND: panic (e2, e3).
+   *
+   * NOT `bgImmersive`. The design drops the ground two further steps for the
+   * panic session -- e2's caption: "even in light mode this is the dimmest
+   * surface in the app". Using the immersive ground here renders the panic
+   * screen a whole step brighter than a person at 3am was promised, and it
+   * looked plausible for four sessions because immersive is *also* a dim warm
+   * sand. It is a different one.
+   */
+  bgPanic: '#EADCC6',
+  /**
+   * The opening line on the panic ground.
+   *
+   * A warm near-brown, not `text` (#2A3642). The panic ground is the warmest
+   * dim surface in the app and the cool navy reads as ink on it.
+   */
+  textPanic: '#33291C',
+  /**
+   * "I'm okay" -- the exit, present from the first second of every panic
+   * screen. A translucent wash rather than a fill, so it is unmistakably
+   * there without competing with the orb for the eye.
+   */
+  surfacePanicExit: 'rgba(51,41,28,0.07)',
+  borderPanicExit: 'rgba(51,41,28,0.18)',
+  textPanicExit: '#3A2E1F',
+
+  /**
+   * THE SEVENTH GROUND: the panic ending (e4).
+   *
+   * "Light coming back up in a room, slowly, from above." Brighter than `bg`
+   * -- the one screen in the app whose ground lifts at the end rather than
+   * settling. Its buttons get their own pair: #F1E7D6 is warmer than
+   * `surfaceQuiet` (#EFE5D8), which is the same card-vs-button distinction
+   * that has now been rediscovered three times.
+   */
+  bgEnding: '#FBF3E6',
+  surfaceEnding: '#F1E7D6',
+  borderEnding: '#E5D6BE',
+
+  /**
    * THE THIRD GROUND. A step warmer than `bg`, a long way short of
    * `bgImmersive`.
    *
@@ -130,6 +170,101 @@ export const light = {
    */
   surfaceDraft: '#F5EDDF',
   borderDraft: '#DFCFB6',
+
+  /**
+   * g4, the save confirmation, and nothing else.
+   *
+   * Not `bgWrite`, not `bgLift`, not `bgEnding` -- and the three are within a
+   * point or two of each other, which is exactly why this is written down.
+   * g4 is the moment a notebook closes: the ground steps a shade away from
+   * the paper the entry was written on, so that leaving the editor registers
+   * as leaving rather than as the same screen with less on it. `bgEnding`
+   * (#FBF3E6) is the panic path's version of the same gesture and is a
+   * different value; reusing it here would tie two unrelated screens together
+   * so that fixing one silently moves the other.
+   */
+  bgSaved: '#FBF4E7',
+
+  /**
+   * g1, the journaling offer.
+   *
+   * Its own ground because the session is still faintly visible behind the
+   * card -- this is the breathing screen dimming, not the Write tab opening.
+   * The sheet is BRIGHTER than the ground it sits on, the same way
+   * `surfaceWorry` and `surfacePaper` are: a notebook slid across a table.
+   */
+  bgOffer: '#F5EDE0',
+  surfaceOffer: '#FDF8EF',
+  borderOffer: '#EADFC9',
+
+  /* ---- PLUS (i1, i2) and the rhythm builder (d7) ------------------- */
+
+  /**
+   * The price row on i1.
+   *
+   * Warmer than a plain card and quieter than a button, because it is neither
+   * -- it states a fact and is not the thing being pressed. i1's caption is
+   * the constraint that matters here: "one price, no annual-vs-monthly
+   * savings maths, no strike-through, no timer, no 'most popular'". There is
+   * therefore exactly ONE of these surfaces and no highlighted variant of it.
+   * If a "best value" tint ever appears in this file, that is the bug.
+   */
+  surfacePrice: '#F8F0E3',
+  borderPrice: '#E9DAC2',
+
+  /**
+   * i1's three feature tiles, tinted by the feature each one names.
+   *
+   * Amber for breathing, neutral for the longer view, clay for worry -- the
+   * same three hues those features carry everywhere else in the app. It would
+   * be cheaper to draw one neutral tile three times, and it would also be the
+   * only place in Calma where a colour that means something everywhere else
+   * suddenly means nothing.
+   */
+  surfaceTileAccent: '#F7E9D5',
+  borderTileAccent: '#EBD6B6',
+  surfaceTileNeutral: '#F1EEE7',
+  borderTileNeutral: '#E2DCD1',
+  surfaceTileClay: '#F6E7DF',
+  borderTileClay: '#E8D0C2',
+
+  /**
+   * i2's "your Plus is active" panel.
+   *
+   * The one sage surface in the app, and the reason is tonal: sage is what
+   * Calma uses for something settled (`sage` is already the release colour on
+   * f7). A paid-and-active state drawn in amber would be the app being
+   * pleased about the transaction.
+   */
+  surfacePlus: '#F1F2EB',
+  borderPlus: '#DDE2D5',
+  textPlus: '#36402E',
+  textPlusMuted: '#46523C',
+  /** i2's row rules. Softer than `border`; these separate, they do not frame. */
+  separatorRow: '#ECE2D4',
+
+  /**
+   * d7's steppers.
+   *
+   * Their own pair rather than `surfaceQuiet`, because a stepper on this
+   * screen is a key on an instrument rather than a secondary button, and d7's
+   * caption asks for exactly that: "the one screen allowed to feel like an
+   * instrument". The glyph is deliberately not `text` -- a full-strength
+   * minus sign at 46px reads as a delete control.
+   */
+  surfaceStepper: '#EADCC7',
+  stepperGlyph: '#7A6552',
+
+  /**
+   * The matched term in search results (g7).
+   *
+   * A wash of amber at the weight of a highlighter, never the accent itself:
+   * `accent` at full strength on a run of body text reads as an alert, and
+   * nothing in Calma alerts. It is also the only place in the app where a
+   * colour is applied to a fragment of someone's own writing, so it is kept
+   * deliberately quiet.
+   */
+  highlight: '#F7E3C4',
 
   bgWorry: '#F6EDE3',
   /**
@@ -225,6 +360,21 @@ export const dark = {
   /** Cards and buttons on the immersive ground (d4, d5). */
   surfaceImmersive: '#1C2733',
   borderImmersive: '#2A3644',
+
+  /** The panic ground in dark. Still not black -- nothing in Calma is. */
+  bgPanic: '#0D141C',
+  textPanic: '#DDD3C6',
+  surfacePanicExit: 'rgba(221,211,198,0.07)',
+  borderPanicExit: 'rgba(221,211,198,0.2)',
+  textPanicExit: '#D6CCBE',
+  /**
+   * The panic ending in dark. Lifts OFF the navy, the same direction reversal
+   * `bgLift` makes -- light warms up, dark lifts off.
+   */
+  bgEnding: '#18212B',
+  /** These two happen to equal the quiet pair in dark; the designs converge. */
+  surfaceEnding: '#212C39',
+  borderEnding: '#2E3B4A',
   /** The third ground. Lifts off navy; light's equivalent warms. See above. */
   bgLift: '#16202B',
   surfaceLift: '#1F2A36',
@@ -247,6 +397,36 @@ export const dark = {
   borderPaper: '#2C3742',
   surfaceDraft: '#1B242E',
   borderDraft: '#333E4A',
+
+  /** g4. See the note on `light.bgSaved`. Lifts off navy, as `bgEnding` does. */
+  bgSaved: '#17202A',
+  /** g1. Sits a shade below `bg`; the card above it is `surfacePaper`'s value. */
+  bgOffer: '#131B24',
+  surfaceOffer: '#1E2731',
+  borderOffer: '#2D3844',
+  /* ---- PLUS (i1, i2) and the rhythm builder (d7) ------------------- */
+  surfacePrice: '#1B242E',
+  borderPrice: '#2A3542',
+  surfaceTileAccent: 'rgba(209,146,73,0.14)',
+  borderTileAccent: '#3D3A33',
+  surfaceTileNeutral: '#242D36',
+  borderTileNeutral: '#333C46',
+  surfaceTileClay: 'rgba(196,129,106,0.16)',
+  borderTileClay: '#3D3430',
+  surfacePlus: '#1E2620',
+  borderPlus: '#2C3529',
+  textPlus: '#DDE6D3',
+  textPlusMuted: '#B7C6AB',
+  separatorRow: '#232E3A',
+  surfaceStepper: '#26313E',
+  stepperGlyph: '#A9B4BF',
+
+  /**
+   * Translucent here, flat in light mode -- the same split `accentWash` makes,
+   * and for the same reason: a solid tint laid over navy reads as a second
+   * surface rather than as a mark on the text.
+   */
+  highlight: 'rgba(209,146,73,0.26)',
 
   bgWorry: '#1A1D24',
   surfaceWorry: '#242830',

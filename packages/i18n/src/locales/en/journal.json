@@ -27,5 +27,31 @@
   "past": "Earlier",
   "empty": "Nothing written yet. There's space here when you want it.",
   "entries_one": "1 entry",
-  "entries_other": "{{count}} entries"
+  "entries_other": "{{count}} entries",
+  "draftsKeep": "Drafts keep as long as you like.",
+  "discard": "Discard this draft",
+  "discardTitle": "Discard this draft?",
+  "discardBody": "What you wrote here won't be kept. Nothing else changes.",
+  "discardYes": "Discard",
+  "discardNo": "Keep it",
+  "untitledEntry": "An entry",
+  "readEarlier": "Read earlier entries",
+  "showMore": "Show more",
+  "search": "Search your writing",
+  "searchStart": "Type a word you remember.",
+  "searchNone": "Nothing here matches that.",
+  "day": {
+    "todayMorning": "This morning",
+    "todayAfternoon": "This afternoon",
+    "todayEvening": "This evening",
+    "todayNight": "Tonight",
+    "yesterday": "Yesterday",
+    "weekdayMorning": "{{weekday}} morning",
+    "weekdayAfternoon": "{{weekday}} afternoon",
+    "weekdayEvening": "{{weekday}} evening",
+    "weekdayNight": "{{weekday}} night",
+    "lastWeekday": "Last {{weekday}}",
+    "weeksAgo_one": "A week ago",
+    "weeksAgo_other": "{{count}} weeks ago"
+  }
 }
