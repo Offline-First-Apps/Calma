@@ -41,7 +41,9 @@
     "dismiss": "I'm okay",
     "end": "You're still here. That's enough.",
     "fabLabel": "Breathe",
-    "fabHint": "Starts a breathing session straight away"
+    "fabHint": "Starts a breathing session straight away",
+    "longer": "A bit longer",
+    "home": "Home"
   },
   "suds": {
     "pre": {
@@ -68,5 +70,14 @@
   "stop": {
     "keepGoing": "Keep going",
     "stop": "Stop"
+  },
+  "custom": {
+    "title": "Your rhythm",
+    "follows": "The orb follows as you change it.",
+    "use": "Use this one",
+    "less": "One second less",
+    "more": "One second more",
+    "tooShort": "A little longer, and it'll be easier to follow.",
+    "tooLong": "That's a long cycle. Shorten one of them if it starts to feel like work."
   }
 }

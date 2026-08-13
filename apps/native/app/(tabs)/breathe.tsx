@@ -56,20 +56,32 @@ export default function Breathe() {
 
         <View className="mt-[22px] gap-3">
           {ROWS.map((row) => {
-            // Custom is present but inert until plan 11 gates it on Plus.
-            // Present-and-quiet rather than hidden: someone who would value
-            // it should be able to see that it exists, without being sold to.
-            const inert = row.id === 'custom';
+            /*
+             * Custom opens the rhythm builder (d7) rather than a session.
+             *
+             * It was inert until session 13. It is still present-and-quiet
+             * rather than hidden: someone who would value it should be able
+             * to see that it exists without being sold to, and the row's own
+             * second line ("yours to set, with Plus") is the whole of what
+             * this screen says about money.
+             *
+             * The row is NOT gated here. Plan 11 T05's `useLimit`/`useTier`
+             * check belongs at the point of use, and the owner's session-13
+             * decision was to build the screen ungated and add the gate with
+             * the rest of plan 11. Recorded in plans/11 T11.
+             */
+            const custom = row.id === 'custom';
 
             return (
               <Pressable
                 key={row.id}
-                disabled={inert}
                 onPress={() =>
-                  router.push({
-                    pathname: '/session/[pattern]',
-                    params: { pattern: row.id, entryPoint: 'breathe-tab' },
-                  })
+                  custom
+                    ? router.push('/custom-rhythm')
+                    : router.push({
+                        pathname: '/session/[pattern]',
+                        params: { pattern: row.id, entryPoint: 'breathe-tab' },
+                      })
                 }
                 accessibilityRole="button"
                 accessibilityLabel={`${t(`patterns.${row.key}.name`)}. ${t(

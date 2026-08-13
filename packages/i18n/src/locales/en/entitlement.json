@@ -15,10 +15,31 @@
     "lifetime": "One payment, yours for good",
     "purchaseFailed": "That didn't go through. Nothing was charged.",
     "restoreNone": "Nothing to restore on this phone.",
-    "restoreDone": "You're all set."
+    "restoreDone": "You're all set.",
+    "monthlyNote": "Stop whenever you like",
+    "annualNote": "A year at a time",
+    "lifetimeNote": "Yours, with nothing to renew"
   },
   "inlineLimit": {
     "worry": "That's 3 for today.",
     "journal": "That's 2 this week."
+  },
+  "offer": {
+    "badge": "Calma Plus",
+    "headline": "Everything you use stays free.",
+    "sub": "Plus adds a few things, if you want them.",
+    "featureRhythm": "Rhythms you set yourself",
+    "featureHistory": "The longer view of your months",
+    "featureWindows": "Worry windows on your schedule",
+    "cta": "Try Plus",
+    "unavailable": "Plus isn't available on this phone right now."
+  },
+  "active": {
+    "title": "Your Plus",
+    "since": "Active since {{month}}.",
+    "renews": "Renews on {{date}}.",
+    "lifetime": "Bought once. Nothing renews.",
+    "stop": "Stop Plus",
+    "survives": "If you stop, everything you've written stays here and breathing keeps working."
   }
 }
