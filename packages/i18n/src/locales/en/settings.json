@@ -57,6 +57,13 @@
     "restoreHint": "If you've changed phones",
     "crisis": "When it's more than this"
   },
+  "answersScreen": {
+    "title": "What you told us",
+    "body": "Three things you said when you set Calma up. Change any of them, or all of them, or none. Nothing here is scored and nothing has to be filled in.",
+    "windowOffer": "Your worry window opens at {{current}}. Going by what you just changed, {{suggested}} might suit you better.",
+    "windowMove": "Move it to {{suggested}}",
+    "windowKeep": "Leave it where it is"
+  },
   "rhythmScreen": {
     "title": "Your usual rhythm",
     "body": "The breath Calma offers when you open it. The others are always a tap away on the Breathe tab.",

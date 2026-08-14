@@ -146,7 +146,31 @@ Preferences, privacy, and the honest bits.
 
 ## T08 — Add the onboarding answers row
 
-- [ ]
+- [x] `ebb2e19`
+- **Note (session 19):** built as `AnswersScreen.tsx` at `/settings/answers`,
+  and the j1 row that pointed there is restored.
+
+  **The cards are `OptionCard`, the same component b4-b6 use**, so "every option
+  is identical in weight" stays one rule in one place rather than two.
+
+  **"When is it hardest" is the only answer with a consequence, and it asks.**
+  `suggestedWindowMove` is pure: it returns the window a new answer would seed,
+  or `null`. Two cases return `null` — the seeded window is already theirs, and
+  the question has been cleared. The second matters: `worryWindowFor([])`
+  returns 19:00, and offering it because somebody *removed* an answer would be
+  the app inventing an opinion out of an absence.
+
+  Onboarding may seed the window silently because at that moment there is
+  nothing to overwrite. Six weeks in there is, and a tap on a card is not
+  consent to move it. The answer saves immediately either way; only the window
+  waits for a yes.
+
+  **"What's helped" needs no offer at all** — `leadToolFor` derives Home's lead
+  from the stored answer on every read, so editing it here is already the whole
+  mechanism.
+
+  Nothing is scored, summarised, or reported as incomplete, and clearing every
+  answer is a state the app works fine in (D-014).
 - **Commit:** `feat(settings): add onboarding answers row`
 - **Depends on:** T01, `13-onboarding-walkthrough` T09
 - **Touches:** `apps/native/src/features/settings/YourAnswersRow.tsx`

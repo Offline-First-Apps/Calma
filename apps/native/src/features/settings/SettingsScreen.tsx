@@ -65,6 +65,22 @@ export function SettingsScreen() {
         </Text>
 
         {/*
+          Not drawn by j1, which has no You section — the three onboarding
+          answers have to live somewhere, and they are the most personal thing
+          in here. The row says "what you told us" rather than "your profile",
+          because it is a record of three sentences somebody typed and not a
+          conclusion the app drew about them.
+        */}
+        <Section title={t('sections.you')}>
+          <LinkRow
+            label={t('rows.answers')}
+            hint={t('rows.answersHint')}
+            onPress={() => router.push('/settings/answers')}
+            last
+          />
+        </Section>
+
+        {/*
           j1's first section, and its two rows are the design's: the rhythm
           you usually breathe, and the buzz you follow it with. The buzz sits
           here rather than under Sound & feel because that is where j1 draws
