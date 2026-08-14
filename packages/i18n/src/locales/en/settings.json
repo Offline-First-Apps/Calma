@@ -57,6 +57,11 @@
     "restoreHint": "If you've changed phones",
     "crisis": "When it's more than this"
   },
+  "rhythmScreen": {
+    "title": "Your usual rhythm",
+    "body": "The breath Calma offers when you open it. The others are always a tap away on the Breathe tab.",
+    "whenItApplies": "A change here takes effect the next time you start, never partway through a breath."
+  },
   "appearanceValue": {
     "system": "Match my phone",
     "light": "Light",

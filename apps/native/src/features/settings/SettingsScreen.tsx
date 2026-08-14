@@ -7,7 +7,8 @@ import { usePrefsStore } from '@/src/stores/prefs';
 import { Screen } from '@/src/ui/Screen';
 import { Text } from '@/src/ui/Text';
 
-import { LinkRow, Section, ToggleRow } from './Rows';
+import { LinkRow, Section, ToggleRow, ValueRow } from './Rows';
+import { PATTERN_KEY, resolveUsualPattern } from './usualRhythm';
 
 /**
  * j1 — Settings.
@@ -36,7 +37,7 @@ import { LinkRow, Section, ToggleRow } from './Rows';
  * when their destinations do (plan 14 T02-T05, T08).
  */
 export function SettingsScreen() {
-  const { t } = useTranslation('settings');
+  const { t } = useTranslation(['settings', 'breathing']);
   const router = useRouter();
   const repositories = useRepositories();
   const prefs = usePrefsStore((state) => state.prefs);
@@ -44,6 +45,14 @@ export function SettingsScreen() {
 
   const set = (patch: Parameters<typeof update>[1]) =>
     void update(repositories.prefs, patch);
+
+  /*
+    Resolved, not read raw. A stored `'custom'` whose ratio has since gone
+    would name a rhythm that cannot be started, and this row is the label on
+    the thing Home actually does.
+  */
+  const rhythm =
+    PATTERN_KEY[resolveUsualPattern(prefs.defaultPattern, prefs.customRatio)];
 
   return (
     <Screen>
@@ -54,6 +63,28 @@ export function SettingsScreen() {
         <Text variant="heading" className="text-[30px] leading-[36px]">
           {t('title')}
         </Text>
+
+        {/*
+          j1's first section, and its two rows are the design's: the rhythm
+          you usually breathe, and the buzz you follow it with. The buzz sits
+          here rather than under Sound & feel because that is where j1 draws
+          it, and because it is a breathing feature — it is the thing you
+          follow with your eyes closed, which is not a preference about sound.
+        */}
+        <Section title={t('sections.breathing')}>
+          <ValueRow
+            label={t('rows.rhythm')}
+            value={t(`breathing:patterns.${rhythm}.name`)}
+            onPress={() => router.push('/settings/breathing')}
+          />
+          <ToggleRow
+            label={t('rows.haptics')}
+            hint={t('rows.hapticsHint')}
+            value={prefs.hapticsEnabled}
+            onChange={(hapticsEnabled) => set({ hapticsEnabled })}
+            last
+          />
+        </Section>
 
         <Section title={t('sections.worries')}>
           {/*
@@ -72,20 +103,12 @@ export function SettingsScreen() {
           />
         </Section>
 
-        {/* One section, because two sections of one row each is a list
-            pretending to be organised. */}
         <Section title={t('sections.soundAndFeel')}>
           <ToggleRow
             label={t('rows.sound')}
             hint={t('rows.soundHint')}
             value={prefs.soundEnabled}
             onChange={(soundEnabled) => set({ soundEnabled })}
-          />
-          <ToggleRow
-            label={t('rows.haptics')}
-            hint={t('rows.hapticsHint')}
-            value={prefs.hapticsEnabled}
-            onChange={(hapticsEnabled) => set({ hapticsEnabled })}
             last
           />
         </Section>

@@ -67,7 +67,40 @@ Preferences, privacy, and the honest bits.
 
 ## T05 — Add breathing preferences
 
-- [ ]
+- [x] `5e297e9`
+- **Note (session 19):** built as `BreathingScreen.tsx` at `/settings/breathing`,
+  which is where j1's "Your usual rhythm · The sigh" row now points. The row
+  had been removed in session 18 because its destination did not exist.
+
+  **The preference is new: `prefs.defaultPattern`.** There was nowhere to store
+  a usual rhythm, so this todo could not have been done without one. It is
+  `.default('physiological-sigh')` in the zod schema rather than a bare enum,
+  because `createPrefsRepo` treats a whole-schema parse failure as corruption —
+  a required field would have recorded a false corruption on every existing
+  device's first launch of this build.
+
+  **It changes exactly one thing: what Home offers.** Not the panic path, which
+  is the sigh always and reads this never (rule 3); not d1, which lists four
+  siblings and always will. `resolveUsualPattern` is pure and resolves the one
+  state that would crash Home — a stored `'custom'` whose ratio has since been
+  erased, where `getPattern` throws.
+
+  **Home keeps c1's exact copy for everyone who has not changed it.** The other
+  three share "Start your usual rhythm" rather than being named in the button,
+  because a pattern name would have to be capitalised mid-sentence in every
+  locale. The line underneath already named the breath and now follows it.
+
+  **The paywall clause is the gate at "Use this one"**, which is precisely where
+  `plans/11` T11's note said it belonged. `mayUseCustomRatio` is pure and has
+  one clause that matters: `suppressed` returns **true**. A build with no
+  RevenueCat key cannot sell anything, so refusing there would be a hard block
+  with nothing on the other side of it. Saving a ratio now also sets it as the
+  usual rhythm — choosing a rhythm is choosing it, and making someone visit
+  Settings afterwards would be two steps for one decision.
+
+  Haptics moved from "Sound & feel" into "Breathing", which is where j1 draws
+  it. The buzz is the thing you follow with your eyes closed; it was never a
+  preference about sound.
 - **Commit:** `feat(settings): add breathing pattern and ratio preferences`
 - **Depends on:** T01, `11-entitlements-paywall` T11
 - **Touches:** `apps/native/src/features/settings/BreathingRow.tsx`

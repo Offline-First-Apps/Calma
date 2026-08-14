@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { customRatioSchema } from './breathing';
+import { breathingPatternIdSchema, customRatioSchema } from './breathing';
 
 /**
  * Everything the app remembers about how a person wants Calma to behave.
@@ -56,6 +56,20 @@ export const prefsSchema = z.object({
   worryWindowTime: timeOfDaySchema,
   worryWindowMinutes: worryWindowMinutesSchema,
   customRatio: customRatioSchema.nullable(),
+  /**
+   * The rhythm j1 calls "your usual rhythm" — what Home offers when it offers
+   * a breath, and nothing else.
+   *
+   * NOT THE PANIC PATH. `/panic` is the sigh, always, and reads this never:
+   * the fastest-acting pattern is not a preference at the moment someone is
+   * least able to have chosen well (rule 3).
+   *
+   * `.default()` rather than a plain enum so that prefs written before this
+   * field existed still parse whole. Without it every upgrade would fail the
+   * schema, fall into the repository's salvage path, and record a corruption
+   * that never happened.
+   */
+  defaultPattern: breathingPatternIdSchema.default('physiological-sigh'),
   orbTheme: orbThemeSchema,
   theme: themePrefSchema,
   soundEnabled: z.boolean(),
@@ -94,6 +108,7 @@ export const defaultPrefs: Prefs = {
   worryWindowTime: '19:00',
   worryWindowMinutes: 15,
   customRatio: null,
+  defaultPattern: 'physiological-sigh',
   orbTheme: 'orb',
   theme: 'system',
   soundEnabled: true,
