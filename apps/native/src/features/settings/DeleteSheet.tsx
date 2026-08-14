@@ -1,3 +1,4 @@
+import { destroyEncryptionKey } from '@calma/db/native';
 import { dark, light } from '@calma/tokens';
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -8,6 +9,8 @@ import { useUniwind } from 'uniwind';
 import { useRepositories, useStorage } from '@/src/lib/repositories';
 import { usePrefsStore } from '@/src/stores/prefs';
 import { Text } from '@/src/ui/Text';
+
+import { cancelAllNotifications } from '@/src/lib/notifications/schedule';
 
 import { countEverything, eraseEverything } from './erase';
 
@@ -56,6 +59,10 @@ export function DeleteSheet({
       stores,
       repositories,
       resetStores: () => usePrefsStore.setState({ hydrated: false }),
+      // Both live behind native modules, so `erase.ts` takes them as
+      // arguments rather than importing them -- see the note there.
+      destroyKey: destroyEncryptionKey,
+      cancelNotifications: cancelAllNotifications,
     });
 
     onDeleted();

@@ -7,6 +7,7 @@ import { View } from 'react-native';
 
 import { PANIC_FAB_CLEARANCE } from '@/src/components/PanicFab';
 import { ReOffer } from '@/src/features/onboarding/ReOffer';
+import { SettingsButton } from '@/src/features/settings/SettingsButton';
 import { OfflineNote } from '@/src/features/states/OfflineNote';
 import { ReturningScreen } from '@/src/features/states/ReturningScreen';
 import { useReturning } from '@/src/features/states/useReturning';
@@ -87,7 +88,11 @@ export function HomeScreen() {
 
   return (
     <Screen>
-      <View className="flex-1 gap-8" style={{ paddingBottom: PANIC_FAB_CLEARANCE }}>
+      <View className="flex-1 gap-6" style={{ paddingBottom: PANIC_FAB_CLEARANCE }}>
+        {/* The only way into Settings. Top-right, quiet, and it does not
+            displace anything -- see the note in `SettingsButton`. */}
+        <SettingsButton />
+
         {/* k2. A note, never a banner: being offline changes nothing about
             what this app can do, so it answers the question and stops. */}
         <OfflineNote />

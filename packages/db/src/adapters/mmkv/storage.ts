@@ -4,6 +4,14 @@ import { MemoryStore, type KeyValueStore, type Stores } from '../../kv';
 import { getOrCreateEncryptionKey, type KeyFailure } from './key';
 
 /**
+ * Re-exported so "erase everything" has one door into storage, the same way
+ * every other consumer does. `key.ts` is not in the package's export map and
+ * should not be: it is the only module that touches the encryption key, and
+ * the fewer paths that reach it the better.
+ */
+export { destroyEncryptionKey } from './key';
+
+/**
  * The three MMKV instances.
  *
  * `calma.data` and `calma.prefs` are encrypted. `calma.cache` is not, and holds

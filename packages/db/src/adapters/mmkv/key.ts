@@ -1,6 +1,5 @@
 import { getRandomBytesAsync } from 'expo-crypto';
 import {
-  AFTER_FIRST_UNLOCK_THIS_DEVICE_ONLY,
   WHEN_UNLOCKED_THIS_DEVICE_ONLY,
   getItemAsync,
   setItemAsync,
@@ -90,8 +89,13 @@ export async function getOrCreateEncryptionKey(): Promise<KeyResult> {
 export async function destroyEncryptionKey(): Promise<void> {
   const { deleteItemAsync } = await import('expo-secure-store');
   try {
+    // The SAME accessibility constant the key was written under. It was
+    // `AFTER_FIRST_UNLOCK_THIS_DEVICE_ONLY` here and
+    // `WHEN_UNLOCKED_THIS_DEVICE_ONLY` in `setItemAsync` -- a mismatch that
+    // can leave the item in place on iOS, which on this particular code path
+    // means "delete everything" quietly not deleting the key.
     await deleteItemAsync(STORAGE_KEY, {
-      keychainAccessible: AFTER_FIRST_UNLOCK_THIS_DEVICE_ONLY,
+      keychainAccessible: WHEN_UNLOCKED_THIS_DEVICE_ONLY,
     });
   } catch {
     // Nothing to do and nothing to tell anyone. The data is already gone.

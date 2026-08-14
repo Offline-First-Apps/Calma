@@ -93,6 +93,74 @@ describe('eraseEverything', () => {
     expect(reset).toBe(true);
   });
 
+  /**
+   * Plan 14 T11's two remaining clauses, which session 15 recorded as not
+   * done on the mistaken belief that `key.ts` had no delete.
+   */
+  it('destroys the encryption key, and only after the stores are empty', async () => {
+    const order: string[] = [];
+
+    await eraseEverything({
+      stores,
+      repositories,
+      resetStores: () => order.push('reset'),
+      destroyKey: async () => {
+        // If this runs first, the stores are left as an encrypted blob nobody
+        // can open -- which is worse than either state on its own.
+        order.push(`destroyKey(dataKeys=${stores.data.getAllKeys().length})`);
+      },
+    });
+
+    expect(order[0]).toBe('destroyKey(dataKeys=0)');
+  });
+
+  it('cancels notifications before anything is deleted', async () => {
+    const order: string[] = [];
+
+    await eraseEverything({
+      stores,
+      repositories,
+      resetStores: () => undefined,
+      cancelNotifications: async () => {
+        order.push(`cancel(dataKeys=${stores.data.getAllKeys().length})`);
+      },
+    });
+
+    // Non-zero: the records are still there when the cancel runs.
+    expect(order[0]).toMatch(/^cancel\(dataKeys=[1-9]/);
+  });
+
+  /**
+   * A reminder that fires after the data it refers to is gone is the one way
+   * this operation can still speak to somebody afterwards -- but a scheduling
+   * failure must never be the reason a deletion does not happen.
+   */
+  it('deletes everything even when cancelling notifications throws', async () => {
+    await eraseEverything({
+      stores,
+      repositories,
+      resetStores: () => undefined,
+      cancelNotifications: async () => {
+        throw new Error('notification module unavailable');
+      },
+    });
+
+    expect(stores.data.getAllKeys()).toEqual([]);
+  });
+
+  it('deletes everything even when destroying the key throws', async () => {
+    await eraseEverything({
+      stores,
+      repositories,
+      resetStores: () => undefined,
+      destroyKey: async () => {
+        throw new Error('keychain unavailable');
+      },
+    });
+
+    expect(stores.data.getAllKeys()).toEqual([]);
+  });
+
   it('is safe to run twice', async () => {
     const deps = { stores, repositories, resetStores: () => undefined };
     await eraseEverything(deps);

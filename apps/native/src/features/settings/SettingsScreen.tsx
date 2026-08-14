@@ -123,6 +123,16 @@ export function SettingsScreen() {
         </Section>
 
         <Section title={t('sections.thisPhone')}>
+          {/*
+            k4's switch. Covers the journal only -- `lock.ts` holds the
+            allowlist and breathing is deliberately not on it.
+          */}
+          <ToggleRow
+            label={t('rows.lock')}
+            hint={t('rows.lockHint')}
+            value={prefs.lockEnabled}
+            onChange={(lockEnabled) => set({ lockEnabled })}
+          />
           <LinkRow
             label={t('rows.writing')}
             onPress={() => router.push('/settings/privacy')}

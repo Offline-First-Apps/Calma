@@ -48,30 +48,59 @@ export interface EraseDeps {
   repositories: Repositories;
   /** Store resets, injected so this module imports no zustand. */
   resetStores: () => void;
+  /**
+   * Destroys the encryption key, and cancels anything scheduled.
+   *
+   * BOTH ARE INJECTED RATHER THAN IMPORTED, because both live behind
+   * `@calma/db/native` and `expo-notifications` -- native modules that would
+   * drag React Native into this file and make the single most destructive
+   * function in the product impossible to test in Node. The call site passes
+   * the real ones; the test passes spies and asserts they were called.
+   *
+   * Optional so a caller cannot half-wire this by forgetting one, and so the
+   * test can prove the default is a no-op rather than a crash.
+   */
+  destroyKey?: () => Promise<void>;
+  cancelNotifications?: () => Promise<void>;
 }
 
 /**
  * Erases everything on this device.
  *
- * NOT DONE HERE, AND BOTH ARE DELIBERATE RATHER THAN FORGOTTEN:
+ * ORDER, AND WHY IT IS THIS ORDER:
  *
- *   - **The SecureStore encryption key is not destroyed.** Plan 14 T11 asks
- *     for it. Clearing the three MMKV instances removes every record; the key
- *     then decrypts nothing. Destroying it as well is correct and belongs
- *     here, but `key.ts` exposes no delete and adding one is a storage-layer
- *     change with its own test surface. Recorded in `plans/14` T11.
- *   - **Notifications are not cancelled**, because none are ever scheduled:
- *     `permission.ts` is still a stub and plan 12 is not built. When it lands,
- *     the cancel goes here.
+ *   1. **Cancel notifications first.** A reminder that fires after the data it
+ *      refers to is gone is the one way this operation can still speak to
+ *      somebody afterwards. It goes first because it is the only step whose
+ *      failure is visible to the person.
+ *   2. **Clear the three stores.** Records gone.
+ *   3. **Destroy the encryption key.** Only after the stores are empty:
+ *      without the key their contents are unreadable, and unreadable is not
+ *      the same as gone. Doing it first would leave an encrypted blob nobody
+ *      can open, which is worse than either state on its own.
+ *   4. **Re-seed prefs, then reset the in-memory stores.**
  *
- * Neither gap leaves user content on the device, which is the promise the
- * screen makes.
+ * Session 15 recorded the key and the notifications as not done, on the
+ * belief that `key.ts` exposed no delete. It does -- `destroyEncryptionKey`
+ * was there the whole time, written alongside the key itself and never
+ * called. Worth remembering as its own small lesson: "not built" was a
+ * guess, and reading the file would have cost less than the note did.
  */
 export async function eraseEverything({
   stores,
   repositories,
   resetStores,
+  destroyKey,
+  cancelNotifications,
 }: EraseDeps): Promise<void> {
+  // Never let a scheduling failure block the erase. Somebody who pressed this
+  // gets their data deleted whatever the notification layer is doing.
+  try {
+    await cancelNotifications?.();
+  } catch {
+    // Nothing to tell anyone. The deletion still happens.
+  }
+
   /*
    * The three instances, cleared inline rather than through
    * `clearAllStores` from `@calma/db/native`.
@@ -86,6 +115,13 @@ export async function eraseEverything({
   stores.data.clearAll();
   stores.prefs.clearAll();
   stores.cache.clearAll();
+
+  // The key, after the stores and never before them.
+  try {
+    await destroyKey?.();
+  } catch {
+    // The records are already gone; a key that decrypts nothing is inert.
+  }
 
   // Prefs are re-seeded rather than left absent: `defaultPrefs` is what a
   // first launch looks like, and an empty prefs record is not the same thing

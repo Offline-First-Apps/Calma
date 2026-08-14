@@ -68,6 +68,16 @@ export const prefsSchema = z.object({
   onboardingAnswers: onboardingAnswersSchema.nullable(),
   /** Whether we have asked for notification permission. We ask at most once. */
   notificationsAsked: z.boolean(),
+  /**
+   * Face ID / passcode on the writing (j1, k4).
+   *
+   * OFF BY DEFAULT, and that is not laziness. A lock nobody asked for is
+   * friction nobody asked for, and this app's whole argument is that opening
+   * it should cost nothing. It also only ever covers the journal --
+   * `features/settings/lock.ts` holds the allowlist, and breathing is
+   * deliberately not on it.
+   */
+  lockEnabled: z.boolean(),
 });
 
 export type Prefs = z.infer<typeof prefsSchema>;
@@ -93,4 +103,5 @@ export const defaultPrefs: Prefs = {
   onboardingReOffered: false,
   onboardingAnswers: null,
   notificationsAsked: false,
+  lockEnabled: false,
 };

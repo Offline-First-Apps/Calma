@@ -36,6 +36,12 @@
       "expo-localization",
       "expo-router",
       [
+        "expo-local-authentication",
+        {
+          "faceIDPermission": "Calma uses Face ID so only you can open your writing."
+        }
+      ],
+      [
         "expo-notifications",
         {
           "icon": "./assets/images/notification-icon.png",
