@@ -83,10 +83,34 @@ export type TextVariant = keyof typeof variants;
 export function Text({
   variant = 'body',
   className = '',
-  ...props
+  style,
+  ...rest
 }: RNTextProps & { variant?: TextVariant; className?: string }) {
-  // allowFontScaling is never disabled. Every numeral scales with the system
-  // font setting — supporting scaling everywhere EXCEPT numbers is worse than
-  // not supporting it at all. (plans/19-review-findings.md R2)
-  return <HeroText className={`${variants[variant]} ${className}`} allowFontScaling {...props} />;
+  /*
+   * `includeFontPadding: false` — the Android fix, applied everywhere.
+   *
+   * Android reserves space above and below every line for the font's full
+   * ascent and descent, and the amount differs per family. With Newsreader and
+   * Figtree that padding is not symmetric, so text centred inside a fixed-
+   * height box sits visibly low — which is what the owner saw on Home's
+   * "Take a sigh" button, and would have been true of every button, chip and
+   * row in the app.
+   *
+   * Turning it off makes the text box match the line box, so `items-center`
+   * centres what you can actually see. It is a no-op on iOS.
+   *
+   * `allowFontScaling` is never disabled. Every numeral scales with the system
+   * font setting — supporting scaling everywhere EXCEPT numbers is worse than
+   * not supporting it at all (plans/19-review-findings.md R2).
+   */
+  return (
+    <HeroText
+      className={`${variants[variant]} ${className}`}
+      allowFontScaling
+      {...rest}
+      // After the spread, and merged rather than replacing: a caller passing
+      // `style` must not silently switch font padding back on.
+      style={[{ includeFontPadding: false }, style]}
+    />
+  );
 }

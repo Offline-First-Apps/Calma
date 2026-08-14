@@ -11,6 +11,7 @@ import { playSound } from '@/src/lib/audio';
 import { hapticJournalSaved } from '@/src/lib/haptics';
 import { useRepositories } from '@/src/lib/repositories';
 import { Button } from '@/src/ui/Button';
+import { Enter } from '@/src/ui/Enter';
 import { Text } from '@/src/ui/Text';
 
 import { IntensityScale } from './IntensityScale';
@@ -177,7 +178,9 @@ function StepBody({
   const { t } = useTranslation('journal');
 
   return (
-    <View className="flex-1">
+    // Keyed on the prompt, so each of the six questions settles in instead of
+    // the words swapping under a cursor that is already in the field.
+    <Enter key={step.prompt} className="flex-1">
       <Text variant="heading" className="text-[32px] leading-[40px]">
         {t(step.prompt)}
       </Text>
@@ -262,6 +265,6 @@ function StepBody({
           ) : null}
         </View>
       ) : null}
-    </View>
+    </Enter>
   );
 }

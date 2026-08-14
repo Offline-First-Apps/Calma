@@ -53,5 +53,6 @@
     "lastWeekday": "Last {{weekday}}",
     "weeksAgo_one": "A week ago",
     "weeksAgo_other": "{{count}} weeks ago"
-  }
+  },
+  "startWritingHint": "Six prompts, and you can stop after any of them."
 }

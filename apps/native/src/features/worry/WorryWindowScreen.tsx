@@ -20,6 +20,8 @@ import { StreakMoment } from '@/src/features/progress/StreakNote';
 import { useStreakMoment } from '@/src/features/progress/useStreakMoment';
 import { useRepositories, useStorage } from '@/src/lib/repositories';
 import { Button } from '@/src/ui/Button';
+import { Collapsed } from '@/src/ui/Collapsed';
+import { Enter } from '@/src/ui/Enter';
 import { Text } from '@/src/ui/Text';
 
 import { TriageAction } from './TriageAction';
@@ -116,6 +118,32 @@ export function WorryWindowScreen() {
   }, [repositories.worry]);
 
   /*
+   * The queue's text, read once for the intro and nowhere else.
+   *
+   * `store.ts` holds ids rather than worries on purpose, so this is a
+   * deliberate, scoped read: only on the intro stage, only into local state,
+   * and dropped the moment triage begins. The rule it respects is "the store
+   * never holds text", not "text is never read".
+   */
+  const [preview, setPreview] = useState<{ id: string; text: string }[]>([]);
+
+  useEffect(() => {
+    if (window?.stage !== 'intro') return;
+
+    let alive = true;
+    void (async () => {
+      const worries = await repositories.worry.listPending();
+      if (alive) {
+        setPreview(worries.map((worry) => ({ id: worry.id, text: worry.text })));
+      }
+    })();
+
+    return () => {
+      alive = false;
+    };
+  }, [repositories.worry, window?.stage]);
+
+  /*
    * h3 fires on the summary and nowhere else.
    *
    * The window is what made today qualify (`aggregates.qualifyingDays`), so
@@ -136,14 +164,49 @@ export function WorryWindowScreen() {
 
   return (
     <Ground insets={insets} theme={theme} lamp={lamp}>
+      {/*
+        Keyed on the stage, so moving from the question to the action to the
+        release settles each one in rather than swapping them instantly. The
+        window is the slowest-paced flow in the app and was the most abrupt.
+      */}
       {window.stage === 'intro' ? (
-        <View className="flex-1 justify-center gap-[22px]">
+        <Enter key="intro" className="flex-1 justify-center gap-[22px]">
           <Text variant="display" className="text-[38px] leading-[46px]">
             {t('window.introTitle')}
           </Text>
           <Text variant="body" className="text-[20px] leading-[31px] text-secondary">
             {t('window.introSub')}
           </Text>
+
+          {/*
+            WHAT "THIS" IS.
+            
+            f4 said "You saved this earlier" over an empty screen, and the
+            owner's first run asked the obvious question: saved WHAT? The
+            caption's rule — no previews on the TAB — is about not handing
+            someone their pile back while they are trying to postpone it. This
+            is the opposite moment: they have chosen to sit down and look, and
+            being shown nothing until after they commit is a worse kind of
+            withholding.
+            
+            Five, then "+X more" — see `Collapsed`. The count is never
+            rendered on its own, so this still is not a tally.
+          */}
+          {preview.length > 0 ? (
+            <Collapsed
+              items={preview}
+              keyFor={(worry) => worry.id}
+              moreLabel={(hidden) => t('showMore', { count: hidden })}
+              lessLabel={t('showLess')}
+              renderItem={(worry) => (
+                <View className="rounded-note border border-border-worry bg-surface-worry px-5 py-4">
+                  <Text variant="bodySm" className="text-clay-ink">
+                    {t('quoted', { text: worry.text })}
+                  </Text>
+                </View>
+              )}
+            />
+          ) : null}
 
           <View className="mt-auto gap-2">
             <Button
@@ -155,16 +218,18 @@ export function WorryWindowScreen() {
                 "are you sure", and nothing recorded about having left. */}
             <Button variant="quiet" label={t('window.leave')} onPress={leave} />
           </View>
-        </View>
+        </Enter>
       ) : null}
 
       {window.stage === 'question' && text !== null ? (
+        <Enter key={`question-${id ?? ''}`} className="flex-1">
         <TriageQuestion
           text={text}
           onAnswer={(actionable) =>
             setWindow(stores.data, answerTriage(window, actionable))
           }
         />
+        </Enter>
       ) : null}
 
       {window.stage === 'action' && id !== null ? (

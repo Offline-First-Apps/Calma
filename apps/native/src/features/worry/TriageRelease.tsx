@@ -3,6 +3,8 @@ import { useTranslation } from 'react-i18next';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import Animated, {
   Easing,
+  Extrapolation,
+  interpolate,
   runOnJS,
   useAnimatedStyle,
   useSharedValue,
@@ -73,7 +75,45 @@ export function TriageRelease({
     void playSound('worryReleased');
   };
 
-  const gesture = Gesture.Pan()
+  /**
+   * TAP, NOT SWIPE. THE SWIPE WAS UNREACHABLE ON ANDROID.
+   *
+   * An upward swipe from anywhere near the bottom of the screen IS the Android
+   * home gesture. The owner tried to let a worry go and got thrown out to
+   * their launcher instead — on a screen whose entire purpose is a single
+   * deliberate act. iOS has the same conflict from the home indicator.
+   *
+   * A tap cannot collide with a system gesture, needs no threshold, and needs
+   * no explanation beyond the line under the card. What T15 actually asked for
+   * was *deliberate* and *without undo*, and a tap on the worry itself is
+   * both — it is not a button somewhere else on the screen, it is the thing
+   * you are letting go of.
+   *
+   * The pan gesture is kept alongside it, so anyone who has learned the swipe
+   * still has it where the system does not eat it.
+   */
+  const release = () => {
+    if (progress.value > 0) return;
+    commit();
+
+    progress.value = withTiming(
+      1,
+      {
+        duration: reduceMotion ? 200 : SCATTER_MS,
+        easing: Easing.out(Easing.cubic),
+      },
+      (finished) => {
+        'worklet';
+        if (finished) runOnJS(onReleased)();
+      },
+    );
+  };
+
+  const tap = Gesture.Tap().onEnd(() => {
+    runOnJS(release)();
+  });
+
+  const pan = Gesture.Pan()
     .onUpdate((event) => {
       // Upward only. A downward drag does nothing rather than pushing the
       // card into the bottom of the screen — there is no "put it back
@@ -103,10 +143,28 @@ export function TriageRelease({
       progress.value = withSpring(0, { damping: 18, stiffness: 140 });
     });
 
+  const gesture = Gesture.Exclusive(pan, tap);
+
+  /**
+   * The "pop": a breath outward before it goes.
+   *
+   * The card grows very slightly through the first fifth of the release and
+   * then shrinks away as it rises, rather than only ever contracting. That
+   * tiny outward move is what makes it read as something leaving under its own
+   * weight instead of a view being dismissed — the owner asked for a pop, and
+   * a pure shrink reads as a delete.
+   */
   const cardStyle = useAnimatedStyle(() => ({
     transform: [
       { translateY: -progress.value * 180 },
-      { scale: 1 - progress.value * 0.06 },
+      {
+        scale: interpolate(
+          progress.value,
+          [0, 0.18, 1],
+          [1, 1.045, 0.9],
+          Extrapolation.CLAMP,
+        ),
+      },
     ],
     opacity: 1 - progress.value,
   }));
@@ -160,8 +218,21 @@ export function TriageRelease({
             style={[cardStyle, { borderRadius: radius.note }]}
             className="w-full border border-border-worry-quiet bg-surface-worry-quiet px-6 py-7"
           >
-            <Text variant="headingSm" className="text-[26px] leading-[36px]">
-              {text}
+            {/*
+              QUOTED, AND IN THE CLAY INK.
+              
+              The owner's first run: "it just says Worry 1 then empty" — the
+              text WAS there, but set in the ordinary foreground at card size
+              it read as a heading the screen had generated rather than as the
+              sentence they had written. Quotation marks and the feature's own
+              ink make it unmistakably theirs, which matters on the one screen
+              that asks them to part with it.
+            */}
+            <Text
+              variant="headingSm"
+              className="text-[26px] leading-[36px] text-clay-ink"
+            >
+              {t('quoted', { text })}
             </Text>
           </Animated.View>
         </GestureDetector>

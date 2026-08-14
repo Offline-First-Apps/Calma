@@ -3,7 +3,7 @@ import { formatWindowTime } from '@calma/i18n';
 import { useRouter } from 'expo-router';
 import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { View } from 'react-native';
+import { ScrollView, View } from 'react-native';
 
 import { PANIC_FAB_CLEARANCE } from '@/src/components/PanicFab';
 import { ReOffer } from '@/src/features/onboarding/ReOffer';
@@ -15,6 +15,7 @@ import { useRepositories } from '@/src/lib/repositories';
 import { usePrefsStore } from '@/src/stores/prefs';
 import { Button } from '@/src/ui/Button';
 import { Card } from '@/src/ui/Card';
+import { Enter } from '@/src/ui/Enter';
 import { Screen } from '@/src/ui/Screen';
 import { Text } from '@/src/ui/Text';
 
@@ -88,7 +89,21 @@ export function HomeScreen() {
 
   return (
     <Screen>
-      <View className="flex-1 gap-6" style={{ paddingBottom: PANIC_FAB_CLEARANCE }}>
+      {/*
+        SCROLLABLE, LIKE EVERY OTHER TAB.
+        
+        Home used to be a fixed `flex-1` column. At 200% font scale, or with a
+        long name and two waiting worries, the bottom simply went under the
+        shelf with no way to reach it. A screen that can grow with the person's
+        own content has to scroll, and all of these can.
+      */}
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{
+          paddingBottom: PANIC_FAB_CLEARANCE + 24,
+          flexGrow: 1,
+        }}
+      >
         {/* The only way into Settings. Top-right, quiet, and it does not
             displace anything -- see the note in `SettingsButton`. */}
         <SettingsButton />
@@ -97,44 +112,68 @@ export function HomeScreen() {
             what this app can do, so it answers the question and stops. */}
         <OfflineNote />
 
-        <Text variant="title">
-          {prefs.name
-            ? t('common:greeting.named', { name: prefs.name })
-            : t('common:greeting.plain')}
-        </Text>
+        {/*
+          THE GREETING GETS ROOM, AND THE ACTION GETS DISTANCE FROM IT.
+          
+          c1's caption is "the room, and the thing the room is for". The
+          previous layout put a uniform `gap-6` between everything, which made
+          the greeting, the button, its description and the worry card read as
+          four items in a list — the owner's word was "terrible", and the
+          reason is that even spacing gives everything equal weight, which is
+          the opposite of one obvious next thing.
+          
+          So: the greeting sits alone at the top with air under it, the
+          primary action is a block, and anything else is pushed to the bottom
+          of the screen rather than stacked under the button.
+        */}
+        <Enter index={0} className="mt-2">
+          <Text variant="title">
+            {prefs.name
+              ? t('common:greeting.named', { name: prefs.name })
+              : t('common:greeting.plain')}
+          </Text>
+        </Enter>
 
-        <ReOffer />
+        <Enter index={1} className="mt-5">
+          <ReOffer />
+        </Enter>
 
-        {lead === 'journal' ? (
-          <>
-            <View className="gap-3">
+        {/* The one obvious thing, with its explanation directly beneath it and
+            nothing else within reach. */}
+        <Enter index={2} className="mt-10 gap-3">
+          {lead === 'journal' ? (
+            <>
               <Button
                 label={t('journal:startWriting')}
                 onPress={() => router.push('/(tabs)/write')}
               />
-            </View>
-            <Button
-              variant="secondary"
-              label={t('common:takeASigh')}
-              onPress={startSigh}
-            />
-          </>
-        ) : (
-          <>
-            <View className="gap-3">
+              <Text variant="callout" className="px-1">
+                {t('journal:startWritingHint')}
+              </Text>
+            </>
+          ) : (
+            <>
               <Button label={t('common:takeASigh')} onPress={startSigh} />
-              <Text variant="callout">
+              <Text variant="callout" className="px-1">
                 {t('breathing:patterns.sigh.description')}
               </Text>
-            </View>
+            </>
+          )}
+        </Enter>
 
-            <Button
-              variant="secondary"
-              label={t('common:breatheFor')}
-              onPress={() => router.push('/breathe')}
-            />
-          </>
-        )}
+        {/* The second way in, given its own air rather than crowding the
+            first. */}
+        <Enter index={3} className="mt-4">
+          <Button
+            variant="secondary"
+            label={lead === 'journal' ? t('common:takeASigh') : t('common:breatheFor')}
+            onPress={lead === 'journal' ? startSigh : () => router.push('/breathe')}
+          />
+        </Enter>
+
+        {/* Pushes anything below to the bottom of the screen when there is
+            room, so the card never sits directly under the buttons. */}
+        <View className="flex-1" style={{ minHeight: 28 }} />
 
         {/* Only ever rendered when there is something waiting. Silence is the
             correct state, not an empty one. */}
@@ -162,7 +201,7 @@ export function HomeScreen() {
             </View>
           </Card>
         ) : null}
-      </View>
+      </ScrollView>
     </Screen>
   );
 }

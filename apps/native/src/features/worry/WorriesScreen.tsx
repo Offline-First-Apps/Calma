@@ -1,17 +1,17 @@
 import { formatWindowTime } from '@calma/i18n';
-import { control } from '@calma/tokens';
 import { useRouter } from 'expo-router';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Pressable, View } from 'react-native';
+import { ScrollView, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { PANIC_FAB_CLEARANCE } from '@/src/components/PanicFab';
 import { useRepositories } from '@/src/lib/repositories';
 import { usePrefsStore } from '@/src/stores/prefs';
+import { Button } from '@/src/ui/Button';
+import { Enter } from '@/src/ui/Enter';
 import { Text } from '@/src/ui/Text';
 
-import { CaptureField } from './CaptureField';
 import { availability } from './schedule';
 import { selectPendingCount, useWorryStore } from './store';
 
@@ -66,34 +66,27 @@ export function WorriesScreen() {
 
   const windowTime = formatWindowTime(prefs.worryWindowTime, i18n.language);
 
-  const onCapture = useCallback(
-    async (text: string) => {
-      await capture(repositories.worry, text);
-      // Cheap, and it means capturing a worry after the window has opened
-      // reveals "Open it now" without a tab switch.
-      setNow(new Date());
-    },
-    [capture, repositories.worry],
-  );
-
   return (
-    <View
+    <ScrollView
       className="flex-1 bg-worry"
-      style={{
+      showsVerticalScrollIndicator={false}
+      contentContainerStyle={{
         paddingTop: Math.max(insets.top, 20) + 56,
         paddingHorizontal: 32,
-        paddingBottom: PANIC_FAB_CLEARANCE,
+        paddingBottom: PANIC_FAB_CLEARANCE + 24,
+        flexGrow: 1,
       }}
     >
-      <CaptureField onCapture={onCapture} windowTime={windowTime} />
-
       {/*
-        Silence is the correct empty state, but not an empty screen: f1's
-        "Nothing waiting. That's a good place to be." is a sentence someone
-        should be able to arrive at and feel something about. It carries no
-        count and no badge.
+        THE STATE FIRST, THEN THE WAY IN. NOT BOTH AT ONCE.
+        
+        The capture field used to sit above this, so the tab showed an input,
+        a button and "Nothing waiting. That's a good place to be." together —
+        an empty state arguing with the thing that fills it. "Nothing waiting"
+        is a sentence to feel; an input box under it turns it into a form
+        label. Writing now happens on its own screen (`/worry/new`).
       */}
-      <View className="mt-[30px] gap-[10px]">
+      <Enter index={0} className="gap-[10px]">
         {pending === 0 ? (
           <Text variant="headingSm" className="text-[26px] leading-[34px]">
             {t('none')}
@@ -108,7 +101,15 @@ export function WorriesScreen() {
             </Text>
           </>
         )}
-      </View>
+      </Enter>
+
+      {/* Full width, because it is the one thing this tab is for. */}
+      <Enter index={1} className="mt-7">
+        <Button
+          label={t('writeOne')}
+          onPress={() => router.push('/worry/new')}
+        />
+      </Enter>
 
       {/*
         "Open it now" appears only once the window has opened AND there is
@@ -117,23 +118,14 @@ export function WorriesScreen() {
         greyed-out button with a timer under it is exactly that.
       */}
       {pending > 0 && state === 'open' ? (
-        <View className="mt-[22px] self-start">
-          <Pressable
-            accessibilityRole="button"
-            accessibilityLabel={t('openNow')}
+        <View className="mt-3">
+          <Button
+            variant="quiet"
+            label={t('openNow')}
             onPress={() => router.push('/worry-window')}
-            className="flex-row items-center justify-center rounded-full border border-border-clay-quiet bg-surface-clay-quiet px-[26px] active:opacity-90"
-            style={{ height: control.compact }}
-          >
-            <Text
-              variant="control"
-              className="font-sans-medium text-[17px] leading-[23px] text-clay-ink"
-            >
-              {t('openNow')}
-            </Text>
-          </Pressable>
+          />
         </View>
       ) : null}
-    </View>
+    </ScrollView>
   );
 }

@@ -1,7 +1,7 @@
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { View } from 'react-native';
+import { ScrollView, View } from 'react-native';
 
 import { Screen } from '@/src/ui/Screen';
 import { Text } from '@/src/ui/Text';
@@ -32,7 +32,16 @@ export function PrivacyScreen() {
 
   return (
     <Screen>
-      <View className="flex-1">
+      {/*
+        Scrolls, because the copy on these screens is long and grows with
+        translation — a 40% longer German string put the footer under the
+        home indicator with no way to reach it.
+      */}
+      <ScrollView
+        className="flex-1"
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{ flexGrow: 1, paddingBottom: 8 }}
+      >
         <Text variant="heading" className="text-[30px] leading-[36px]">
           {t('privacyScreen.title')}
         </Text>
@@ -67,7 +76,7 @@ export function PrivacyScreen() {
         <Text variant="footnote" className="mx-1 text-label-quiet">
           {t('privacyScreen.footer')}
         </Text>
-      </View>
+      </ScrollView>
 
       {confirming ? (
         <DeleteSheet

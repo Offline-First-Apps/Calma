@@ -22,7 +22,7 @@
     "stepDone": "That'll do",
     "stepEmpty": "Nothing comes to mind",
     "release": "Then this one isn't yours to carry.",
-    "releaseAction": "Swipe up to let it go",
+    "releaseAction": "Tap it to let it go",
     "releaseLabel": "Let this go",
     "back": "Back",
     "leave": "The rest can wait",
@@ -41,5 +41,11 @@
       "allActioned_other": "All {{count}} had a next step. You've got a plan.",
       "none": "Nothing was waiting. That's a good place to be."
     }
-  }
+  },
+  "writeOne": "Write a worry",
+  "newTitle": "What's on your mind?",
+  "showLess": "Show fewer",
+  "quoted": "“{{text}}”",
+  "showMore_one": "+1 more",
+  "showMore_other": "+{{count}} more"
 }

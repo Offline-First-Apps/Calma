@@ -1,4 +1,6 @@
+import { orb } from '@calma/tokens';
 import { useTranslation } from 'react-i18next';
+import Svg, { Defs, RadialGradient, Rect, Stop } from 'react-native-svg';
 import { View } from 'react-native';
 
 import { requestNotificationPermission } from '@/src/lib/notifications/permission';
@@ -40,12 +42,23 @@ export function Notifications({ onContinue }: { onContinue: () => void }) {
   const { prefs: prefsRepo } = useRepositories();
   const updatePrefs = usePrefsStore((state) => state.update);
 
-  const accept = () => {
-    // `notificationsAsked` records that the OS dialog was fired, so nothing
-    // in the app ever fires it a second time. Set before the await: the
-    // permission is spent the moment the dialog appears, whatever the answer.
+  const accept = async () => {
+    /*
+     * AWAITED, AND THAT IS THE WHOLE FIX.
+     *
+     * This used to fire the request and call `onContinue()` in the same tick.
+     * Onboarding then advanced immediately, unmounting the screen while the
+     * OS dialog was still being presented — so on device the dialog never
+     * appeared, and "Yes, remind me" silently did nothing at all. The person
+     * had agreed to the one notification this app sends and got no reminders,
+     * with nothing anywhere to tell them why.
+     *
+     * `notificationsAsked` is still set BEFORE the await: the permission is
+     * spent the moment the dialog appears, whatever the answer, and a
+     * force-quit mid-dialog must not let us ask again.
+     */
     void updatePrefs(prefsRepo, { notificationsAsked: true });
-    void requestNotificationPermission();
+    await requestNotificationPermission();
     onContinue();
   };
 
@@ -76,10 +89,16 @@ export function Notifications({ onContinue }: { onContinue: () => void }) {
       */}
       <View className="mt-[30px] rounded-[26px] bg-foreground/5 p-4">
         <View className="flex-row items-start gap-[14px] rounded-card bg-surface-secondary px-[18px] py-4">
-          {/* The app icon, as a shape. Squircle-ish radius, amber gradient
-              flattened to a single fill: this is a 42px stand-in inside a
-              preview, not the icon itself. */}
-          <View className="h-[42px] w-[42px] flex-none rounded-[11px] bg-accent" />
+          {/*
+            The app icon.
+            
+            This was a bare amber square, which read as a missing image rather
+            than as Calma — the owner flagged it on first run. It is now the
+            orb, at icon size: a radial with the highlight offset up and left,
+            which is the app's own mark and the only thing in the product that
+            gives off light.
+          */}
+          <PreviewIcon />
 
           <View className="flex-1 gap-1">
             {/*
@@ -126,13 +145,44 @@ export function Notifications({ onContinue }: { onContinue: () => void }) {
       <View className="flex-1" />
 
       <View className="gap-[10px]">
-        <Button label={t('onboarding:notifications.yes')} onPress={accept} />
+        <Button
+          label={t('onboarding:notifications.yes')}
+          onPress={() => void accept()}
+        />
         <Button
           variant="secondary"
           label={t('onboarding:notifications.no')}
           onPress={decline}
         />
       </View>
+    </View>
+  );
+}
+
+/**
+ * The app icon inside the notification preview.
+ *
+ * The orb at 42px, drawn rather than imported: `assets/images/icon.png` is a
+ * 1024px asset and scaling it into a preview costs a decode for something the
+ * OS will draw itself in reality. The radial keeps the highlight up and left,
+ * which is what makes the orb read as lit rather than as a filled circle.
+ */
+function PreviewIcon() {
+  return (
+    <View
+      className="flex-none overflow-hidden rounded-[11px]"
+      style={{ width: 42, height: 42 }}
+    >
+      <Svg width={42} height={42}>
+        <Defs>
+          <RadialGradient id="previewOrb" cx="42%" cy="36%" r="78%">
+            <Stop offset="0%" stopColor={orb.core} />
+            <Stop offset="46%" stopColor={orb.mid} />
+            <Stop offset="100%" stopColor={orb.edge} />
+          </RadialGradient>
+        </Defs>
+        <Rect x="0" y="0" width={42} height={42} fill="url(#previewOrb)" />
+      </Svg>
     </View>
   );
 }
