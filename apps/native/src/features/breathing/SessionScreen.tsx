@@ -21,6 +21,7 @@ import { useJournalStore } from '@/src/features/journal/store';
 import { playSound, setBreathingSessionActive } from '@/src/lib/audio';
 import { useReduceMotion } from '@/src/lib/motion';
 import { useRepositories } from '@/src/lib/repositories';
+import { usePaywallHold } from '@/src/features/entitlement/gateStore';
 import { Button } from '@/src/ui/Button';
 import { Screen } from '@/src/ui/Screen';
 import { SessionInterrupted } from '@/src/features/states/SessionInterrupted';
@@ -109,6 +110,10 @@ export function SessionScreen({
   // The screen must not sleep mid-breath. Someone following the orb is not
   // touching the screen, which is exactly what the idle timer watches for.
   useKeepAwake();
+
+  // T12. Nothing commercial while the orb is running -- including the ending,
+  // which is why this is not scoped to a stage. Released on unmount.
+  usePaywallHold('session');
 
   const breathingPattern = useMemo(
     () => getPattern(pattern, customRatio),

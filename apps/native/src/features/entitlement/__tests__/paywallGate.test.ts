@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import {
   SETTLE_MS,
+  isDeferral,
   paywallDecision,
   type Blocker,
   type PaywallContext,
@@ -119,5 +120,72 @@ describe('a build that cannot sell says nothing at all', () => {
         context({ suppressed: true, markerDay: '2026-08-13', shown: ['worry'] }),
       ),
     ).toBe('silent');
+  });
+});
+
+/**
+ * The other half of T12, which says the paywall is "suppressed and QUEUED to
+ * the next boundary". Suppression was built; queueing was not, and without it
+ * the capture field could never show a paywall at all -- it holds `'field'`
+ * for as long as it has focus and T16 keeps that focus through a submit, so
+ * every offer it made was silent and then discarded.
+ *
+ * `isDeferral` is the difference between "not yet" and "not at all".
+ */
+describe('deferral: which silences resolve later (T12)', () => {
+  const blockers: Blocker[] = [
+    'session',
+    'panic',
+    'worryWindow',
+    'editor',
+    'field',
+    'animation',
+  ];
+
+  it.each(blockers)('defers while %s is in flight', (blocker) => {
+    expect(isDeferral(context({ blockers: new Set([blocker]) }))).toBe(true);
+  });
+
+  it('defers inside the settle window after a completion', () => {
+    expect(
+      isDeferral(context({ completedAt: NOW - SETTLE_MS + 1 })),
+    ).toBe(true);
+  });
+
+  it('stops deferring once the settle window has passed', () => {
+    // Not a deferral and not silence either -- by this point `paywallDecision`
+    // returns a sheet, so there is nothing left to wait for.
+    expect(isDeferral(context({ completedAt: NOW - SETTLE_MS }))).toBe(false);
+  });
+
+  it('defers when the clock has moved backwards', () => {
+    // A completion timestamp in the future. `paywallDecision` treats this as
+    // silence, and the two must agree: waiting is right, discarding is not,
+    // because the clock catches up and the moment becomes showable.
+    expect(isDeferral(context({ completedAt: NOW + 60_000 }))).toBe(true);
+  });
+
+  it('NEVER defers on a build that cannot sell anything', () => {
+    // The one silence that must be dropped rather than held. A queued offer
+    // on a suppressed build would surface at the next boundary and try to
+    // sell something that cannot be bought.
+    expect(isDeferral(context({ suppressed: true }))).toBe(false);
+    expect(
+      isDeferral(
+        context({ suppressed: true, blockers: new Set<Blocker>(['session']) }),
+      ),
+    ).toBe(false);
+  });
+
+  it('does not defer when nothing is in flight', () => {
+    expect(isDeferral(context())).toBe(false);
+  });
+
+  it('does not defer a limit already seen today', () => {
+    // That is not silence -- `paywallDecision` returns `inline`, which is
+    // shown immediately. Queueing it would mean showing the line twice.
+    expect(
+      isDeferral(context({ markerDay: '2026-08-13', shown: ['worry'] })),
+    ).toBe(false);
   });
 });

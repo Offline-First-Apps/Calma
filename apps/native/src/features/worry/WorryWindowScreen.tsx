@@ -18,6 +18,7 @@ import { useUniwind } from 'uniwind';
 
 import { StreakMoment } from '@/src/features/progress/StreakNote';
 import { useStreakMoment } from '@/src/features/progress/useStreakMoment';
+import { usePaywallHold } from '@/src/features/entitlement/gateStore';
 import { useRepositories, useStorage } from '@/src/lib/repositories';
 import { Button } from '@/src/ui/Button';
 import { Collapsed } from '@/src/ui/Collapsed';
@@ -59,6 +60,10 @@ export function WorryWindowScreen() {
   const { theme } = useUniwind();
   const repositories = useRepositories();
   const { stores } = useStorage();
+
+  // T12. The window is held at every stage, from the intro through the
+  // summary. It is the longest deliberate sit-down in the app.
+  usePaywallHold('worryWindow');
 
   const window = useWorryStore((state) => state.window);
   const beginWindow = useWorryStore((state) => state.beginWindow);

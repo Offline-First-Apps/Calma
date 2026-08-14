@@ -23,6 +23,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { playSound, setBreathingSessionActive } from '@/src/lib/audio';
 import { useReduceMotion } from '@/src/lib/motion';
+import { usePaywallHold } from '@/src/features/entitlement/gateStore';
 import { Text } from '@/src/ui/Text';
 
 import { PhaseLabel } from './PhaseLabel';
@@ -93,6 +94,10 @@ export function PanicSession() {
   // The screen must not sleep mid-breath. Someone following the orb is not
   // touching the screen, which is exactly what the idle timer watches for.
   useKeepAwake();
+
+  // T12. The panic path is the one place a price must never appear, and the
+  // hold covers the ending as well as the breathing.
+  usePaywallHold('panic');
 
   const pattern = useMemo(() => getPattern('physiological-sigh'), []);
 

@@ -1,10 +1,12 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { View } from 'react-native';
 
 import { Text } from '@/src/ui/Text';
 
+import { usePaywallGate } from './gateStore';
 import { PaywallSheet } from './PaywallSheet';
+import { SETTLE_MS } from './paywallGate';
 import type { Limit } from './useLimit';
 
 /**
@@ -34,23 +36,73 @@ type RecurringKind = 'worry' | 'journal';
  */
 export function useLimitNotice(kind: RecurringKind, limit: Limit) {
   const [showing, setShowing] = useState<'sheet' | 'inline' | null>(null);
+  const [queued, setQueued] = useState(false);
 
-  /**
-   * Call AFTER the action succeeded, never before it.
-   *
-   * `systems/05-entitlements.md`: the action is attempted and a gentle card
-   * follows. Nothing is ever disabled, so this cannot be used to decide
-   * whether something is allowed — by the time it runs, it already happened.
-   */
-  const offer = useCallback(() => {
+  // Subscribed to purely so the queue below re-evaluates when the gate opens.
+  // Nothing here reads them; `limit.decide()` builds its own context.
+  const blockers = usePaywallGate((state) => state.blockers);
+  const completedAt = usePaywallGate((state) => state.completedAt);
+
+  /** Asks the gate, and shows whatever it allows. True if anything appeared. */
+  const present = useCallback(() => {
     const decision = limit.decide();
-    if (decision === 'silent') return;
+    if (decision === 'silent') return false;
 
     if (decision === 'sheet') limit.record();
     setShowing(decision);
+    return true;
   }, [limit]);
 
-  const dismiss = useCallback(() => setShowing(null), []);
+  /**
+   * Call when the limit was reached. The gate decides the rest.
+   *
+   * If nothing may be shown right now, the request is HELD rather than
+   * dropped — T12 says the paywall is "suppressed and queued to the next
+   * boundary", and dropping it is why the capture field could never show one:
+   * it holds `'field'` for as long as it has focus, and T16 keeps that focus
+   * through a submit, so the answer at the moment of capture is always silent.
+   *
+   * Only deferrable silence queues. A build that cannot sell anything, or a
+   * limit whose sheet was already seen today, is a settled answer.
+   */
+  const offer = useCallback(() => {
+    if (present()) return;
+    if (limit.deferrable()) setQueued(true);
+  }, [limit, present]);
+
+  useEffect(() => {
+    if (!queued) return;
+
+    if (present()) {
+      setQueued(false);
+      return;
+    }
+
+    /*
+     * The settle window closes on its own, and nothing tells us.
+     *
+     * A blocker being released re-renders this hook, because `blockers` is
+     * subscribed above. The four seconds after a completion do not: no store
+     * changes, so without this the queued offer would wait for some unrelated
+     * event and arrive at a random later moment — which is precisely the kind
+     * of out-of-nowhere appearance T12 exists to prevent.
+     */
+    if (completedAt === null || blockers.size > 0) return;
+
+    const remaining = completedAt + SETTLE_MS - Date.now();
+    if (remaining <= 0) return;
+
+    const timer = setTimeout(() => {
+      if (present()) setQueued(false);
+    }, remaining);
+
+    return () => clearTimeout(timer);
+  }, [queued, present, blockers, completedAt]);
+
+  const dismiss = useCallback(() => {
+    setQueued(false);
+    setShowing(null);
+  }, []);
 
   const notice =
     showing === 'sheet' ? (

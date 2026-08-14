@@ -93,3 +93,35 @@ export function paywallDecision(
   const seenToday = context.markerDay === context.today && context.shown.includes(kind);
   return seenToday ? 'inline' : 'sheet';
 }
+
+/**
+ * Whether a `silent` answer means "not yet" rather than "not at all".
+ *
+ * T12 does not say the paywall is dropped when something is in flight. It says
+ * it is "suppressed and QUEUED TO THE NEXT BOUNDARY" — and until now only the
+ * first half existed, which quietly turned every gated moment into no gate at
+ * all. The capture field is the clearest case: it holds `'field'` for as long
+ * as it has focus, and T16 keeps that focus through a submit, so an offer made
+ * at the moment of capture is always silent and never returns.
+ *
+ * Two reasons for silence are permanent and must NOT be queued:
+ *   - `suppressed`, because purchasing cannot work on this build at all. A
+ *     queued offer would come back the moment somebody finished a session and
+ *     sell them something that cannot be bought.
+ *   - having already been seen today, which is not silence at all — that
+ *     returns `inline`, and is somebody's answer being respected.
+ *
+ * Everything else is a timing problem, and timing problems resolve.
+ */
+export function isDeferral(context: PaywallContext): boolean {
+  if (context.suppressed) return false;
+  if (context.blockers.size > 0) return true;
+
+  // Mirrors the settle clause in `paywallDecision` exactly, including the
+  // future-timestamp case: a clock change can move `Date.now()` backwards, and
+  // both functions must treat that as "wait", never as "sell now".
+  return (
+    context.completedAt !== null &&
+    context.now - context.completedAt < SETTLE_MS
+  );
+}
