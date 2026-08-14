@@ -3,7 +3,7 @@ import { radius } from '@calma/tokens';
 import { useRouter } from 'expo-router';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Pressable, ScrollView, TextInput, View } from 'react-native';
+import { ScrollView, TextInput, View } from 'react-native';
 import { KeyboardAvoidingView } from 'react-native-keyboard-controller';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -16,6 +16,7 @@ import { useLimit } from '@/src/features/entitlement/useLimit';
 import { Button } from '@/src/ui/Button';
 import { Enter } from '@/src/ui/Enter';
 import { Text } from '@/src/ui/Text';
+import { Touchable } from '@/src/ui/Touchable';
 
 import { IntensityScale } from './IntensityScale';
 import { SaveConfirmation } from './SaveConfirmation';
@@ -186,16 +187,16 @@ export function EditorScreen({ id }: { id: string }) {
           {/* "Skip this one" is a sentence, not a greyed control, and it is
               present on every step including the last. Leaving a prompt blank
               is a legitimate answer (T03). */}
-          <Pressable
+          <Touchable
             accessibilityRole="button"
             accessibilityLabel={t('skip')}
             onPress={() => (isLast ? onSave() : setIndex(index + 1))}
-            className="h-12 justify-center active:opacity-70"
+            className="h-12 justify-center"
           >
             <Text variant="callout" className="text-[17px]">
               {t('skip')}
             </Text>
-          </Pressable>
+          </Touchable>
 
           <Button
             label={isLast ? t('save') : t('next')}

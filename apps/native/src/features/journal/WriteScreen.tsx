@@ -3,13 +3,14 @@ import { radius } from '@calma/tokens';
 import { useRouter } from 'expo-router';
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Pressable, ScrollView, View } from 'react-native';
+import { ScrollView, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { PANIC_FAB_CLEARANCE } from '@/src/components/PanicFab';
 import { useRepositories } from '@/src/lib/repositories';
 import { Button } from '@/src/ui/Button';
 import { Text } from '@/src/ui/Text';
+import { Touchable } from '@/src/ui/Touchable';
 
 import { DraftCard } from './DraftList';
 import { EntryList } from './EntryList';
@@ -98,14 +99,14 @@ export function WriteScreen() {
           {/* The label is the way to the full list (g5). A section heading
               that navigates is a smaller target than a row, so it carries the
               button role and the whole line is tappable. */}
-          <Pressable
+          <Touchable
             accessibilityRole="button"
             accessibilityLabel={t('drafts')}
             onPress={() => router.push('/journal/drafts')}
-            className="active:opacity-70"
+            className=""
           >
             <SectionLabel>{t('drafts')}</SectionLabel>
-          </Pressable>
+          </Touchable>
 
           {drafts.slice(0, DRAFTS_ON_TAB).map((draft) => (
             <DraftCard key={draft.id} draft={draft} />
@@ -129,15 +130,15 @@ export function WriteScreen() {
             rule that writing is always the most prominent thing).
             Recorded in plans/09 T14.
           */}
-          <Pressable
+          <Touchable
             accessibilityRole="button"
             accessibilityLabel={t('search')}
             onPress={() => router.push('/journal/search')}
             hitSlop={12}
-            className="h-11 w-11 items-center justify-end pb-1 active:opacity-70"
+            className="h-11 w-11 items-center justify-end pb-1"
           >
             <Ionicons name="search-outline" size={18} color="#8A939C" />
-          </Pressable>
+          </Touchable>
         </View>
 
         <EntryList />

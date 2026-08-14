@@ -1,8 +1,9 @@
 import { useTranslation } from 'react-i18next';
-import { Pressable, View } from 'react-native';
+import { View } from 'react-native';
 
 import { hapticSelection } from '@/src/lib/haptics';
 import { Text } from '@/src/ui/Text';
+import { Touchable } from '@/src/ui/Touchable';
 
 /**
  * A 0–10 intensity control.
@@ -71,7 +72,7 @@ function Mark({
   onPress: () => void;
 }) {
   return (
-    <Pressable
+    <Touchable
       accessibilityRole="button"
       accessibilityLabel={String(mark)}
       accessibilityState={{ selected }}
@@ -89,6 +90,6 @@ function Mark({
             : 'h-[10px] w-[10px] rounded-full bg-option-mark'
         }
       />
-    </Pressable>
+    </Touchable>
   );
 }

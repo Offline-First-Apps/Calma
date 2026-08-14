@@ -3,15 +3,17 @@ import { radius } from '@calma/tokens';
 import { useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Pressable, ScrollView, View } from 'react-native';
+import { ScrollView, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { useRepositories } from '@/src/lib/repositories';
 import { Button } from '@/src/ui/Button';
 import { Text } from '@/src/ui/Text';
+import { Touchable } from '@/src/ui/Touchable';
 
 import { useDayLabel } from './dayLabel';
 import { selectDrafts, useJournalStore } from './store';
+import { Collapsed } from '@/src/ui/Collapsed';
 
 /**
  * Drafts (g5).
@@ -64,10 +66,26 @@ export function DraftList() {
     >
       <Text variant="heading">{t('drafts')}</Text>
 
-      <View className="mt-[22px] gap-3">
-        {drafts.map((draft) => (
-          <DraftCard key={draft.id} draft={draft} />
-        ))}
+      {/*
+        DRAFTS ARE UNBOUNDED BY DESIGN, WHICH IS WHY THIS LIST COLLAPSES.
+
+        "Drafts keep as long as you like" is a promise, and the consequence of
+        keeping it is that this screen grows forever. Nineteen drafts push the
+        very sentence that made the promise off the bottom, so the screen stops
+        answering the question it raised.
+
+        Five, then "+X more". The opened list scrolls inside itself rather than
+        growing the page, so the footnote stays where it is.
+      */}
+      <View className="mt-[22px]">
+        <Collapsed
+          items={drafts}
+          keyFor={(draft) => draft.id}
+          moreLabel={(hidden) => t('moreHere', { count: hidden })}
+          lessLabel={t('showFewer')}
+          gap={12}
+          renderItem={(draft) => <DraftCard draft={draft} />}
+        />
       </View>
 
       {/* "Drafts keep as long as you like." Not a hint, not a tip: it is the
@@ -129,7 +147,7 @@ export function DraftCard({ draft }: { draft: JournalEntry }) {
   }
 
   return (
-    <Pressable
+    <Touchable
       accessibilityRole="button"
       accessibilityLabel={snippet.length > 0 ? snippet : t('untitled')}
       // VoiceOver cannot long-press, so the same action is published as a
@@ -141,7 +159,7 @@ export function DraftCard({ draft }: { draft: JournalEntry }) {
       }}
       onPress={() => router.push(`/journal/${draft.id}`)}
       onLongPress={() => setConfirming(true)}
-      className="border border-dashed border-border-draft bg-surface-draft px-[22px] pb-6 pt-[22px] active:opacity-80"
+      className="border border-dashed border-border-draft bg-surface-draft px-[22px] pb-6 pt-[22px]"
       style={{ borderRadius: radius.xl }}
     >
       <Text variant="bodySm" className="text-[18px] leading-[26px]">
@@ -153,6 +171,6 @@ export function DraftCard({ draft }: { draft: JournalEntry }) {
       <Text variant="headingSm" className="mt-1.5 text-[22px] leading-[31px] text-muted">
         {snippet.length > 0 ? snippet : t('untitled')}
       </Text>
-    </Pressable>
+    </Touchable>
   );
 }
