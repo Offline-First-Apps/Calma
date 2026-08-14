@@ -7,6 +7,7 @@ import { usePrefsStore } from '@/src/stores/prefs';
 import { Screen } from '@/src/ui/Screen';
 import { Text } from '@/src/ui/Text';
 
+import { PlusSection } from './PlusSection';
 import { LinkRow, Section, ToggleRow, ValueRow } from './Rows';
 import { PATTERN_KEY, resolveUsualPattern } from './usualRhythm';
 
@@ -151,13 +152,12 @@ export function SettingsScreen() {
           />
         </Section>
 
-        <Section title={t('sections.plus')}>
-          <LinkRow
-            label={t('rows.seePlans')}
-            onPress={() => router.push('/paywall')}
-            last
-          />
-        </Section>
+        {/*
+          Renders nothing at all on a build where nothing can be bought. See
+          `plusSectionState` — that is designed behaviour, not a missing
+          section.
+        */}
+        <PlusSection />
 
         {/*
           The silent-switch explainer, and it is a sentence rather than a row

@@ -180,7 +180,32 @@ Preferences, privacy, and the honest bits.
 
 ## T09 — Add the Calma Plus section
 
-- [ ]
+- [x] `e4c1bc8`
+- **Note (session 19):** built as `PlusSection.tsx`, replacing the bare
+  "See plans" row. `plusSectionState` is pure and has three answers, one of
+  which is **`hidden`**: on a build where nothing can be purchased the section
+  is absent rather than disabled, which is what systems/05 means by "no prices
+  and no paywalls at all". It stays hidden for a cached Plus user on such a
+  build too — the tier survives a key-less build and neither manage nor restore
+  can work there.
+
+  **Free reads "Free", never "Not active" and never "Upgrade".** It is the
+  honest name of what someone has, and in this app it is most of the product.
+
+  **No price appears in Settings.** Prices live on i1 behind a deliberate tap;
+  a number here would put a commercial thing in front of somebody who came to
+  adjust their haptics, which is the exact failure `paywallGate.ts` exists
+  because of.
+
+  **Restore is on both tiers and runs in place.** Both, because the person who
+  needs it has a tier that currently reads free — a new phone, a reinstall.
+  In place, because it is a request with an answer rather than a destination,
+  and the answer is one line in the same ink as everything else. `null` (SDK
+  unreachable) and `'free'` (nothing to restore) give the same sentence: neither
+  is a problem the person caused.
+
+  This also closes the Settings half of `plans/11` T04, including its
+  device-change sentence.
 - **Commit:** `feat(settings): add calma plus section`
 - **Depends on:** T01, `11-entitlements-paywall` T04
 - **Touches:** `apps/native/src/features/settings/PlusSection.tsx`

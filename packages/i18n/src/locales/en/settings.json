@@ -57,6 +57,11 @@
     "restoreHint": "If you've changed phones",
     "crisis": "When it's more than this"
   },
+  "plusSection": {
+    "free": "Free",
+    "active": "Active",
+    "deviceChange": "There are no accounts here, so a purchase belongs to your app store rather than to Calma. On a new phone, restoring is how it comes back."
+  },
   "answersScreen": {
     "title": "What you told us",
     "body": "Three things you said when you set Calma up. Change any of them, or all of them, or none. Nothing here is scored and nothing has to be filled in.",
