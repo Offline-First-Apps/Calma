@@ -45,7 +45,14 @@ const variants = {
    * `font-serif` would render upright on iOS and fall back to a system serif
    * on some Android builds, silently — the same trap as `font-medium`.
    */
-  aside: 'font-serif-italic text-[27px] leading-[36px] text-faint',
+  /*
+   * `text-aside-warm`, not `text-faint`. In light the two are the same value;
+   * in dark `faint` is a cool grey (#8996A2) and the design's aside is a warm
+   * one (#A99B8A). This is the app's only italic and its quietest sentence --
+   * rendering it in UI grey at 2am is the same category of mistake as setting
+   * an emotional line in the sans face. Found in session 14's audit.
+   */
+  aside: 'font-serif-italic text-[27px] leading-[36px] text-aside-warm',
 
   /** DOMINANT BODY SIZE — the most used value across all 58 screens. */
   body: 'font-sans text-[21px] leading-[31px] text-foreground',

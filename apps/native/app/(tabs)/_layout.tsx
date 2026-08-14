@@ -1,9 +1,11 @@
 import { Ionicons } from '@expo/vector-icons';
 import { Tabs } from 'expo-router';
+import { dark as darkTokens, light as lightTokens } from '@calma/tokens';
 import { useThemeColor } from 'heroui-native';
 import { useTranslation } from 'react-i18next';
 import { View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useUniwind } from 'uniwind';
 
 import { PanicFab } from '@/src/components/PanicFab';
 import { useReduceMotion } from '@/src/lib/motion';
@@ -19,7 +21,11 @@ import { useReduceMotion } from '@/src/lib/motion';
  * survives tab switches without remounting — and its ambient pulse never
  * restarts, which would be visible.
  */
-const TAB_BAR_HEIGHT = 56;
+const TAB_BAR_HEIGHT = 78;
+/** The shelf's inset from each side, and how far it floats clear of the bottom. */
+const SHELF_INSET = 16;
+const SHELF_LIFT = 14;
+const SHELF_RADIUS = 28;
 
 export default function TabsLayout() {
   const { t } = useTranslation(['common', 'breathing', 'worry', 'journal', 'progress']);
@@ -30,12 +36,32 @@ export default function TabsLayout() {
   // The old value resolved to undefined, which React Navigation reads as
   // "use the default blue", so all four inactive tabs were tinted by a
   // library default rather than by the palette.
-  const [active, inactive, background, border] = useThemeColor([
-    'accent',
-    'muted',
-    'background',
-    'border',
-  ]);
+  const [active, inactive] = useThemeColor(['accent', 'muted']);
+
+  /*
+   * THE TAB BAR IS A FLOATING SHELF, NOT A BAR, AND IT WAS WRONG ON ALL FIVE
+   * TABS FOR FIVE SESSIONS.
+   *
+   * Every design in the set that has a tab bar draws the same thing: 78px
+   * tall, inset 16px from each side, floating 30px clear of the bottom, radius
+   * 28, on `shelf` rather than `background`, with a drop shadow and a 1px
+   * inset highlight along its top edge. What shipped was a full-width bar in
+   * `background` with a hairline on top -- the platform default, wearing the
+   * palette's colours.
+   *
+   * It is furniture, so it never got opened alongside a screen's design file,
+   * and it is on every tab, so it was the most-seen wrong thing in the app.
+   *
+   * `position: absolute` is what lets it float: without it React Navigation
+   * reserves the bar's height at the bottom of the screen and the shelf sits
+   * in a sand-coloured gutter. Screens compensate through
+   * `PANIC_FAB_CLEARANCE`, which already existed for the FAB.
+   */
+  // Straight from the token module, not `useThemeColor`: heroui's hook only
+  // knows heroui's own names, and every Calma-only colour is invisible to it.
+  const { theme } = useUniwind();
+  const { shelf, shelfBorder, shelfHighlight } =
+    theme === 'dark' ? darkTokens : lightTokens;
 
   return (
     <View className="flex-1">
@@ -45,11 +71,28 @@ export default function TabsLayout() {
           tabBarActiveTintColor: active,
           tabBarInactiveTintColor: inactive,
           tabBarStyle: {
-            backgroundColor: background,
-            borderTopColor: border,
-            height: TAB_BAR_HEIGHT + insets.bottom,
-            paddingBottom: insets.bottom,
+            position: 'absolute',
+            left: SHELF_INSET,
+            right: SHELF_INSET,
+            bottom: Math.max(insets.bottom, SHELF_INSET) + SHELF_LIFT,
+            height: TAB_BAR_HEIGHT,
+            backgroundColor: shelf,
+            borderRadius: SHELF_RADIUS,
+            // React Navigation draws a 1px top hairline by default. The shelf
+            // has a full border instead, so the hairline has to be removed
+            // rather than recoloured or it doubles up along the top edge.
+            borderTopWidth: 0,
+            borderWidth: 1,
+            borderColor: shelfBorder,
+            paddingBottom: 0,
+            paddingTop: 0,
+            elevation: 12,
+            shadowColor: '#2A3642',
+            shadowOpacity: 0.28,
+            shadowRadius: 30,
+            shadowOffset: { width: 0, height: 12 },
           },
+          tabBarItemStyle: { paddingTop: 10, paddingBottom: 10 },
           tabBarLabelStyle: {
             // The registered face, not a family + weight pair. expo-font does
             // not synthesise weights, so 'Figtree' at '500' silently renders
@@ -110,7 +153,26 @@ export default function TabsLayout() {
         />
       </Tabs>
 
-      <PanicFab reduceMotion={reduceMotion} bottomOffset={TAB_BAR_HEIGHT} />
+      {/* The shelf's inset highlight. React Native has no `inset` shadow, so
+          the design's `inset 0 1px 0` is drawn as a hairline pinned just
+          inside the top edge. `pointerEvents="none"` keeps it off the tabs. */}
+      <View
+        pointerEvents="none"
+        style={{
+          position: 'absolute',
+          left: SHELF_INSET + SHELF_RADIUS / 2,
+          right: SHELF_INSET + SHELF_RADIUS / 2,
+          bottom:
+            Math.max(insets.bottom, SHELF_INSET) + SHELF_LIFT + TAB_BAR_HEIGHT - 2,
+          height: 1,
+          backgroundColor: shelfHighlight,
+        }}
+      />
+
+      <PanicFab
+        reduceMotion={reduceMotion}
+        bottomOffset={TAB_BAR_HEIGHT + SHELF_LIFT}
+      />
     </View>
   );
 }
