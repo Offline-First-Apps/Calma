@@ -1,9 +1,9 @@
 # Screens — what exists, screen by screen
 
-**58 screens designed. 42 built, 1 cut, 15 not started.
+**58 screens designed. 47 built, 1 cut, 10 not started.
 0 verified — nothing has ever rendered.**
 
-As of end of session 13.
+As of end of session 14.
 
 This file is the answer to "is X done?". It talks in **screens**, not features,
 because a feature being "done" is not a thing anyone can look at. Designs are
@@ -141,19 +141,34 @@ Plan 08 T01–T16.
 
 > g7 is **ungated**. Plan 11 T10 gates search for free tier and is not built.
 
-## H · Progress — 0 of 5
+## H · Progress — 5 of 5 built
 
-`app/(tabs)/progress.tsx` is a one-line placeholder. Plan 10 is 0 of 10.
+Plan 10 is 8 of 10. T08 is recommended for cutting; T10 needs a device.
 
-| Screen | Status |
-|---|---|
-| h1 progress tab | — |
-| h2 streak | — |
-| h3 streak moment | — |
-| h4 week summary | — |
-| h5 history & trends | — |
+| Screen | Status | Where |
+|---|---|---|
+| h1 progress tab | **Built** | `features/progress/ProgressScreen.tsx`. The placeholder is gone |
+| h2 streak | **Built** | `features/progress/StreakNote.tsx` at `/progress/streak` |
+| h3 streak moment | **Built** | `StreakNote.tsx`, rendered by `WorryWindowScreen` over f8 |
+| h4 week summary | **Built** | `features/progress/WeekSummaryScreen.tsx` at `/progress/week` |
+| h5 history & trends | **Built** | `features/progress/HistoryView.tsx`, the "Longer" segment |
 
-**This is the block that proves onboarding's B7 breath actually persisted.**
+**This is the block that proves onboarding's B7 breath actually persisted** —
+and it is now the fastest way to check it. Breathe once, open Progress: if the
+week card is empty, b7 did not write.
+
+> **No design draws the way into h2.** The "Showing up" tile opens it —
+> chosen because h2 is the streak enlarged, and enlarging what you tapped
+> needs no label. Same situation as g7 in session 13; recorded in `plans/10`.
+
+> h5's bands put **sage outside f6 for the first time**. The designs win on
+> appearance and the H-group caption asks for it by name ("sage only for
+> things that went well"). The rule that survives: sage never means "correct"
+> and never appears as a tick.
+
+> **h3 fires on f8's summary and nowhere else**, capped to once a day by a
+> stored day key. It ships the two glass notes and **no haptic** — see the
+> Note (session 14) in `plans/10` T04.
 
 ## I · Plus — 2 of 2 built
 
@@ -207,7 +222,7 @@ which session 13 built and nothing calls.
 
 ---
 
-# Handover — the 15 screens still to build
+# Handover — the 10 screens still to build
 
 In the order I would take them, and why.
 
@@ -229,7 +244,7 @@ that is otherwise easy to forget exists.
 - `useLimit` is called by nothing. Plan 11 T08, T09 and T10 are those call
   sites.
 
-### 2. H · Progress — 5 screens, plan 10 (0/10)
+### ~~2. H · Progress~~ — done, session 14 (plan 10, 8/10)
 
 Replaces a placeholder tab, and it is the screen that shows whether B7's
 onboarding breath was actually written. Mostly reads aggregates
@@ -239,7 +254,7 @@ Watch the tone rules hard here: no scoring, no comparison to previous weeks,
 no chart that implies a target. h3 (streak moment) is the single most likely
 screen in the app to accidentally congratulate someone.
 
-### 3. J · Settings — 4 screens, plan 14 (0/11)
+### 2. J · Settings — 4 screens, plan 14 (0/11)
 
 Every answer onboarding collects is meant to be editable and none of it is.
 Also the only home for "erase everything", which a privacy-first app is weak
@@ -249,7 +264,7 @@ which cannot be finished until this exists.
 No new plumbing needed: prefs, the repositories and `deleteBreathingSession`
 all exist.
 
-### 4. K · States — 6 screens
+### 3. K · States — 6 screens
 
 Cheapest per screen and the easiest to defer, but k3 (session interrupted)
 matters more than the others — it is what someone sees when a call arrives

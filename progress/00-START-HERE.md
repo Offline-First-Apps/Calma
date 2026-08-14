@@ -8,13 +8,13 @@ Android. This file is self-contained. Read it fully before touching anything.
 > and what "leaving the repo correct" means. This file is only *what* to build
 > next. That one is *how*.
 
-Last updated: end of session 13.
+Last updated: end of session 14.
 
 > **For "is screen X done?", read `progress/03-screens-status.md`.** It is all
 > 58 screens in one table — built, cut, or not started — plus the handover
 > order for the 15 that remain. It talks in screens rather than features,
 > because a feature being "done" is not something anyone can look at.
-> **Current count: 42 built, 0 partial, 1 cut, 15 not started, 0 verified.**
+> **Current count: 47 built, 0 partial, 1 cut, 10 not started, 0 verified.**
 
 ---
 
@@ -44,14 +44,21 @@ when someone opens the design file.
 | 11 | `--worry` and `--write`, two whole grounds | Nobody had opened the f- or g- screens. |
 | 12 | `--panic` and `--ending`, two more | The panic screens rendered on `--immersive`. Two dim warm sands that are not the same dim warm sand. |
 | 13 | `--saved`, `--offer`, `--highlight`, and eleven more | `--saved` is #FBF4E7. `--lift` is #FBF4E9 and `--ending` is #FBF3E6. Three warm off-whites, two points apart, none of them the other two. |
+| 14 | nineteen for h1-h5, **and two that were simply wrong** | `--surface-tile-neutral`/`--border-tile-neutral` were #F1EEE7/#E2DCD1. Neither hex occurs in any of the 116 screens. Invented in session 11, wrong for five sessions, and the parity test could never have caught it because both layers carried the same invented value. |
 
 **Assume the ground you need does not exist yet.** Check `global.css` against
 the design file before you write a single `bg-` class.
 
-There are now 82 themed variables and the parity test covers all of them, in
+There are now 101 themed variables and the parity test covers all of them, in
 `colors.ts`, `global.css` and `tailwind.ts`. **Change a colour in all three.**
-The test tells you if you forgot one; only the design file can tell you the
-value is wrong in all three.
+
+**And there is now a second test that the previous five sessions did not have.**
+`packages/tokens/src/designs.test.ts` decodes the tracked bundles in
+`designs/html/` and asserts every flat hex in the token layer is a colour a
+designer actually drew. It is the check that catches a value wrong in *all*
+three places, which is exactly how the tile colours survived five sessions.
+If you add a token and it fails, you transcribed it wrong — go back to the
+design file rather than adding an exception.
 
 The one deliberate exception: **the orb's proportions follow `systems/03`
 (35% halo at 1.35R), not d3's 1.64.** Decided in session 9. Do not "fix" it.
@@ -62,70 +69,76 @@ The one deliberate exception: **the orb's proportions follow `systems/03`
 
 **Run the app. Everything else is downstream of that.**
 
-Twelve sessions of code, seven features' worth of screens, and **not one
-screen has ever rendered.** This has now been the stated task for four
-sessions running. Nothing below matters as much.
+Thirteen sessions of code, eight features' worth of screens, and **not one
+screen has ever rendered.** This has been the stated task for five sessions.
+Nothing below matters as much.
 
-```powershell
-powershell -ExecutionPolicy Bypass -File progress\commit-session-12.ps1   # FIRST
-powershell -ExecutionPolicy Bypass -File progress\commit-session-13.ps1
-
+```bash
 pnpm install
-pnpm check-types      # DID NOT COMPLETE in session 13 — see below
-pnpm test             # THE FIRST RUN, EVER. Expect real failures.
+pnpm check-types      # ~11s, clean
+pnpm lint             # clean
+pnpm test             # 881 assertions, all green
+npx expo prebuild --clean
 pnpm --filter native android
 ```
 
-**Session 12's work is still uncommitted.** `panic.tsx`, `PanicFab.tsx`,
-`PanicSession.tsx`, `PanicEnding.tsx` and `breathing.json` all show as
-modified or untracked in `git status`. `progress/commit-session-12.ps1` was
-written to commit them and has never been run. **Run it before session 13's
-script** — the two scripts do not touch the same paths, but committing 13 on
-top of an uncommitted 12 makes the log lie about the order things were built.
+### The toolchain works. Session 13's handover was wrong about this.
 
-**`pnpm check-types` and `eslint` both hung in session 13.** Started on the
-device, left running for well over half an hour, and neither produced a single
-line of output — not a pass, not a failure, nothing. That is a fact about the
-toolchain on that machine, not a claim about the code. `apps/native`
-typechecked clean at the start of session 12 and has had four sessions of code
-added since. **This is the first thing to establish.** If it hangs again, try
-`pnpm --filter @calma/domain check-types` and the other packages one at a time
-to find where it stalls.
+That handover said `check-types` and `eslint` hang with no output, that
+`expo export` never finishes, and that `vitest` cannot run at all. **None of
+it reproduces.** Session 14 ran the whole toolchain from a clean install:
+typecheck clean across 7 packages, lint clean, `expo export --platform
+android` producing an 8.6MB bundle, and **the first execution of `pnpm test`
+in the project's history — 881 assertions, all passing**, including the parity
+test that thirteen sessions had never run.
+
+Those limits were real limits of *that sandbox*. **Try the toolchain yourself
+in the first ten minutes, and believe what you see over what any handover says
+— including this one.**
+
+### The build was broken in four places. It is not any more.
+
+Fixed in session 14 (`fix(build):`), listed because each is the kind of thing
+that comes back:
+
+1. `EXPO_PUBLIC_SERVER_URL` was **required** in `packages/env/src/native.ts`
+   and read by nothing. `createEnv` validates at module-eval, so the first
+   import of `purchases.ts` threw on any machine without a `.env` — and
+   `.env` is gitignored, so that was every fresh clone, every CI run and every
+   EAS build. **Never add a required key the app does not need.**
+2. `expo-asset` was missing (required peer of `expo-audio`).
+3. `@calma/db` and `@calma/i18n` pinned SDK-15/17 versions of `expo-crypto`
+   and `expo-localization` against an SDK 57 app.
+4. `react-native-mmkv` pulled a second React. Pinned via a workspace override.
+
+`apps/native/eas.json` now exists — `development`, `development-simulator`,
+`preview`, `production`.
 
 > **`pnpm dev:native` alone will not get you a running app.** `expo start`
 > expects a dev client, and `react-native-mmkv`, reanimated, svg and
 > `react-native-purchases` are all native — Expo Go cannot load this project.
-> `apps/native/android/` exists from session 11's prebuild (gitignored) but is
-> **stale**: `android.package` changed to `app.calma.mobile` in session 11, so
-> run `npx expo prebuild --clean` before building. **You are on Windows: iOS
-> needs a Mac.** Any "on both platforms" clause in a plan cannot be closed
-> from this machine.
+> **iOS needs a Mac.** Any "on both platforms" clause cannot be closed without
+> one.
 
 ### What to look at, in this order
 
 1. **Does it look like Calma?** Warm sand or deep navy, amber orb. If it looks
    like a blue-and-grey component library demo, the theme in
-   `apps/native/global.css` is not resolving.
-2. **A breathing session.** Tab "Breathe" → "The sigh". Does the orb breathe
-   (0.62↔1.0, soft edge, never perfectly still)? Do the haptics land with it?
-3. **Onboarding, from cleared prefs.** Ten screens, B1 through B11 with B3
-   cut. B7 is a real session — breathe it, then check that it persisted.
-4. **The worry flow.** Capture four worries in under fifteen seconds without
-   waiting once. That is the entire design of `CaptureField` and it has never
-   met a human hand.
-5. **The write tab, end to end — new in session 13 and the largest untested
-   surface.** Start an entry, type a sentence, force-quit, reopen (the
-   sentence must still be there). Save it and watch for "Saved. That's yours."
-   Then: does it appear under "Earlier"? Does the day label say something a
-   person would say? Does search find it? Does a draft's long press offer to
-   discard it, and does "Keep it" keep it?
-6. **The post-session offer.** Rate 8 or above before a session; at the end
-   the orb should stay visible behind a card in the lower third, not vanish.
+   `apps/native/global.css` is not resolving. (It is in the bundle — session
+   14 grepped the exported `.hbc` for the token hexes and found them.)
+2. **Breathe once, then open Progress.** The fastest possible check that
+   storage works end to end: if the week card is empty after a session, the
+   write path is broken. This also proves b7's onboarding breath persisted.
+3. **A breathing session.** Does the orb breathe (0.62↔1.0, soft edge, never
+   perfectly still)? Do the haptics land with it?
+4. **Onboarding, from cleared prefs.** Ten screens, B1–B11 with B3 cut.
+5. **The worry flow.** Capture four worries in under fifteen seconds without
+   waiting once. That is the entire design of `CaptureField`.
+6. **The write tab, end to end.** Type, force-quit, reopen — the sentence must
+   still be there.
 7. **The Plus screens.** With no RevenueCat keys they must show *no prices and
-   no paywalls at all* — that is the designed behaviour, not a bug. `/paywall`
-   should render i1 with one plain sentence where the prices would be.
-8. Then **VoiceOver, 200% font scale, Reduce Motion**, plus the pseudo-locale
-   from plan 18 T14 to catch truncation.
+   no paywalls at all*. That is designed behaviour, not a bug.
+8. Then **VoiceOver, 200% font scale, Reduce Motion**, and the pseudo-locale.
 
 Anything you fix goes in as its own `fix(...)` commit.
 
@@ -252,10 +265,26 @@ split exists so those assertions can run in Node at all.
 i1 and i2 are both at `/paywall`, chosen by tier. d7 is at `/custom-rhythm`
 and d1's custom row now opens it.
 
+### Progress — plan 10, 8 of 10, new in session 14. Written, never run.
+
+`apps/native/src/features/progress/`. h1 is the tab (Week and Longer
+segments), h4 and h2 are pushes, h3 lands over f8's summary.
+
+**The tone rules are enforced in code, not trusted.** `phrasing.ts` returns
+`null` for every zero and `StatTiles` renders only what survives, so a tile
+with nothing to say is *absent* rather than showing a nought. Bars scale to
+the week's own tallest day; h5's bands come from the person's own six months.
+`streak.longest` is read nowhere in the feature and nothing computes days
+until a streak breaks.
+
+`phrasing.ts` returns **i18n keys and params, never built strings** — the
+rounding is the logic, the wording is the locale's.
+
 ### Not built
 
-Progress (10), notifications (12), settings (14), web (15), release (16). Plus
-the rest of plan 11: T03, T04, T08, T09, T10.
+Notifications (12), settings (14), web (15), release (16). Plus the rest of
+plan 11: T03, T04, T08, T09, T10. Plan 10's T08 is **recommended for cutting**
+— see its Note (session 14).
 
 ---
 
@@ -328,26 +357,21 @@ gate — lives in a `.ts` module beside its component rather than inside it.
 **A rule that can only be checked by mounting a component tree is a rule that
 stops being checked.**
 
-### The sandbox cannot delete files or run git
+### The execution environment (re-establish this yourself)
 
-The mount blocks `unlink`, so `git` strands its lock files and refuses to run,
-and `tar` cannot overwrite an existing file. Write all the code, then emit a
-PowerShell script the user runs — see `progress/commit-session-{6..13}.ps1`.
-It commits one todo at a time.
+Session 13 could not delete files, run `git`, or run `vitest`. **Session 14
+could do all three**, plus `expo export`, from an ordinary Linux container. The
+`.ps1` commit scripts in this folder are historical; they exist because one
+sandbox could not run git, not because the project needs them.
 
-**Any `.ps1` you write must be ASCII-only.** Windows PowerShell 5.1 reads a
-script as ANSI unless it has a BOM, so an em dash in a here-string gets
-written into the repo doubly encoded. Check with:
+Run Pillar 5's checklist in your first ten minutes. Do not assume either
+handover is describing your machine.
+
+**If you cannot commit:** write all the code, then emit a script the owner
+runs. Any `.ps1` you write must be **ASCII-only** — Windows PowerShell 5.1
+reads a script as ANSI unless it has a BOM, so an em dash in a here-string
+lands in the repo doubly encoded. Check with:
 `python -c "print(sum(1 for b in open(p,'rb').read() if b>127))"`
-
-**`vitest` cannot run in the sandbox** and cannot be installed there either —
-there is no npm registry. Session 13's workaround, which is worth reusing:
-`node --experimental-strip-types` with a ~40-line `describe/it/expect` shim
-and a loader that resolves extensionless relative imports. It ran 59
-assertions. Not the real suite; enormously better than nothing.
-
-**`tsc` and `eslint` both hung on the device in session 13** with no output at
-all. `expo export` does not finish either. `expo prebuild` *does* work.
 
 ### Other hard rules
 
@@ -397,71 +421,64 @@ routes are actually in `apps/native/app/`. Read `src/app/` as `app/`.
 
 ## Open items, in priority order
 
-1. **Run the commit scripts, then establish whether the code compiles.**
-   Session 12's script has never been run and session 13's is new. Then
-   `pnpm check-types` — it hung in session 13 and produced nothing, so its
-   result is genuinely unknown, and four sessions of code have landed since
-   the last clean typecheck.
+1. **Nothing has rendered. Five sessions running, now eight features deep.**
+   47 screens are marked Built and the number a human has seen is zero.
+   `pnpm test` now passes 881 assertions, which raises confidence in the pure
+   logic and says nothing at all about whether a screen looks right.
 
-2. **Nothing has rendered. Four sessions running, now seven features deep.**
-   Plans 05, 06, 07, 08, 09, 11 and 13 have ticked boxes so you know the code
-   exists; they are honest only once it has run. `pnpm test` has **never
-   executed in any session** — not once, in thirteen sessions.
+2. **The tab bar is wrong on every tab, and it is a small fix.** The designs
+   draw a floating shelf — `#F1E6D7` / `#E4D6C1` in light, `#1C2530` /
+   `#2A3542` in dark, radius 28, `margin: 0 16px 30px`, height 78.
+   `app/(tabs)/_layout.tsx` renders a full-width bar in `background`. Visible
+   on all five tabs, so it is the highest-leverage cosmetic fix in the repo.
+   Cross-cutting, so give it its own commit.
 
 3. **Place the paywall holds.** `usePaywallHold` exists and no screen calls
-   it. Until `CaptureField`, `SessionScreen`, `PanicSession`,
-   `WorryWindowScreen` and `EditorScreen` each register one, plan 11 T12's
-   guarantee is a correct mechanism with nothing feeding it. Five one-line
-   additions, and the test that proves them is already written.
+   it. Five one-line additions — `CaptureField`, `SessionScreen`,
+   `PanicSession`, `WorryWindowScreen`, `EditorScreen` — and plan 11 T12's
+   guarantee becomes real rather than merely correct. The test is written.
 
 4. **Finish plan 11: T08, T09, T10** — the three call sites for `useLimit`.
    The hook, the sheet, the frequency cap and the gate all exist and are
-   tested; nothing calls them. This is the cheapest remaining work in the repo
-   and it closes the loop on everything session 13 built.
+   tested; nothing calls them. Cheapest remaining work in the repo.
 
-5. **T03 and T04 are blocked on you, the owner.** A RevenueCat project,
-   `calma_plus_monthly` / `calma_plus_annual` / `calma_plus_lifetime` in App
-   Store Connect and Play Console, the `plus` entitlement mapped to all three,
-   and the two public SDK keys in `apps/native/.env` as
-   `EXPO_PUBLIC_REVENUECAT_IOS_KEY` and `EXPO_PUBLIC_REVENUECAT_ANDROID_KEY`.
-   Until then the app runs correctly with no paywalls at all.
+5. **Plan 14, settings — the next screens.** 4 screens, and the copy already
+   exists in `settings.json`. Everything onboarding collects is uneditable,
+   there is no home for "erase everything" or j3 crisis resources, and plan 11
+   T04's restore row is blocked on it. `deleteBreathingSession` was built in
+   session 13 and is still called by nothing.
 
-6. **`panic.m4a` is missing and must be regenerated.** The delivered file has
-   a ~31 Hz fundamental with 90% of its energy below 300 Hz — no phone speaker
-   reproduces it. It is the one sound a person hears at their worst moment.
-   `soundManifest.panic.module` is `null` and the bank treats that as a silent
-   no-op, so nothing is blocked — but plan 07 T03 cannot be done until it
-   exists.
+6. **T03 and T04 are blocked on you, the owner.** A RevenueCat project, the
+   three products, the `plus` entitlement, and the two public SDK keys in
+   `apps/native/.env`. Until then the app runs correctly with no paywalls.
 
-7. **Plan 10, the progress dashboard.** Five screens, and the block that
-   proves B7's onboarding breath actually persisted. `packages/db` already
-   computes the aggregates, so it is more screen work than logic. Watch the
-   tone rules hard: no scoring, no comparison to previous weeks, no chart that
-   implies a target. h3 is the single most likely screen in the app to
-   accidentally congratulate someone.
+7. **`panic.m4a` is missing and must be regenerated.** ~31 Hz fundamental,
+   90% of its energy below 300 Hz — no phone speaker reproduces it. It is the
+   one sound a person hears at their worst moment. `soundManifest.panic.module`
+   is `null` and the bank treats that as a silent no-op, so nothing is blocked,
+   but plan 07 T03 cannot be done until it exists.
 
-8. **Plan 14, settings.** Everything onboarding collects — name, language,
-   worry window, breathing preference, notifications — is currently
-   uneditable, and there is no home for "erase everything" or for j3 crisis
-   resources. It is also where plan 11 T04's restore row belongs.
+8. **f8's italic aside is `#A99B8A` in dark** and renders `text-faint`
+   (`#8996A2`). One class, found in session 14's audit, left alone because it
+   is outside the H block.
 
-9. **d7's orb does not follow the numbers**, and its caption says it should.
-   See `plans/11` T11 for why the naive version is worse than the current one.
+9. **Plan 10 T08 should probably be cut.** "Completion rate" is a percentage
+   of the sessions you stopped early, and no design draws it. Owner's call —
+   see the Note (session 14).
 
-10. `systems/04-audio-and-haptics.md`'s ffmpeg command uses `loudnorm`, which
+10. **d7's orb does not follow the numbers**, and its caption says it should.
+    See `plans/11` T11 for why the naive version is worse.
+
+11. `systems/04-audio-and-haptics.md`'s ffmpeg command uses `loudnorm`, which
     normalises loudness rather than peak — it contradicts the doc's own
-    "-3 dBFS peak" requirement. The doc should be updated.
+    "-3 dBFS peak" requirement.
 
-11. `apps/native/app/+not-found.tsx` is still Expo template boilerplate:
-    untranslated English, an emoji, and `rounded-lg`/`text-4xl` classes from
-    outside the design system. It is also the only consumer of the leftover
-    `components/container.tsx`, which imports `expo-haptics` directly via
-    `theme-toggle.tsx` — against the rule above.
+12. `apps/native/app/+not-found.tsx` is still Expo template boilerplate:
+    untranslated English, an emoji, and classes from outside the design
+    system. It is the only consumer of the leftover `components/container.tsx`.
 
-12. No CI config. Parity and tone run as tests, so `pnpm test` covers it until
-    `plans/16`.
-
----
+13. No CI config. Everything now runs — `pnpm check-types && pnpm lint &&
+    pnpm test` is a working pipeline and nothing is stopping it being one.
 
 ## The test
 

@@ -1,3 +1,115 @@
+## Session 14
+
+**The toolchain works, the build was broken in four places, and H is built.**
+
+### The toolchain — and a correction to session 13's handover
+
+`START-HERE` said `check-types` and `eslint` hang with no output and that
+`expo export` never finishes. **None of that reproduces here.** From a clean
+`pnpm install`: typecheck clean across 7 packages in ~11s, lint clean,
+`expo export --platform android` produces an 8.6MB bundle in about a minute.
+
+**`pnpm test` ran for the first time in the project's history.** 881
+assertions, all green, including the 82-variable parity test that thirteen
+sessions had never executed. Session 13's sandbox limits were real; they were
+limits of that sandbox, not of this repo. Anyone picking this up should try
+the toolchain before believing a handover about it — including this one.
+
+### Four things stopping a development build
+
+Found by running it, not by reading it.
+
+1. **`EXPO_PUBLIC_SERVER_URL` was required and read by nothing.** `createEnv`
+   validates at module-eval, so the first import of `purchases.ts` threw on
+   any machine without a `.env` — and `.env` is gitignored, so that is every
+   fresh clone, every CI run and every EAS build. The one place it worked was
+   a developer's own checkout, which is the shape of failure that ships.
+   Calma has no network layer; the key is gone.
+2. `expo-asset` missing as a direct dep (required peer of `expo-audio`).
+3. `@calma/db` pinned `expo-crypto@~15.0.7` and `@calma/i18n` pinned
+   `expo-localization@~17.0.7` against an SDK 57 app. Two majors of a native
+   module resolve, one gets linked, the JS half expects the other.
+4. `react-native-mmkv` resolved its own `react@19.2.8` beside the app's
+   19.2.3 under pnpm's isolated linker. Two Reacts in one bundle.
+
+Also added `eas.json`, which did not exist, so `eas build --profile
+development` had nothing to read.
+
+### The token that matched nothing, and the test that now spans the gap
+
+`surfaceTileNeutral`/`borderTileNeutral` were `#F1EEE7`/`#E2DCD1`. **Neither
+hex occurs anywhere in the 116 delivered screens.** They were invented when i1
+was built and have been wrong for five sessions — on i1's neutral tile, and
+now on h1's and h4's "Writing" tile too.
+
+The parity test could never have caught it: it compares `colors.ts` with
+`global.css`, and both carried the same invented value. Two layers agreeing
+with each other while disagreeing with reality — Pillar 6's exact failure
+mode, and the missing check was the one spanning to the *designs*.
+
+`packages/tokens/src/designs.test.ts` is that check. It decodes the tracked
+bundles in `designs/html/` and asserts every flat hex in the token layer is a
+colour a designer actually drew: 199 assertions across both themes, the
+amber/clay/sage families and the h5 gradients. Made to fail once, as Pillar 6
+requires — reverting the tile token turns it red. It also carries a standing
+tamper check, so the haystack is proven to be a haystack on every run rather
+than once by hand.
+
+This is the check the table at the top of `START-HERE` has been asking for
+five sessions running. It is one-directional on purpose: a token layer is
+allowed to be incomplete, and catching *that* is what opening the design file
+for your screen is for.
+
+### H · Progress — five screens
+
+Nineteen new themed variables. `barGradient` is 180deg two-stop, not the
+button's 158deg three-stop: a bar is a quantity, not a control.
+
+The three captions did the structural work. "Never a zero" is why every
+`describe*` returns `null` and `StatTiles` renders only survivors — which
+forces a wrapping layout, because one tile has to look deliberate. "No goals,
+no rings, no comparisons" is why bars scale to the week's own tallest day, why
+h5 bands against the person's own six months, and why the streak medallion is
+three quarters of a ring. "Never 4 and 20:15" is why `phrasing.ts` returns
+i18n keys rather than strings.
+
+### The audit found four deviations in work I had just called done
+
+**Do this step. I was careful and it still found four.**
+
+- The SUDS dots were three buckets off `clay/amber/sage.base`; the design runs
+  an eight-stop ramp. That is "simplifying a fill" from the anti-pattern
+  table, and three buckets is also a traffic light with the middle lamp on.
+- Fixing it moved `dotColour` out of `SudsTrail.tsx` into `history.ts`,
+  because a function in a component file cannot be imported by a Node test.
+  The repo's own rule caught the repo.
+- The unselected segment label and h1's weekday letters were `muted`; the
+  designs carry their own value, now `label-quiet`.
+- h3's medallion edge is not `sage-mark` in dark.
+
+### Two findings NOT fixed, because they are outside H
+
+- **The tab bar is wrong on every tab.** The designs draw a floating shelf:
+  `#F1E6D7` / `#E4D6C1`, radius 28, `margin: 0 16px 30px`, height 78.
+  `_layout.tsx` renders a full-width bar in `background`. Cross-cutting, so it
+  wants its own commit rather than being smuggled in with a feature.
+- **f8's italic aside is `#A99B8A` in dark**, and renders `text-faint`
+  (`#8996A2`). Pre-existing, one class.
+
+### What is verified and what is not
+
+Typechecks, lints, 881 tests, and the android bundle exports with the new
+token hexes and routes present in it. **Nothing has rendered.** Plan 10 T10 is
+left unticked for exactly that reason — "verified on iOS and Android at 200%
+font scale" needs a device.
+
+### Next
+
+J · Settings (4 screens, plan 14). Copy already exists in `settings.json`;
+prefs, the repositories and `deleteBreathingSession` are all built and
+uncalled. But **run the app first** — 47 screens are marked Built and the
+count of screens a human has seen is still zero.
+
 # Session 13 — the G block finished, and the Plus block started
 
 **Plan 09 is 14/14.** T07, T08, T09, T10, T11, T13, T14 — the seven that were
