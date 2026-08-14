@@ -8,7 +8,7 @@ Android. This file is self-contained. Read it fully before touching anything.
 > and what "leaving the repo correct" means. This file is only *what* to build
 > next. That one is *how*.
 
-Last updated: end of session 15.
+Last updated: end of session 16.
 
 > **For "is screen X done?", read `progress/03-screens-status.md`.** It is all
 > 58 screens in one table — built, cut, or not started — plus the handover
@@ -45,13 +45,14 @@ when someone opens the design file.
 | 11 | `--worry` and `--write`, two whole grounds | Nobody had opened the f- or g- screens. |
 | 12 | `--panic` and `--ending`, two more | The panic screens rendered on `--immersive`. Two dim warm sands that are not the same dim warm sand. |
 | 13 | `--saved`, `--offer`, `--highlight`, and eleven more | `--saved` is #FBF4E7. `--lift` is #FBF4E9 and `--ending` is #FBF3E6. Three warm off-whites, two points apart, none of them the other two. |
+| 16 | **the tab shelf, which is three shelves** | Mixed against the ground it stands on — `bg`, `bgWorry`, `bgWrite`. The fifth time this exact shape has been missed. `chrome.test.ts` caught it. |
 | 15 | twenty-two for j1-j4, k1-k6 and the tab shelf | `designs.test.ts` caught an invented padlock colour mid-write, and the audit found four more in k1 and k3. The test is one session old and has now paid for itself twice. |
 | 14 | nineteen for h1-h5, **and two that were simply wrong** | `--surface-tile-neutral`/`--border-tile-neutral` were #F1EEE7/#E2DCD1. Neither hex occurs in any of the 116 screens. Invented in session 11, wrong for five sessions, and the parity test could never have caught it because both layers carried the same invented value. |
 
 **Assume the ground you need does not exist yet.** Check `global.css` against
 the design file before you write a single `bg-` class.
 
-There are now 125 themed variables and the parity test covers all of them, in
+There are now 129 themed variables and the parity test covers all of them, in
 `colors.ts`, `global.css` and `tailwind.ts`. **Change a colour in all three.**
 
 **And there is now a second test that the previous five sessions did not have.**
@@ -444,22 +445,22 @@ routes are actually in `apps/native/app/`. Read `src/app/` as `app/`.
    all about whether a screen looks right — session 14's audit found four
    deviations in H after a careful build, and session 15 found four more in K.
 
-2. **Four things exist and are called by nothing.** Each is a screen not
-   doing its job, and all four are small:
-   - `/settings` has no entry point. Four screens reachable only by route.
-   - k4 has no trigger: no lock, no `expo-local-authentication` (plan 14 T06).
+2. **Three things exist and are called by nothing**, and four j1 rows lead
+   nowhere. All of them are small:
    - `usePaywallHold` — five one-line additions, test already written.
    - `useLimit` — plan 11 T08, T09, T10.
    - `deleteBreathingSession`, built in session 13 and still uncalled.
+   - `/settings/name`, `/settings/answers`, `/settings/window` and
+     `/settings/appearance` are pushed to by j1 and do not exist.
 
 3. **Plan 12, notifications.** The last unbuilt feature. `permission.ts` is a
    stub returning `'unavailable'`, b10 is built on top of it, k5's copy is
    written. It unblocks the rest of plan 14 T07 and T11.
 
-4. **Anything SHARED needs its own audit.** The tab bar was wrong on all five
-   tabs for five sessions and no screen's audit caught it, because the audit
-   step looks at screens and the bar is furniture. Same applies to the FAB and
-   anything else that appears on top of everything.
+4. **Anything SHARED needs its own audit**, and `packages/tokens/chrome.test.ts`
+   is now that audit for the shelf and the FAB. Extend it rather than trusting
+   a per-screen pass: the tab bar was wrong on all five tabs for five sessions
+   precisely because the audit step looks at screens and furniture is not one.
 
 5. **T03 and T04 are blocked on you, the owner.** A RevenueCat project, the
    three products, the `plus` entitlement, and two public SDK keys in

@@ -14,10 +14,11 @@ Preferences, privacy, and the honest bits.
   `src/app/settings/`. Sections follow j1's design (Breathing · Worries ·
   This phone) plus You, Sound & feel and Calma Plus, rather than the eight
   this todo lists — j1 draws three and the others are where the remaining
-  rows have to live. **Not reachable from Home yet**: c1's design has no
-  settings affordance and inventing one on the app's calmest screen is a
-  decision for the owner, not a side effect of this plan. Currently reachable
-  only by route.
+  rows have to live. **Note (session 16):** now reachable from Home. c1 draws no
+  affordance, so `SettingsButton` is invented — 24px of drawn rules in a 44px
+  target, top-right, in `muted`, displacing nothing. Not a cog. This todo's
+  "Done when" asked for it, so the placement is the plan's; the drawing is
+  session 16's and is reversible in one file.
 - **Commit:** `feat(settings): build settings screen shell`
 - **Depends on:** `05-app-shell` T03
 - **Touches:** `apps/native/src/app/settings/index.tsx`, `apps/native/src/features/settings/*`
@@ -76,7 +77,19 @@ Preferences, privacy, and the honest bits.
 
 ## T06 — Add sound, haptics, and theme toggles
 
-- [x] `pending-T06`
+- [x] `pending-T06` — sound, haptics and the lock. Theme is not built.
+- **Note (session 16):** the **lock** half is done: `lockEnabled` in prefs
+  (off by default), a j1 row, `expo-local-authentication`, and `LockGate` on
+  the Write tab, which is what finally gives k4 a trigger.
+
+  **The scope is enforced, not promised.** `lock.ts` holds an allowlist and
+  `lock.test.ts` asserts `/panic`, `/session/*`, `/(tabs)/breathe` and
+  `/settings/crisis` stay reachable while locked. Rule 3 is the whole reason
+  this feature is dangerous; an unavailable authenticator means no lock rather
+  than an impassable one.
+
+  Theme (system/light/dark) and the orb-theme row are **not built** — the
+  appearance row exists and its picker screen does not.
 - **Commit:** `feat(settings): add sound, haptics and theme toggles`
 - **Depends on:** T01, `04-audio-haptics` T07
 - **Touches:** `apps/native/src/features/settings/FeelRows.tsx`
@@ -136,17 +149,21 @@ Preferences, privacy, and the honest bits.
 
 ## T11 — Add erase everything
 
-- [ ]
+- [x] `pending-T11`
 - **Note (session 15):** clears all three MMKV instances and re-seeds
   `defaultPrefs` (an empty prefs record is not a first launch). Twelve
   assertions in `__tests__/erase.test.ts`, including that nothing survives.
 
-  **Two of the five things this todo lists are NOT done, and neither is
-  forgotten:** the SecureStore key is not destroyed — `key.ts` exposes no
-  delete, and adding one is a storage-layer change with its own test surface
-  — and notifications are not cancelled, because none are ever scheduled
-  while plan 12 is a stub. Neither leaves user content on the device, which
-  is the promise the screen makes. **T11 stays unticked until both land.**
+  **Note (session 16): both remaining clauses are done, and session 15's
+  reason for skipping them was wrong.** `destroyEncryptionKey` was already in
+  `key.ts`, written alongside the key and never called — "exposes no delete"
+  was a guess, and reading the file would have cost less than the note did.
+  It also had a bug: the delete used a different keychain accessibility
+  constant from the write, which on iOS can leave the item in place.
+
+  Order is asserted: cancel, clear, then the key. `cancelAllNotifications` is
+  an honest stub until plan 12 lands, and no call site will change when it
+  does. Four new assertions cover the ordering and both failure paths.
 - **Commit:** `feat(settings): add erase everything`
 - **Depends on:** T10, `03-storage-layer` T03
 - **Touches:** `apps/native/src/features/settings/EraseRow.tsx`

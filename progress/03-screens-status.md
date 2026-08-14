@@ -204,14 +204,14 @@ Plan 14 is 6 of 11. T02 is blocked on i18n; T05, T08, T09 and T11 are open.
 | j3 crisis resources | **Built** | `features/settings/CrisisScreen.tsx` at `/settings/crisis` |
 | j4 delete everything | **Built** | `features/settings/DeleteSheet.tsx`, inside j2 |
 
-> **NOTHING LINKS TO `/settings` YET.** c1's design draws no settings
-> affordance, and inventing one on the app's calmest screen is the owner's
-> call rather than a side effect of this plan. Reachable by route only.
+> **Reachable from Home** as of session 16, via a drawn 24px mark in the
+> top-right. c1 draws no affordance, so the control is invented; `plans/14`
+> T01's "Done when" asked for Home, so the placement is the plan's.
 
-> Erase clears all three MMKV instances and re-seeds `defaultPrefs`, with
-> twelve assertions behind it. It does **not** destroy the SecureStore key or
-> cancel notifications — see the Note (session 15) in `plans/14` T11. Neither
-> leaves user content on the device.
+> Erase clears all three MMKV instances, **destroys the SecureStore key**, and
+> calls a notification-cancel that is an honest stub until plan 12. Order is
+> asserted: cancel, clear, then the key — the other order leaves an encrypted
+> blob nobody can open. Sixteen assertions.
 
 > Two rows on j2 are **drawn and inert**: iCloud backup and export. Both need
 > machinery that does not exist, and a toggle that silently does nothing is
@@ -227,7 +227,7 @@ component nobody renders is a state that has not been handled.
 | k1 empty state | **Built** | `features/states/EmptyPage.tsx`, rendered by `EntryList` |
 | k2 offline | **Built** | `features/states/OfflineNote.tsx`, at the top of Home |
 | k3 session interrupted | **Built** | `features/states/SessionInterrupted.tsx`, on `SessionScreen`'s AppState change |
-| k4 locked | **Built, unreachable** | `features/states/LockedScreen.tsx`. No lock exists to trigger it — see below |
+| k4 locked | **Built** | `features/states/LockedScreen.tsx`, gated by `settings/LockGate.tsx` on the Write tab |
 | k5 notification | **Copy built** | `notifications.json`. Delivery is plan 12's |
 | k6 returning | **Built** | `features/states/ReturningScreen.tsx`, replacing Home for one launch |
 
@@ -237,9 +237,11 @@ component nobody renders is a state that has not been handled.
 > lock; "Unlock" is the quiet link. Getting that the usual way round would be
 > the worst decision available in this app.
 
-> **k4 has no trigger yet.** j1's "Lock with Face ID" row is not built and
-> there is no `expo-local-authentication` dependency. The screen is correct
-> and nothing calls it; that is plan 14 T06's remaining half.
+> **k4's trigger landed in session 16.** j1's "Lock with Face ID" row,
+> `expo-local-authentication`, and `LockGate` on the Write tab — the writing
+> and nothing else. `lock.ts` holds the allowlist and `lock.test.ts` asserts
+> that `/panic`, `/session/*`, `/(tabs)/breathe` and `/settings/crisis` stay
+> reachable while locked, so rule 3 is enforced rather than promised.
 
 > k6 fires at **21 days**, not a month — three weeks is already past the point
 > where someone wonders whether their writing survived. Six months and three
@@ -266,14 +268,15 @@ done. A device will find things neither audit could.
 
 None of these is a screen; all of them are a screen not doing its job.
 
-- **Nothing links to `/settings`.** Four screens, reachable only by typing a
-  route. c1 draws no affordance, so this needs an owner's decision about
-  where it goes.
-- **k4 has no trigger.** No lock, no `expo-local-authentication`. Plan 14 T06.
+- ~~Nothing links to `/settings`~~ — done, session 16.
+- ~~k4 has no trigger~~ — done, session 16.
 - **`usePaywallHold` is called by nothing.** Five one-line additions and plan
   11 T12's guarantee becomes real. The test is already written.
 - **`useLimit` is called by nothing.** Plan 11 T08, T09, T10.
-- **`deleteBreathingSession` is called by nothing**, two sessions on.
+- **`deleteBreathingSession` is called by nothing**, three sessions on.
+- **Four j1 rows lead to screens that do not exist**: `/settings/name`,
+  `/settings/answers`, `/settings/window`, `/settings/appearance`. Plan 14
+  T02, T03 (partly), T04 and T06's theme half.
 
 ### 3. Plan 12, notifications
 

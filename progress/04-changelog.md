@@ -1,3 +1,73 @@
+## Session 16
+
+**Three gaps closed, and two recurring mistakes turned into machinery.**
+
+### First: the merge did not take
+
+PR #2 merged an empty branch. `git diff` between the two merge commits is
+zero bytes, and `main` still had no `features/progress`, no `eas.json`, no
+`designs.test.ts`, and the `EXPO_PUBLIC_SERVER_URL` boot crash. Worth a check
+next time: **compare content, not commit SHAs** — `git am` rewrites SHAs, so
+"is my commit an ancestor of main" answers the wrong question.
+
+### The three gaps
+
+**`/settings` had no entry point.** c1 draws no affordance, and `plans/14`
+T01's "Done when" already said "reachable from Home" — so the placement was
+the plan's decision and only the drawing was mine. 24px of rules in a 44px
+target, top-right, in `muted`, displacing nothing. Not a cog: a cog is
+machinery, and this app is not a machine.
+
+**k4 had no trigger.** `expo-local-authentication`, a j1 row, and `LockGate`
+on the Write tab. The scope is the dangerous part, so it is enforced rather
+than promised: `lock.ts` holds an allowlist and `lock.test.ts` asserts that
+`/panic`, `/session/*`, `/(tabs)/breathe` and `/settings/crisis` all stay
+reachable while locked. An unavailable authenticator means **no** lock rather
+than an impassable one — a phone whose biometrics were removed must not
+become a phone whose owner cannot reach their own journal.
+
+**Erase did not destroy the key.** And session 15's reason for skipping it
+was simply wrong: `destroyEncryptionKey` was already in `key.ts`, written
+alongside the key and never called. "Exposes no delete" was a guess, and
+reading the file would have cost less than writing the note did. It also had
+a real bug — the delete used a different keychain accessibility constant from
+the write, which on iOS can leave the item in place.
+
+### Two findings, made mechanical
+
+**"Pure logic in a .ts file" is now a lint rule.** It had been written down
+for two sessions and broken in both, by the person writing it down. The rule
+found a third instance on its first run — `phrase` in `WeekCard.tsx`, which
+neither of the two audits looking for exactly this had caught. Two sessions
+of documentation did not stop me; the rule did, in under a second.
+
+**The furniture now has an audit.** `chrome.test.ts` reads the designs and
+pins the shelf's and the FAB's geometry as well as their colour. It failed on
+its first run and it was right: **there are three shelves, not one.** The
+shelf is mixed against the ground it stands on — `bg`, `bgWorry`, `bgWrite` —
+exactly as `surfaceQuiet` and `surfaceImmersive` are.
+
+That is the **fifth** time this project has tokenised a ground-varying
+surface as a single value: immersive (9), quiet (10), worry and write (11),
+panic (12), shelf (16). The pattern is now written where the next person will
+hit it, in `colors.ts`: when a surface appears on more than one ground, check
+it on every ground before naming it.
+
+Both findings had the same shape — a true rule, documented, and broken
+anyway. Documentation is where a rule goes to be agreed with; a test or a
+lint rule is where it goes to be obeyed.
+
+### What is verified and what is not
+
+Typecheck, lint, 1036 assertions, 8.7MB android bundle. **Nothing has
+rendered.** Sixteen sessions.
+
+### Next
+
+Run it. Then the three remaining uncalled things (`usePaywallHold`,
+`useLimit`, `deleteBreathingSession`), the four j1 rows whose destinations do
+not exist yet, and plan 12.
+
 ## Session 15
 
 **Every designed screen now exists. 57 built, 1 cut, 0 seen.**
