@@ -340,6 +340,110 @@ export const light = {
    * 15px against the segment track.
    */
   labelQuiet: '#5F6C78',
+
+  /* ---- SETTINGS (j1-j4) AND STATES (k1-k6) ------------------------ */
+
+  /**
+   * The rule BETWEEN rows inside a settings card (j1).
+   *
+   * Not `separatorRow` (#ECE2D4), which is i2's and h4's rule standing on the
+   * ground. This one is mixed against `surfaceWarm` and is a shade warmer; the
+   * two are three points apart and used on adjacent screens.
+   */
+  rowSeparator: '#F2E8D8',
+
+  /**
+   * The switch.
+   *
+   * `toggleTrackOff` is a warm sand, NOT a grey and never a red-to-green pair.
+   * j1's caption: "every switch says what it does to you, not what it
+   * toggles". An off switch is a thing that is not happening, not a thing that
+   * is wrong. The knob keeps its near-white in both states in light mode; in
+   * dark the off knob dims, because a bright knob on a dim track reads as on.
+   */
+  toggleTrackOff: '#E9DFCF',
+  toggleKnob: '#FFFDF8',
+  toggleKnobOff: '#FFFDF8',
+
+  /** The disclosure chevron. Quieter than any text colour on the row. */
+  chevron: '#8A939C',
+
+  /**
+   * j4's sheet, and the backdrop it sits on.
+   *
+   * A deeper backdrop than `--backdrop` (0.28): this is the one sheet in the
+   * app that must not be dismissed by accident, so the screen behind recedes
+   * further than it does under an ordinary overlay.
+   */
+  sheetBorder: '#EFE4D2',
+  sheetGrabber: '#E4D8C8',
+  backdropSheet: 'rgba(42,54,66,0.32)',
+
+  /**
+   * "Delete everything", and it is NOT RED.
+   *
+   * A warm burnt clay. `systems/03-design-system.md` forbids red outright and
+   * j4's caption is explicit — "the destructive ones are stated once, calmly,
+   * and never dressed in red". The weight comes from the sentence above the
+   * button ("They'll be gone from this phone for good"), not from the colour.
+   *
+   * Note the destructive button is also the QUIETER of the two: "Keep them"
+   * gets the filled surface and this gets the ground with a hairline. The
+   * dangerous option is never the easy one to hit, and it is never the one
+   * the eye lands on first.
+   */
+  destructive: '#7A4A3A',
+  surfaceDestructive: '#FBF7F1',
+  borderDestructive: '#E0D4C2',
+
+  /**
+   * k1's empty-page illustration.
+   *
+   * A drawn page with three ruled lines, not an icon and not a spot
+   * illustration. The K-group caption: "these are where a calm app usually
+   * turns into software". A shrugging-character illustration is exactly that.
+   */
+  surfaceEmptyPage: '#F5EDE1',
+  borderEmptyPage: '#EBDFCC',
+  emptyPageRule: '#E4D6C0',
+
+  /**
+   * k3's supporting line, on the immersive ground.
+   *
+   * Warm, like `textPanic` above it, rather than the cool `textSecondary`.
+   * The interrupted session keeps the room it was already in.
+   */
+  textImmersive: '#33291C',
+  textImmersiveSecondary: '#5C5343',
+
+  /** k4's padlock shackle. A drawn outline, in the ground's own warm grey. */
+  lockShackle: '#D3C3AC',
+
+  /**
+   * THE TAB BAR, WHICH IS A FLOATING SHELF AND NOT A BAR.
+   *
+   * `margin: 0 16px 30px`, radius 28, height 78, with a shadow and an inset
+   * highlight along its top edge. Every screen in the design set that has a
+   * tab bar draws it this way; `_layout.tsx` rendered a full-width bar in
+   * `background` for five sessions, on all five tabs at once.
+   *
+   * Note this is NOT `segmentTrack`, despite sharing a hex in light. They
+   * part company in dark (#1C2530 vs #182028), and one is a control while the
+   * other is furniture.
+   */
+  shelf: '#F1E6D7',
+  shelfBorder: '#E4D6C1',
+  shelfHighlight: 'rgba(255,253,248,0.9)',
+
+  /**
+   * The serif italic aside, in the one place it appears (f8, h3).
+   *
+   * `textFaint`'s value in light and a WARM grey in dark, where `textFaint`
+   * is cool (#8996A2). "How does that feel?" is the app's quietest sentence
+   * and the only italic in the product; rendering it in UI grey at 2am is the
+   * same category of mistake as setting an emotional line in the sans face.
+   */
+  asideWarm: '#7A6A5C',
   /** h3's card, which stands on `bgLift` and is the app's only sage card. */
   surfaceStreakNote: '#F3F3EC',
   borderStreakNote: '#DEE3D6',
@@ -550,6 +654,33 @@ export const dark = {
   /** Not `sageMark` here. See the note in the light block. */
   sageMarkEdge: '#6E8062',
   labelQuiet: '#93A0AC',
+
+  /* ---- SETTINGS (j1-j4) AND STATES (k1-k6) ------------------------ */
+  rowSeparator: '#26313D',
+  toggleTrackOff: '#2C3845',
+  toggleKnob: '#F7F1E6',
+  /** Dims here, unlike light: a bright knob on a dim track reads as on. */
+  toggleKnobOff: '#9FAAB5',
+  chevron: '#7E8B97',
+  sheetBorder: '#2B3644',
+  sheetGrabber: '#33404E',
+  backdropSheet: 'rgba(6,10,14,0.55)',
+  /** Still not red. A warm dusty rose against navy. */
+  destructive: '#D9A08A',
+  surfaceDestructive: '#18212B',
+  borderDestructive: '#2A3441',
+  surfaceEmptyPage: '#1B242E',
+  borderEmptyPage: '#29333F',
+  emptyPageRule: '#2D3844',
+  textImmersive: '#EAE2D7',
+  textImmersiveSecondary: '#A0ACB8',
+  lockShackle: '#3A4753',
+  /** Not `segmentTrack` (#182028). See the note in the light block. */
+  shelf: '#1C2530',
+  shelfBorder: '#2A3542',
+  shelfHighlight: 'rgba(234,226,215,0.06)',
+  /** Warm, where `textFaint` is cool. The one italic in the app. */
+  asideWarm: '#A99B8A',
   surfaceStreakNote: '#1F2721',
   borderStreakNote: '#2E3729',
   surfacePlus: '#1E2620',
