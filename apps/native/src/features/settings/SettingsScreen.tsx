@@ -1,3 +1,4 @@
+import { LANGUAGES, SYSTEM_LOCALE, languageFor } from '@calma/i18n';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { ScrollView, View } from 'react-native';
@@ -7,6 +8,7 @@ import { usePrefsStore } from '@/src/stores/prefs';
 import { Screen } from '@/src/ui/Screen';
 import { Text } from '@/src/ui/Text';
 
+import { offersLanguageChoice } from './languageRow';
 import { PlusSection } from './PlusSection';
 import { LinkRow, Section, ToggleRow, ValueRow } from './Rows';
 import { PATTERN_KEY, resolveUsualPattern } from './usualRhythm';
@@ -55,6 +57,8 @@ export function SettingsScreen() {
   const rhythm =
     PATTERN_KEY[resolveUsualPattern(prefs.defaultPattern, prefs.customRatio)];
 
+  const offersLanguage = offersLanguageChoice(LANGUAGES);
+
   return (
     <Screen>
       <ScrollView
@@ -73,6 +77,25 @@ export function SettingsScreen() {
           conclusion the app drew about them.
         */}
         <Section title={t('sections.you')}>
+          {/*
+            Absent while English ships alone, because a picker whose two
+            answers both resolve to English is a setting that does nothing —
+            and this screen's rule since session 18 is that no row leads
+            nowhere. The condition is `offersLanguageChoice`, so the row
+            appears by itself the day a second locale folder lands.
+          */}
+          {offersLanguage ? (
+            <ValueRow
+              label={t('language')}
+              hint={t('languageHint')}
+              value={
+                prefs.locale === SYSTEM_LOCALE
+                  ? t('languageSystem')
+                  : languageFor(prefs.locale)?.nativeName ?? t('languageSystem')
+              }
+              onPress={() => router.push('/settings/language')}
+            />
+          ) : null}
           <LinkRow
             label={t('rows.answers')}
             hint={t('rows.answersHint')}

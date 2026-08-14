@@ -28,10 +28,32 @@ Preferences, privacy, and the honest bits.
 
 ## T02 — Add the language preference
 
-- [ ]
+- [x] `ad4c617`
 - **Note (session 15):** **not built.** Blocked on `18-i18n` T13, which makes
   b2 reachable; only English ships, so a language row today offers one
   option. The copy already exists in `settings.json`.
+- **Note (session 19):** built, along with `18-i18n` T13, and **the row is
+  conditional rather than absent**. `offersLanguageChoice(LANGUAGES)` is pure
+  and false today: with English alone, "Match my phone" and "English" both
+  resolve to English, so the row would be a question with two identical
+  answers — which is exactly the kind of row the owner's standing instruction
+  removes. The condition reads the registry, so the row appears by itself the
+  day a locale folder lands, which is what `supported.ts` promises ("never a
+  code change anywhere else").
+
+  **`LanguagePicker.tsx` is shared with no variant prop between the two call
+  sites.** Not a `showSystem` flag, not a `compact` mode — onboarding's b2 and
+  `/settings/language` render the identical component. Two copies of a list of
+  languages drift the first time one is added, and they drift silently.
+
+  **"Match my phone" stores the `'system'` sentinel and names what it resolves
+  to.** b2 badges the detected language instead; the sentinel is the honest
+  version of that badge, because it keeps following the phone rather than
+  snapshotting one answer. Recorded as a knowing divergence in `Language.tsx`.
+
+  Changing applies immediately via `applyLocale`, and prefs are written *after*
+  the language changes so a locale that fails to load cannot leave prefs
+  claiming one the app is not showing.
 - **Commit:** `feat(settings): add language preference row`
 - **Depends on:** T01, `18-i18n` T13
 - **Touches:** `apps/native/src/features/settings/LanguageRow.tsx`
