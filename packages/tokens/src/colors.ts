@@ -430,10 +430,32 @@ export const light = {
    * Note this is NOT `segmentTrack`, despite sharing a hex in light. They
    * part company in dark (#1C2530 vs #182028), and one is a control while the
    * other is furniture.
+   *
+   * THERE ARE THREE SHELVES, NOT ONE, AND IT IS THE SAME LESSON AGAIN.
+   *
+   * The shelf is mixed against the ground it stands on, exactly as
+   * `surfaceQuiet`, `surfaceImmersive` and `surfaceWorryQuiet` are. Session 16
+   * shipped one shelf and `chrome.test.ts` caught it on its first run:
+   *
+   *   `bg`      c1, d1, h1, g7, k1, k2, k6   #F1E6D7 / #1C2530
+   *   `bgWorry` f1                            #F2E6D6 / #22262E
+   *   `bgWrite` g0, e1                        #F3E9D6 / #1D262F
+   *
+   * This is the FIFTH time this project has found a surface that varies by
+   * ground and tokenised it as one value first (immersive in 9, quiet in 10,
+   * worry and write in 11, panic in 12). The rule that keeps being relearned:
+   * when a surface appears on more than one ground, check it on every ground
+   * before naming it.
    */
   shelf: '#F1E6D7',
   shelfBorder: '#E4D6C1',
   shelfHighlight: 'rgba(255,253,248,0.9)',
+  /** The shelf standing on the worry ground (f1). */
+  shelfWorry: '#F2E6D6',
+  shelfWorryBorder: '#E3D1BB',
+  /** The shelf standing on the writing ground (g0, e1). */
+  shelfWrite: '#F3E9D6',
+  shelfWriteBorder: '#E6D9C0',
 
   /**
    * The serif italic aside, in the one place it appears (f8, h3).
@@ -679,6 +701,10 @@ export const dark = {
   shelf: '#1C2530',
   shelfBorder: '#2A3542',
   shelfHighlight: 'rgba(234,226,215,0.06)',
+  shelfWorry: '#22262E',
+  shelfWorryBorder: '#333844',
+  shelfWrite: '#1D262F',
+  shelfWriteBorder: '#2D3844',
   /** Warm, where `textFaint` is cool. The one italic in the app. */
   asideWarm: '#A99B8A',
   surfaceStreakNote: '#1F2721',

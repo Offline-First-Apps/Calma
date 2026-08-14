@@ -1,5 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
-import { Tabs } from 'expo-router';
+import { Tabs, useSegments } from 'expo-router';
 import { dark as darkTokens, light as lightTokens } from '@calma/tokens';
 import { useThemeColor } from 'heroui-native';
 import { useTranslation } from 'react-i18next';
@@ -36,7 +36,7 @@ export default function TabsLayout() {
   // The old value resolved to undefined, which React Navigation reads as
   // "use the default blue", so all four inactive tabs were tinted by a
   // library default rather than by the palette.
-  const [active, inactive] = useThemeColor(['accent', 'muted']);
+  const [activeTint, inactiveTint] = useThemeColor(['accent', 'muted']);
 
   /*
    * THE TAB BAR IS A FLOATING SHELF, NOT A BAR, AND IT WAS WRONG ON ALL FIVE
@@ -60,16 +60,39 @@ export default function TabsLayout() {
   // Straight from the token module, not `useThemeColor`: heroui's hook only
   // knows heroui's own names, and every Calma-only colour is invisible to it.
   const { theme } = useUniwind();
-  const { shelf, shelfBorder, shelfHighlight } =
-    theme === 'dark' ? darkTokens : lightTokens;
+  const tokens = theme === 'dark' ? darkTokens : lightTokens;
+
+  /*
+   * THREE SHELVES, NOT ONE.
+   *
+   * The shelf is mixed against the ground it stands on, the same way
+   * `surfaceQuiet`, `surfaceImmersive` and `surfaceWorryQuiet` are — so the
+   * Worries tab and the Write tab each carry their own pair. Session 16
+   * shipped a single shelf and `chrome.test.ts` caught it on its first run.
+   *
+   * `useSegments` rather than a per-screen option, because `tabBarStyle` is
+   * set once on the navigator: reading the active route here is what lets one
+   * declaration follow the ground underneath it.
+   */
+  const segments = useSegments();
+  const activeTab = segments[segments.length - 1];
+
+  const { shelf, shelfBorder } =
+    activeTab === 'worries'
+      ? { shelf: tokens.shelfWorry, shelfBorder: tokens.shelfWorryBorder }
+      : activeTab === 'write'
+        ? { shelf: tokens.shelfWrite, shelfBorder: tokens.shelfWriteBorder }
+        : { shelf: tokens.shelf, shelfBorder: tokens.shelfBorder };
+
+  const shelfHighlight = tokens.shelfHighlight;
 
   return (
     <View className="flex-1">
       <Tabs
         screenOptions={{
           headerShown: false,
-          tabBarActiveTintColor: active,
-          tabBarInactiveTintColor: inactive,
+          tabBarActiveTintColor: activeTint,
+          tabBarInactiveTintColor: inactiveTint,
           tabBarStyle: {
             position: 'absolute',
             left: SHELF_INSET,

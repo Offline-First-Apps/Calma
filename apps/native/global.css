@@ -234,6 +234,10 @@
       --lock-shackle: #D3C3AC;
       --shelf: #F1E6D7;
       --shelf-border: #E4D6C1;
+      --shelf-worry: #F2E6D6;
+      --shelf-worry-border: #E3D1BB;
+      --shelf-write: #F3E9D6;
+      --shelf-write-border: #E6D9C0;
       --shelf-highlight: rgba(255, 253, 248, 0.9);
       --aside-warm: #7A6A5C;
       --surface-streak-note: #F3F3EC;
@@ -434,6 +438,10 @@
       --lock-shackle: #3A4753;
       --shelf: #1C2530;
       --shelf-border: #2A3542;
+      --shelf-worry: #22262E;
+      --shelf-worry-border: #333844;
+      --shelf-write: #1D262F;
+      --shelf-write-border: #2D3844;
       --shelf-highlight: rgba(234, 226, 215, 0.06);
       --aside-warm: #A99B8A;
       --surface-streak-note: #1F2721;
@@ -567,6 +575,10 @@
   --color-lock-shackle: var(--lock-shackle);
   --color-shelf: var(--shelf);
   --color-shelf-border: var(--shelf-border);
+  --color-shelf-worry: var(--shelf-worry);
+  --color-shelf-worry-border: var(--shelf-worry-border);
+  --color-shelf-write: var(--shelf-write);
+  --color-shelf-write-border: var(--shelf-write-border);
   --color-shelf-highlight: var(--shelf-highlight);
   --color-aside-warm: var(--aside-warm);
   --color-surface-streak-note: var(--surface-streak-note);

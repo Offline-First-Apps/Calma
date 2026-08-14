@@ -5,6 +5,7 @@ import { Text } from '@/src/ui/Text';
 
 import { Bars } from './Bars';
 import { TileIcon } from './TileIcon';
+import { phrase } from './phrase';
 import { type Phrase, weekOpener } from './phrasing';
 import { type WeekShape, barFractions } from './week';
 
@@ -60,10 +61,3 @@ export function WeekCard({
   );
 }
 
-/** i18next's `t` with a `Phrase`, kept in one place so the cast is not spread. */
-export function phrase(
-  t: (key: string, params?: Record<string, unknown>) => string,
-  value: Phrase,
-): string {
-  return t(value.key, value.params);
-}

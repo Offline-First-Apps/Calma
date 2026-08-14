@@ -14,7 +14,7 @@ import {
   describeWorries,
   describeWriting,
 } from './phrasing';
-import { phrase } from './WeekCard';
+import { phrase } from './phrase';
 
 /**
  * h1's four tiles.

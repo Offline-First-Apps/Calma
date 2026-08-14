@@ -7,7 +7,7 @@ import { Text } from '@/src/ui/Text';
 import { Bars } from './Bars';
 import { TileIcon } from './TileIcon';
 import { type TileKind } from './TileIcon';
-import { phrase } from './WeekCard';
+import { phrase } from './phrase';
 import {
   type Phrase,
   describeBreathing,

@@ -128,6 +128,22 @@ export const literalCopyBoundary = {
   },
 };
 
+/**
+ * Pure logic lives in a `.ts` file, or it cannot be tested.
+ *
+ * The native test runner is pure Node with no renderer, so anything exported
+ * from a file containing JSX is unreachable from a test. Sessions 14 and 15
+ * each broke this once and only found out when the test refused to load; this
+ * catches it while the code is being written instead.
+ */
+export const testableLogicBoundary = {
+  files: ['apps/native/src/**/*.tsx'],
+  plugins: { calma },
+  rules: {
+    'calma/no-logic-in-component-files': 'error',
+  },
+};
+
 /** The whole boundary set, in the order the root config applies it. */
 export default [
   ignores,
@@ -135,4 +151,5 @@ export default [
   mmkvBoundary,
   domainBoundary,
   literalCopyBoundary,
+  testableLogicBoundary,
 ];
