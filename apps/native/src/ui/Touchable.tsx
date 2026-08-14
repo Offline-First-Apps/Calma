@@ -33,6 +33,30 @@ const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
  * NO STATE IN ZUSTAND, EVER (D-004). A store write during an inhale is a
  * dropped frame somebody can feel.
  *
+ * WHY `createAnimatedComponent` OVER A UNIWIND COMPONENT IS SAFE HERE, SINCE
+ * IT LOOKS LIKE IT SHOULD NOT BE.
+ *
+ * `Pressable` imported from `react-native` is not React Native's — uniwind's
+ * metro resolver rewrites the specifier to `uniwind/components`, and what
+ * arrives is a plain function component that reads `className`. Wrapping a
+ * function component in `createAnimatedComponent` is normally the shape that
+ * silently fails to attach a ref.
+ *
+ * It is fine because it is the same shape the whole app already runs on. That
+ * resolver deliberately routes Reanimated's own internal `react-native`
+ * imports to uniwind too (it excludes node_modules from the rewrite EXCEPT
+ * for `Animated` paths), so `Animated.View` is itself
+ * `createAnimatedComponent` over a uniwind function component — which is what
+ * the orb, the phase label and every `Enter` in the app are built on. This is
+ * one level up from that, not a new arrangement.
+ *
+ * The degradation is also gentle if that ever changes: `className` still
+ * reaches uniwind's Pressable and the styling is unaffected. Only the press
+ * animation would stop.
+ *
+ * UNVERIFIED ON A DEVICE, like everything else here. If presses do not
+ * animate on first run, this comment is where to start.
+ *
  * THE ONE PLACE THIS IS NOT USED IS THE PANIC FAB.
  *
  * `PanicFab` has its own pulse and its own reasons, and layering a press
