@@ -1,4 +1,9 @@
-import { LANGUAGES, SYSTEM_LOCALE, languageFor } from '@calma/i18n';
+import {
+  LANGUAGES,
+  SYSTEM_LOCALE,
+  formatWindowTime,
+  languageFor,
+} from '@calma/i18n';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { ScrollView, View } from 'react-native';
@@ -12,6 +17,7 @@ import { offersLanguageChoice } from './languageRow';
 import { PlusSection } from './PlusSection';
 import { LinkRow, Section, ToggleRow, ValueRow } from './Rows';
 import { PATTERN_KEY, resolveUsualPattern } from './usualRhythm';
+import { windowRange } from './windowRange';
 
 /**
  * j1 — Settings.
@@ -40,7 +46,7 @@ import { PATTERN_KEY, resolveUsualPattern } from './usualRhythm';
  * when their destinations do (plan 14 T02-T05, T08).
  */
 export function SettingsScreen() {
-  const { t } = useTranslation(['settings', 'breathing']);
+  const { t, i18n } = useTranslation(['settings', 'breathing']);
   const router = useRouter();
   const repositories = useRepositories();
   const prefs = usePrefsStore((state) => state.prefs);
@@ -77,6 +83,11 @@ export function SettingsScreen() {
           conclusion the app drew about them.
         */}
         <Section title={t('sections.you')}>
+          <ValueRow
+            label={t('rows.name')}
+            value={prefs.name ?? t('rows.nameUnset')}
+            onPress={() => router.push('/settings/name')}
+          />
           {/*
             Absent while English ships alone, because a picker whose two
             answers both resolve to English is a setting that does nothing —
@@ -127,6 +138,18 @@ export function SettingsScreen() {
         </Section>
 
         <Section title={t('sections.worries')}>
+          {/* One value, not a time plus a length: nobody thinks of their
+              window as "20:00" plus "20 minutes". `windowRange` is pure. */}
+          <ValueRow
+            label={t('rows.window')}
+            value={windowRange(
+              prefs.worryWindowTime,
+              prefs.worryWindowMinutes,
+              i18n.language,
+              formatWindowTime,
+            )}
+            onPress={() => router.push('/settings/window')}
+          />
           {/*
             This toggle NEVER fires the OS dialog. A permission can only be
             spent once, and `permission.ts` is explicit that the prompt belongs

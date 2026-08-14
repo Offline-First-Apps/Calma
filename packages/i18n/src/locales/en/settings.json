@@ -2,6 +2,7 @@
   "title": "Settings",
   "name": "What should we call you?",
   "nameHint": "Only stored on this phone. Leave it blank if you'd rather.",
+  "nameClear": "Leave it blank",
   "privacy": "Everything you write stays on this phone. There are no accounts and no servers. Nothing is backed up — if you lose this phone, this is gone too.",
   "erase": "Erase everything",
   "eraseConfirm": "This deletes every worry, entry, and session. It can't be undone.",
@@ -46,7 +47,7 @@
     "windowNotify": "Tell me when it opens",
     "windowNotifyHint": "One quiet note, never a badge",
     "lock": "Lock Calma",
-    "lockHint": "Ask for your face, fingerprint or passcode before opening your writing",
+    "lockHint": "However you unlock this phone, before opening your writing",
     "writing": "Your writing",
     "answers": "What you told us",
     "answersHint": "Three answers, and all of them changeable",
@@ -82,6 +83,13 @@
     "title": "Your usual rhythm",
     "body": "The breath Calma offers when you open it. The others are always a tap away on the Breathe tab.",
     "whenItApplies": "A change here takes effect the next time you start, never partway through a breath."
+  },
+  "windowScreen": {
+    "body": "When your worries get their twenty minutes. Set it for a time you are usually free, and a while before you want to sleep.",
+    "hour": "Hour",
+    "minutes": "Minutes",
+    "earlier": "Earlier",
+    "later": "Later"
   },
   "appearanceValue": {
     "system": "Match my phone",

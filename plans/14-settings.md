@@ -63,7 +63,13 @@ Preferences, privacy, and the honest bits.
 
 ## T03 — Add the name preference
 
-- [x] `pending-T03`
+- [x] `25de1ad`
+- **Note (session 19): the screen behind the row is built** at
+  `/settings/name`, and the row is restored. Clearing is a full-size pill
+  directly beneath Done — b11's "identical target, no pitch about
+  personalising" applied to the edit. Empty stays `null` rather than `''`,
+  because every greeting branches on the null and an empty string would pass a
+  truthiness check and render "You're here, ." at somebody.
 - **Commit:** `feat(settings): add name preference`
 - **Depends on:** T01, `03-storage-layer` T06
 - **Touches:** `apps/native/src/features/settings/NameRow.tsx`
@@ -80,6 +86,40 @@ Preferences, privacy, and the honest bits.
   make the length read as a thing to maximise. `windowRange` is pure and
   tested. **The picker screen behind it is not built** and the row is
   currently inert.
+- **Note (session 19): the picker is built** at `/settings/window`, and the row
+  points at it again.
+
+  **DIVERGENCE, and the plan is wrong rather than the code.** This todo says
+  "set with a native picker". That means
+  `@react-native-community/datetimepicker` — a native module, so a prebuild,
+  drawing a platform wheel in the platform's own type and colours in the middle
+  of an app whose whole argument is that it does not look like a platform. The
+  screen uses d7's steppers instead: whole values, every one reachable in an
+  exact number of taps, no dependency, and vocabulary the app already has.
+
+  **The time wraps at midnight rather than clamping.** Somebody whose worst
+  hour is 1am gets there by pressing down from midnight, and a stepper that
+  stopped would be saying their window is not a real option. `stepWindowTime`
+  reuses `addMinutes` from `windowRange.ts`, so the row that displays the
+  window and the screen that sets it cannot disagree about midnight.
+
+  **Nothing calls `rescheduleAll()` and nothing needs to.** `useReschedule` is
+  mounted at the root with window time and duration in its dependency array, so
+  the write itself rebuilds the schedule. That was the point of building it as
+  one dependency array rather than seven call sites; this screen was the
+  seventh.
+
+  **The permission pre-prompt clause is deliberately not honoured.** T07's
+  session-15 note already settled it: a permission is spent once and the prompt
+  belongs to b10 alone. Two todos asking for the same prompt is how an app ends
+  up asking twice.
+
+  **20 and 30 wear no badge and no padlock.** `mayUseDuration` carries the same
+  `suppressed` clause as the custom rhythm — on a build where nothing can be
+  bought, every length is available, because a block nobody can pay past is not
+  a paywall.
+
+  No design file exists for this screen; j1-j4 are the whole set.
 - **Commit:** `feat(settings): add worry window time and duration preferences`
 - **Depends on:** T01, `08-worry-postponement` T13
 - **Touches:** `apps/native/src/features/settings/WorryWindowRow.tsx`

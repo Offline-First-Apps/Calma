@@ -25,7 +25,7 @@
   "offline": "No connection at the moment. Everything here works anyway.",
   "locked": {
     "title": "Calma is locked",
-    "body": "Face ID, or your passcode.",
+    "body": "However you unlock this phone.",
     "breathe": "Breathe without unlocking",
     "unlock": "Unlock"
   },
