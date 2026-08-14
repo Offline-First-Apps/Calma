@@ -1,8 +1,10 @@
 import { LANGUAGES, SYSTEM_LOCALE } from '@calma/i18n';
 import { useTranslation } from 'react-i18next';
-import { Pressable, View } from 'react-native';
+import { View } from 'react-native';
 
 import { Text } from '@/src/ui/Text';
+import { Stagger } from '@/src/ui/Stagger';
+import { Touchable } from '@/src/ui/Touchable';
 
 /**
  * The language picker, shared verbatim by onboarding (b2) and Settings
@@ -53,7 +55,7 @@ export function LanguagePicker({
     LANGUAGES.find((language) => language.tag === resolved)?.nativeName ?? '';
 
   return (
-    <View className="gap-[10px]">
+    <Stagger className="gap-[10px]">
       <Row
         label={t('languageSystem')}
         detail={resolvedName}
@@ -69,7 +71,7 @@ export function LanguagePicker({
           onPress={() => onChange(language.tag)}
         />
       ))}
-    </View>
+    </Stagger>
   );
 }
 
@@ -91,12 +93,12 @@ function Row({
   onPress: () => void;
 }) {
   return (
-    <Pressable
+    <Touchable
       onPress={onPress}
       accessibilityRole="radio"
       accessibilityState={{ selected }}
       accessibilityLabel={detail ? `${label}. ${detail}` : label}
-      className={`min-h-option-card flex-row items-center justify-between gap-4 rounded-card px-5 py-4 active:opacity-90 ${
+      className={`min-h-option-card flex-row items-center justify-between gap-4 rounded-card px-5 py-4 ${
         selected
           ? 'border-[1.5px] border-accent-wash-border bg-accent-wash'
           : 'border border-border bg-surface'
@@ -121,6 +123,6 @@ function Row({
           selected ? 'bg-accent' : 'border-[1.5px] border-option-mark'
         }`}
       />
-    </Pressable>
+    </Touchable>
   );
 }

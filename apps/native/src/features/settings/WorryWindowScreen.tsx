@@ -4,7 +4,7 @@ import { formatWindowTime } from '@calma/i18n';
 import { radius } from '@calma/tokens';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Pressable, ScrollView, View } from 'react-native';
+import { ScrollView, View } from 'react-native';
 
 import { PlusPrompt } from '@/src/features/entitlement/PlusPrompt';
 import { useEntitlementStore, useTier } from '@/src/features/entitlement/store';
@@ -13,6 +13,8 @@ import { usePrefsStore } from '@/src/stores/prefs';
 import { OptionCard } from '@/src/ui/OptionCard';
 import { Screen } from '@/src/ui/Screen';
 import { Text } from '@/src/ui/Text';
+import { Stagger } from '@/src/ui/Stagger';
+import { Touchable } from '@/src/ui/Touchable';
 
 import {
   HOUR_STEP,
@@ -135,7 +137,7 @@ export function WorryWindowScreen() {
           {t('settings:worryWindowLength')}
         </Text>
 
-        <View className="mt-[14px] gap-[10px]">
+        <Stagger className="mt-[14px] gap-[10px]">
           {WINDOW_DURATIONS.map((option) => (
             <OptionCard
               key={option}
@@ -150,7 +152,7 @@ export function WorryWindowScreen() {
               onPress={() => chooseLength(option)}
             />
           ))}
-        </View>
+        </Stagger>
 
         {offered ? (
           <PlusPrompt message={t('entitlement:offer.featureWindows')} />
@@ -206,15 +208,15 @@ function Stepper({
   onPress: () => void;
 }) {
   return (
-    <Pressable
+    <Touchable
       accessibilityRole="button"
       accessibilityLabel={label}
       onPress={onPress}
       hitSlop={6}
-      className="h-[46px] w-[46px] items-center justify-center bg-surface-stepper active:opacity-80"
+      className="h-[46px] w-[46px] items-center justify-center bg-surface-stepper"
       style={{ borderRadius: 14 }}
     >
       <Ionicons name={icon} size={18} color="#7A6552" />
-    </Pressable>
+    </Touchable>
   );
 }

@@ -1,9 +1,10 @@
 import type { PostFeeling } from '@calma/domain';
 import { useTranslation } from 'react-i18next';
-import { Pressable, Text as RNText, View } from 'react-native';
+import { Text as RNText, View } from 'react-native';
 
 import { Button } from '@/src/ui/Button';
 import { Text } from '@/src/ui/Text';
+import { Touchable } from '@/src/ui/Touchable';
 
 /**
  * B8 — How was that. `designs/extracted/b8-how-was-that-{light,dark}.html`.
@@ -59,7 +60,7 @@ export function HowWasThat({
 
         <View className="flex-row gap-3">
           {ORDER.map((feeling) => (
-            <Pressable
+            <Touchable
               key={feeling}
               onPress={() => onAnswer(feeling)}
               accessibilityRole="button"
@@ -67,7 +68,7 @@ export function HowWasThat({
               // "pensive face" would be describing a picture of the answer
               // rather than the answer.
               accessibilityLabel={t(`breathing:suds.post.${feeling}`)}
-              className="flex-1 items-center justify-center gap-[14px] rounded-sheet border border-border bg-surface px-2 py-[26px] active:opacity-90"
+              className="flex-1 items-center justify-center gap-[14px] rounded-sheet border border-border bg-surface px-2 py-[26px]"
             >
               {/* Raw RN Text: an emoji rendered in Newsreader or Figtree falls
                   back to the system emoji font anyway, and forcing a family on
@@ -78,7 +79,7 @@ export function HowWasThat({
               <Text variant="callout" className="text-center text-foreground">
                 {t(`breathing:suds.post.${feeling}`)}
               </Text>
-            </Pressable>
+            </Touchable>
           ))}
         </View>
       </View>

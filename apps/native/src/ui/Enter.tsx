@@ -34,6 +34,12 @@ import { useReduceMotion } from '@/src/lib/motion';
 
 /** Short enough to be over before it is noticed as an animation. */
 const FADE_MS = 320;
+/**
+ * How long a screen's own settle takes, for anything that should follow it
+ * rather than run underneath it. Exported so a nested `Stagger` can wait it
+ * out instead of hard-coding a guess at this number.
+ */
+export const SETTLE_MS = FADE_MS;
 /** Between staggered siblings. Six items land inside half a second. */
 export const STAGGER_MS = 55;
 /** Points of upward drift. More than this reads as a slide. */

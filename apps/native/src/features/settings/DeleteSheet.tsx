@@ -2,13 +2,14 @@ import { destroyEncryptionKey } from '@calma/db/native';
 import { dark, light } from '@calma/tokens';
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Pressable, View } from 'react-native';
+import { View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useUniwind } from 'uniwind';
 
 import { useRepositories, useStorage } from '@/src/lib/repositories';
 import { usePrefsStore } from '@/src/stores/prefs';
 import { Text } from '@/src/ui/Text';
+import { Touchable } from '@/src/ui/Touchable';
 
 import { cancelAllNotifications } from '@/src/lib/notifications/schedule';
 
@@ -71,7 +72,7 @@ export function DeleteSheet({
   return (
     <View className="absolute inset-0 justify-end" style={{ zIndex: 10 }}>
       {/* The backdrop dismisses, because dismissing is the safe direction. */}
-      <Pressable
+      <Touchable
         onPress={onKeep}
         accessibilityRole="button"
         accessibilityLabel={t('deleteSheet.keep')}
@@ -106,21 +107,21 @@ export function DeleteSheet({
         )}
 
         <View className="mt-[22px] gap-2">
-          <Pressable
+          <Touchable
             onPress={onKeep}
             accessibilityRole="button"
-            className="h-button items-center justify-center rounded-full border border-border-ending bg-surface-ending active:opacity-80"
+            className="h-button items-center justify-center rounded-full border border-border-ending bg-surface-ending"
           >
             <Text variant="control">{t('deleteSheet.keep')}</Text>
-          </Pressable>
+          </Touchable>
 
           {nothing ? null : (
-            <Pressable
+            <Touchable
               onPress={() => void confirm()}
               disabled={busy}
               accessibilityRole="button"
               accessibilityState={{ disabled: busy }}
-              className="h-button items-center justify-center rounded-full border border-border-destructive bg-surface-destructive active:opacity-80"
+              className="h-button items-center justify-center rounded-full border border-border-destructive bg-surface-destructive"
             >
               {/* `font-sans`, not `font-sans-medium`: the destructive label is
                   the lighter of the two, which is the same argument as the
@@ -128,7 +129,7 @@ export function DeleteSheet({
               <Text variant="control" className="font-sans text-destructive">
                 {t('deleteSheet.confirm')}
               </Text>
-            </Pressable>
+            </Touchable>
           )}
         </View>
       </View>

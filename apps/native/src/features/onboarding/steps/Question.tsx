@@ -5,6 +5,8 @@ import { View } from 'react-native';
 import { Button } from '@/src/ui/Button';
 import { OptionCard } from '@/src/ui/OptionCard';
 import { Text } from '@/src/ui/Text';
+import { SETTLE_MS } from '@/src/ui/Enter';
+import { Stagger } from '@/src/ui/Stagger';
 
 /**
  * B4, B5 and B6 — the three personalisation questions.
@@ -75,7 +77,15 @@ export function Question({
         <Text variant="callout">{t('onboarding:questions.whyHint')}</Text>
       </View>
 
-      <View className="mt-[18px] gap-[10px]">
+      {/*
+        The cards arrive one after another rather than as a block.
+
+        A screen where six options appear at once is one object appearing; a
+        short stagger makes them six things to read, in the order they are
+        written. `delay` waits out StepFrame's own settle so the two are a
+        sequence rather than two animations over each other.
+      */}
+      <Stagger className="mt-[18px] gap-[10px]" delay={SETTLE_MS}>
         {OPTIONS[question].map((option) => (
           <OptionCard
             key={option}
@@ -84,7 +94,7 @@ export function Question({
             onPress={() => toggle(option)}
           />
         ))}
-      </View>
+      </Stagger>
 
       <View className="flex-1" />
 

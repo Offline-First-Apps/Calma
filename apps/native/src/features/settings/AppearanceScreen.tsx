@@ -6,6 +6,7 @@ import { usePrefsStore } from '@/src/stores/prefs';
 import { OptionCard } from '@/src/ui/OptionCard';
 import { Screen } from '@/src/ui/Screen';
 import { Text } from '@/src/ui/Text';
+import { Stagger } from '@/src/ui/Stagger';
 
 import {
   ORB_OPTIONS,
@@ -60,7 +61,7 @@ export function AppearanceScreen() {
           {t('theme')}
         </Text>
 
-        <View className="mt-6 gap-[10px]">
+        <Stagger className="mt-6 gap-[10px]">
           {THEME_OPTIONS.map((option) => (
             <OptionCard
               key={option}
@@ -69,7 +70,7 @@ export function AppearanceScreen() {
               onPress={() => void update(repositories.prefs, { theme: option })}
             />
           ))}
-        </View>
+        </Stagger>
 
         <Text variant="bodyEmphasis" className="mx-1 mt-9">
           {t('orbTheme.title')}
@@ -78,7 +79,7 @@ export function AppearanceScreen() {
           {t('orbTheme.hint')}
         </Text>
 
-        <View className="mt-[14px] gap-[10px]">
+        <Stagger className="mt-[14px] gap-[10px]" from={THEME_OPTIONS.length}>
           {ORB_OPTIONS.map((option) => {
             const available = isOrbThemeAvailable(option);
 
@@ -102,7 +103,7 @@ export function AppearanceScreen() {
               />
             );
           })}
-        </View>
+        </Stagger>
       </ScrollView>
     </Screen>
   );

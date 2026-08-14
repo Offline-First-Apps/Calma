@@ -3,13 +3,14 @@ import { radius } from '@calma/tokens';
 import { useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Pressable, ScrollView, View } from 'react-native';
+import { ScrollView, View } from 'react-native';
 import type { PurchasesPackage } from 'react-native-purchases';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { useStorage } from '@/src/lib/repositories';
 import { Button } from '@/src/ui/Button';
 import { Text } from '@/src/ui/Text';
+import { Touchable } from '@/src/ui/Touchable';
 
 import { fetchPackages, purchase, restore } from './purchases';
 import { useEntitlementStore } from './store';
@@ -204,7 +205,7 @@ export function PlansScreen() {
             const isSelected = id === selected;
 
             return (
-              <Pressable
+              <Touchable
                 key={id}
                 accessibilityRole="radio"
                 accessibilityState={{ selected: isSelected }}
@@ -229,7 +230,7 @@ export function PlansScreen() {
                 <Text variant="headingSm" className="text-[26px] leading-[32px]">
                   {pkg.product.priceString}
                 </Text>
-              </Pressable>
+              </Touchable>
             );
           })
         )}
@@ -261,14 +262,14 @@ export function PlansScreen() {
           path here: with no accounts, there is nothing else to look someone
           up by after a device change.
         */}
-        <Pressable
+        <Touchable
           accessibilityRole="button"
           accessibilityLabel={t('paywall.restore')}
           onPress={() => void restorePurchase()}
-          className="h-12 items-center justify-center active:opacity-70"
+          className="h-12 items-center justify-center"
         >
           <Text variant="footnote">{t('paywall.restore')}</Text>
-        </Pressable>
+        </Touchable>
       </View>
     </ScrollView>
   );

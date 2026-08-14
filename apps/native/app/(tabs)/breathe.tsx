@@ -1,12 +1,14 @@
 import { PRESET_PATTERNS, type BreathingPatternId } from '@calma/domain';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
-import { Pressable, ScrollView, View } from 'react-native';
+import { ScrollView, View } from 'react-native';
 import Svg, { Circle, Defs, RadialGradient, Stop } from 'react-native-svg';
 
 import { PANIC_FAB_CLEARANCE } from '@/src/components/PanicFab';
 import { Screen } from '@/src/ui/Screen';
 import { Text } from '@/src/ui/Text';
+import { Stagger } from '@/src/ui/Stagger';
+import { Touchable } from '@/src/ui/Touchable';
 
 /**
  * The pattern picker.
@@ -54,7 +56,7 @@ export default function Breathe() {
           {t('picker.subtitle')}
         </Text>
 
-        <View className="mt-[22px] gap-3">
+        <Stagger className="mt-[22px] gap-3">
           {ROWS.map((row) => {
             /*
              * Custom opens the rhythm builder (d7) rather than a session.
@@ -73,7 +75,7 @@ export default function Breathe() {
             const custom = row.id === 'custom';
 
             return (
-              <Pressable
+              <Touchable
                 key={row.id}
                 onPress={() =>
                   custom
@@ -87,7 +89,7 @@ export default function Breathe() {
                 accessibilityLabel={`${t(`patterns.${row.key}.name`)}. ${t(
                   `patterns.${row.key}.purpose`,
                 )}`}
-                className="flex-row items-center gap-4 rounded-sheet border border-border bg-surface px-5 py-5 active:opacity-90"
+                className="flex-row items-center gap-4 rounded-sheet border border-border bg-surface px-5 py-5"
               >
                 <PatternMark />
                 <View className="flex-1 gap-1">
@@ -99,10 +101,10 @@ export default function Breathe() {
                   <Text variant="bodyEmphasis">{t(`patterns.${row.key}.name`)}</Text>
                   <Text variant="callout">{t(`patterns.${row.key}.purpose`)}</Text>
                 </View>
-              </Pressable>
+              </Touchable>
             );
           })}
-        </View>
+        </Stagger>
       </ScrollView>
     </Screen>
   );

@@ -5,6 +5,7 @@ import { ScrollView, View } from 'react-native';
 
 import { Screen } from '@/src/ui/Screen';
 import { Text } from '@/src/ui/Text';
+import { Touchable } from '@/src/ui/Touchable';
 
 import { DeleteSheet } from './DeleteSheet';
 import { Chevron, ToggleRow } from './Rows';
@@ -106,11 +107,11 @@ function GroundRow({
   last?: boolean;
 }) {
   return (
-    <Pressable
+    <Touchable
       onPress={onPress}
       accessibilityRole="button"
       accessibilityLabel={label}
-      className={`flex-row items-center justify-between gap-[14px] px-1 py-5 active:opacity-70 ${
+      className={`flex-row items-center justify-between gap-[14px] px-1 py-5 ${
         last ? '' : 'border-b border-separator-row'
       }`}
     >
@@ -118,6 +119,6 @@ function GroundRow({
         {label}
       </Text>
       <Chevron />
-    </Pressable>
+    </Touchable>
   );
 }

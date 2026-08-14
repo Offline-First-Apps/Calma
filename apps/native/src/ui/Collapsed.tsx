@@ -1,7 +1,8 @@
 import { useState } from 'react';
-import { LayoutAnimation, Platform, Pressable, ScrollView, UIManager, View } from 'react-native';
+import { LayoutAnimation, Platform, ScrollView, UIManager, View } from 'react-native';
 
 import { Text } from './Text';
+import { Touchable } from './Touchable';
 
 /**
  * A list that shows a few things and offers the rest behind "+X more".
@@ -91,17 +92,17 @@ export function Collapsed<T>({
       )}
 
       {hidden > 0 ? (
-        <Pressable
+        <Touchable
           onPress={toggle}
           accessibilityRole="button"
           accessibilityState={{ expanded: open }}
-          className="mt-3 self-start active:opacity-70"
+          className="mt-3 self-start"
           hitSlop={10}
         >
           <Text variant="control" className="font-sans text-clay-ink">
             {open ? lessLabel : moreLabel(hidden)}
           </Text>
-        </Pressable>
+        </Touchable>
       ) : null}
     </View>
   );

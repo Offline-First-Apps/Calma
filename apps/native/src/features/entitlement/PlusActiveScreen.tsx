@@ -1,10 +1,11 @@
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { radius } from '@calma/tokens';
 import { useTranslation } from 'react-i18next';
-import { Linking, Platform, Pressable, ScrollView, View } from 'react-native';
+import { Linking, Platform, ScrollView, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { Text } from '@/src/ui/Text';
+import { Touchable } from '@/src/ui/Touchable';
 
 /**
  * Plus, active (i2).
@@ -86,17 +87,17 @@ export function PlusActiveScreen({
       </View>
 
       <View className="mt-5">
-        <Pressable
+        <Touchable
           accessibilityRole="link"
           accessibilityLabel={t('active.stop')}
           onPress={() => void Linking.openURL(MANAGE_URL)}
-          className="flex-row items-center justify-between gap-3.5 px-1 py-5 active:opacity-70"
+          className="flex-row items-center justify-between gap-3.5 px-1 py-5"
         >
           <Text variant="bodySm" className="text-[18px] leading-[25px]">
             {t('active.stop')}
           </Text>
           <Ionicons name="chevron-forward" size={16} color="#8A939C" />
-        </Pressable>
+        </Touchable>
       </View>
 
       <Text variant="callout" className="mx-1 mt-[22px] text-[17px] leading-[27px]">

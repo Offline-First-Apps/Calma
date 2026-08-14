@@ -17,6 +17,7 @@ import { Card } from '@/src/ui/Card';
 import { OptionCard } from '@/src/ui/OptionCard';
 import { Screen } from '@/src/ui/Screen';
 import { Text } from '@/src/ui/Text';
+import { Stagger } from '@/src/ui/Stagger';
 
 import { suggestedWindowMove } from './answerEdits';
 
@@ -193,7 +194,7 @@ function Group({
         {t(`onboarding:questions.${question}.title`)}
       </Text>
 
-      <View className="mt-[14px] gap-[10px]">
+      <Stagger className="mt-[14px] gap-[10px]">
         {options.map((option) => (
           <OptionCard
             key={option}
@@ -202,7 +203,7 @@ function Group({
             onPress={() => onToggle(option)}
           />
         ))}
-      </View>
+      </Stagger>
     </View>
   );
 }

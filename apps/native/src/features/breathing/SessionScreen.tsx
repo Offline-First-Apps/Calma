@@ -14,7 +14,7 @@ import { useNavigation, useRouter } from 'expo-router';
 import { useKeepAwake } from 'expo-keep-awake';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { AppState, Pressable, View } from 'react-native';
+import { AppState, View } from 'react-native';
 
 import { JournalOffer } from '@/src/features/journal/JournalOffer';
 import { useJournalStore } from '@/src/features/journal/store';
@@ -26,6 +26,7 @@ import { Button } from '@/src/ui/Button';
 import { Screen } from '@/src/ui/Screen';
 import { SessionInterrupted } from '@/src/features/states/SessionInterrupted';
 import { Text } from '@/src/ui/Text';
+import { Touchable } from '@/src/ui/Touchable';
 
 import { FeelingPicker } from './FeelingPicker';
 import { Orb } from './Orb';
@@ -335,9 +336,9 @@ export function SessionScreen({
    */
   if (interrupted && breathing) {
     return (
-      <Pressable className="flex-1" onPress={() => setInterrupted(false)}>
+      <Touchable className="flex-1" onPress={() => setInterrupted(false)}>
         <SessionInterrupted reduceMotion={reduceMotion} />
-      </Pressable>
+      </Touchable>
     );
   }
 

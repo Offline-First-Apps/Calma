@@ -1,4 +1,14 @@
+import { duration } from '@calma/tokens';
+import { useEffect } from 'react';
 import { View } from 'react-native';
+import Animated, {
+  Easing,
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming,
+} from 'react-native-reanimated';
+
+import { useReduceMotion } from '@/src/lib/motion';
 
 /**
  * DELIBERATE EXCEPTION to the app-wide ban on progress indicators
@@ -25,9 +35,36 @@ import { View } from 'react-native';
  * 3px and a near-invisible track, from the b-screens. Hidden from
  * accessibility entirely: a screen reader announcing "38 percent" would be
  * the spoken step count the system doc explicitly rules out.
+ *
+ * IT GROWS RATHER THAN JUMPING, AND THAT IS WHAT MAKES THE CURVE VISIBLE.
+ *
+ * The width used to change between two frames, which threw away the one thing
+ * the non-linear fractions are for: 18 to 38 and 92 to 99 are very different
+ * distances, and a jump communicates neither. Growing over the step's own
+ * cross-fade turns the hairline into a thing that moved a finger's width,
+ * which is exactly the sensation the b5 caption asks for.
+ *
+ * Under Reduce Motion it still moves, only faster — a bar that teleports is
+ * not "less motion", it is a different and worse animation.
  */
 export function ProgressHairline({ fraction }: { fraction: number }) {
   const clamped = Math.max(0, Math.min(1, fraction));
+  const reduceMotion = useReduceMotion();
+
+  const width = useSharedValue(clamped);
+
+  useEffect(() => {
+    width.value = withTiming(clamped, {
+      // Matched to the step cross-fade, so the bar arrives with the screen
+      // rather than after it.
+      duration: reduceMotion ? 140 : duration.transition,
+      easing: Easing.out(Easing.cubic),
+    });
+  }, [clamped, reduceMotion, width]);
+
+  const style = useAnimatedStyle(() => ({
+    width: `${width.value * 100}%`,
+  }));
 
   return (
     <View
@@ -35,10 +72,7 @@ export function ProgressHairline({ fraction }: { fraction: number }) {
       accessibilityElementsHidden
       importantForAccessibility="no-hide-descendants"
     >
-      <View
-        className="h-full rounded-[2px] bg-accent"
-        style={{ width: `${clamped * 100}%` }}
-      />
+      <Animated.View className="h-full rounded-[2px] bg-accent" style={style} />
     </View>
   );
 }

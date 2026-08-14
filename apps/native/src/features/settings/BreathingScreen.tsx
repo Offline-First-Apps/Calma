@@ -7,6 +7,7 @@ import { usePrefsStore } from '@/src/stores/prefs';
 import { OptionCard } from '@/src/ui/OptionCard';
 import { Screen } from '@/src/ui/Screen';
 import { Text } from '@/src/ui/Text';
+import { Stagger } from '@/src/ui/Stagger';
 
 import { PATTERN_KEY, PICKER_ORDER } from './usualRhythm';
 
@@ -68,7 +69,7 @@ export function BreathingScreen() {
           {t('settings:rhythmScreen.body')}
         </Text>
 
-        <View className="mt-6 gap-[10px]">
+        <Stagger className="mt-6 gap-[10px]">
           {PICKER_ORDER.map((id) => {
             const key = PATTERN_KEY[id];
             const custom = id === 'custom';
@@ -87,7 +88,7 @@ export function BreathingScreen() {
               />
             );
           })}
-        </View>
+        </Stagger>
 
         {/*
           A sentence rather than a warning. Someone who expected the change to

@@ -1,8 +1,9 @@
 import { control } from '@calma/tokens';
 import { useTranslation } from 'react-i18next';
-import { Pressable, View } from 'react-native';
+import { View } from 'react-native';
 
 import { Text } from '@/src/ui/Text';
+import { Touchable } from '@/src/ui/Touchable';
 
 /**
  * The fork (f5).
@@ -78,16 +79,16 @@ function ForkButton({
   onPress: () => void;
 }) {
   return (
-    <Pressable
+    <Touchable
       accessibilityRole="button"
       accessibilityLabel={label}
       onPress={onPress}
-      className="flex-row items-center justify-center rounded-full border border-border-worry-quiet bg-surface-worry-quiet active:opacity-90"
+      className="flex-row items-center justify-center rounded-full border border-border-worry-quiet bg-surface-worry-quiet"
       style={{ height: control.fork, borderRadius: control.fork / 2 }}
     >
       <Text variant="control" className="font-sans-medium">
         {label}
       </Text>
-    </Pressable>
+    </Touchable>
   );
 }

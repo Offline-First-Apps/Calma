@@ -10,7 +10,7 @@ import { radius } from '@calma/tokens';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Pressable, ScrollView, View } from 'react-native';
+import { ScrollView, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { PlusPrompt } from '@/src/features/entitlement/PlusPrompt';
@@ -22,6 +22,7 @@ import { usePrefsStore } from '@/src/stores/prefs';
 import { Button } from '@/src/ui/Button';
 import { Orb } from '@/src/ui/Orb';
 import { Text } from '@/src/ui/Text';
+import { Touchable } from '@/src/ui/Touchable';
 
 /**
  * The rhythm builder (d7).
@@ -242,16 +243,16 @@ function Stepper({
   onPress: () => void;
 }) {
   return (
-    <Pressable
+    <Touchable
       accessibilityRole="button"
       accessibilityLabel={label}
       onPress={onPress}
       hitSlop={6}
-      className="h-[46px] w-[46px] items-center justify-center bg-surface-stepper active:opacity-80"
+      className="h-[46px] w-[46px] items-center justify-center bg-surface-stepper"
       style={{ borderRadius: 14 }}
     >
       <Ionicons name={icon} size={18} color="#7A6552" />
-    </Pressable>
+    </Touchable>
   );
 }
 

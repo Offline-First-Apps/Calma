@@ -1,8 +1,9 @@
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
-import { Pressable, View } from 'react-native';
+import { View } from 'react-native';
 
 import { Text } from '@/src/ui/Text';
+import { Touchable } from '@/src/ui/Touchable';
 
 /**
  * What the free tier sees where its own older writing would be (T10).
@@ -38,16 +39,16 @@ export function PlusPrompt({
         {message}
       </Text>
 
-      <Pressable
+      <Touchable
         accessibilityRole="button"
         onPress={() => router.push('/paywall')}
-        className="mt-4 self-start active:opacity-70"
+        className="mt-4 self-start"
         hitSlop={10}
       >
         <Text variant="control" className="font-sans-semibold text-accent-ink">
           {t('paywall.primary')}
         </Text>
-      </Pressable>
+      </Touchable>
     </View>
   );
 }
