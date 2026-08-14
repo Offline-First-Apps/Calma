@@ -12,7 +12,7 @@ import {
 } from '@calma/domain';
 import { useNavigation, useRouter } from 'expo-router';
 import { useKeepAwake } from 'expo-keep-awake';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { AppState, Pressable, View } from 'react-native';
 
@@ -123,6 +123,22 @@ export function SessionScreen({
   const [preSuds, setPreSuds] = useState<number | null>(null);
   const [postFeeling, setPostFeeling] = useState<PostFeeling | null>(null);
   const [confirmingStop, setConfirmingStop] = useState(false);
+
+  /*
+   * WHY THIS IS A REF AND NOT `confirmingStop`.
+   *
+   * The stop button used to clear `confirmingStop` and then navigate. The
+   * guard below re-ran during that navigation, found `confirmingStop` back at
+   * `false` and `stage` still `breathing`, and asked again — so confirming a
+   * stop re-opened the confirmation, forever. Somebody mid-session could not
+   * leave, on the one screen where being trapped is least acceptable.
+   *
+   * A boolean in state cannot express "we have decided to go" here, because
+   * the decision has to survive the very re-render that navigating causes.
+   * A ref does, and it is read synchronously by the listener.
+   */
+  const leaving = useRef(false);
+
   const [extended, setExtended] = useState(false);
   const [sessionId, setSessionId] = useState<string | null>(null);
 
@@ -204,6 +220,10 @@ export function SessionScreen({
   }, [breathing]);
 
   const close = useCallback(() => {
+    // Every programmatic exit disarms the guard. `endSession`, the feeling
+    // check and the journaling offer all route through here, and any one of
+    // them re-triggering the confirmation would strand somebody again.
+    leaving.current = true;
     setBreathingSessionActive(false);
     if (router.canGoBack()) router.back();
     else router.replace('/(tabs)');
@@ -289,6 +309,7 @@ export function SessionScreen({
     // than the person's choice -- it does not -- but because a swipe caught
     // by a shaking hand should not silently discard what they were doing.
     const guard = navigation.addListener('beforeRemove', (event) => {
+      if (leaving.current) return;
       if (stage !== 'breathing' && stage !== 'extend') return;
       if (confirmingStop) return;
 
@@ -382,6 +403,9 @@ export function SessionScreen({
           <StopConfirmation
             onKeepGoing={() => setConfirmingStop(false)}
             onStop={() => {
+              // Decided. The guard must not ask again on the way out — set
+              // this BEFORE anything that can navigate.
+              leaving.current = true;
               setConfirmingStop(false);
               void endSession(false);
             }}
