@@ -57,6 +57,15 @@
     "restoreHint": "If you've changed phones",
     "crisis": "When it's more than this"
   },
+  "orbTheme": {
+    "title": "The shape you follow",
+    "hint": "What the breathing screen draws.",
+    "orb": "The orb",
+    "orbHint": "A warm light that grows and settles",
+    "wave": "The wave",
+    "bloom": "The bloom",
+    "notYet": "Not here yet"
+  },
   "plusSection": {
     "free": "Free",
     "active": "Active",

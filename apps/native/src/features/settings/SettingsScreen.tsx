@@ -149,6 +149,16 @@ export function SettingsScreen() {
             hint={t('rows.soundHint')}
             value={prefs.soundEnabled}
             onChange={(soundEnabled) => set({ soundEnabled })}
+          />
+          {/*
+            "Sound & feel" is where this belongs and it is not a stretch: the
+            theme is how the app feels at the hour someone opens it, which is
+            the same kind of preference as whether it makes a noise.
+          */}
+          <ValueRow
+            label={t('rows.appearance')}
+            value={t(`appearanceValue.${prefs.theme}`)}
+            onPress={() => router.push('/settings/appearance')}
             last
           />
         </Section>

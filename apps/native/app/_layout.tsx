@@ -22,6 +22,7 @@ import { KeyboardProvider } from 'react-native-keyboard-controller';
 import { AppThemeProvider } from '@/contexts/app-theme-context';
 import { BootError } from '@/src/components/BootError';
 import { useEntitlementStore } from '@/src/features/entitlement/store';
+import { useThemePreference } from '@/src/features/settings/useThemePreference';
 import { useAppStateEffects } from '@/src/lib/appState';
 import { useReschedule } from '@/src/lib/notifications/useReschedule';
 import { boot, type BootResult } from '@/src/lib/boot';
@@ -179,6 +180,11 @@ function Routes({
 
   useAppStateEffects();
   useEntitlement();
+  // Applies `prefs.theme` to Uniwind on every change, including the one
+  // hydration makes at boot. Mounted here rather than in the picker: a
+  // preference applied by the screen that sets it is correct exactly once and
+  // reverts on the next launch.
+  useThemePreference();
   // Rebuilds the whole notification schedule whenever anything it depends on
   // changes — window time, duration, tier, pending count, permission, boot.
   // Mounted here so that list is one dependency array rather than seven call

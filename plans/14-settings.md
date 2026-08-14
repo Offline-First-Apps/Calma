@@ -145,6 +145,25 @@ Preferences, privacy, and the honest bits.
 
   Theme (system/light/dark) and the orb-theme row are **not built** — the
   appearance row exists and its picker screen does not.
+- **Note (session 19): the theme half is done, and the row is back.**
+  `AppearanceScreen.tsx` at `/settings/appearance`, which is the screen the
+  owner asked for by name.
+
+  **The important half is `useThemePreference`, mounted at the root.**
+  `AppThemeProvider` wrapped `Uniwind.setTheme` and had never read a
+  preference, so a theme chosen here would have survived exactly until the next
+  launch and then reverted. A setting that appears to work is worse than one
+  that is absent. It applies on every change to `prefs.theme`, including the
+  one hydration makes at boot.
+
+  **`'system'` is stored and passed through, never resolved.** Uniwind takes the
+  sentinel and tracks the OS itself, so "match my phone" keeps following the
+  phone — the same decision `prefs.locale` makes, for the same reason.
+
+  **Wave and bloom are listed and unselectable.** `isOrbThemeAvailable` enforces
+  it, so an unbuilt theme cannot become selectable because somebody forgot to
+  disable a row. Their second line says "Not here yet" — no padlock and no
+  grey, because this is unfinished work rather than a tier.
 - **Commit:** `feat(settings): add sound, haptics and theme toggles`
 - **Depends on:** T01, `04-audio-haptics` T07
 - **Touches:** `apps/native/src/features/settings/FeelRows.tsx`
