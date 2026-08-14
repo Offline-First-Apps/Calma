@@ -1,4 +1,5 @@
 import type { JournalEntry } from '@calma/domain';
+import { weekKey } from '@calma/domain';
 
 /**
  * The list logic behind g6 and g7, kept out of the components.
@@ -89,4 +90,37 @@ export function splitOnMatch(text: string, needle: string): string[] {
 
   parts.push(text.slice(cursor));
   return parts;
+}
+
+/**
+ * What the free tier may see, and how much it may not (plan 11 T10).
+ *
+ * `systems/05-entitlements.md`: "Journal history & search — Current week
+ * only". So the split is by ISO week, Monday start, computed from the same
+ * `weekKey` the journal allowance uses — one definition of "this week" across
+ * the feature, because two would eventually disagree about a Sunday night.
+ *
+ * NOTHING IS TEASED. This returns the older entries' COUNT and not the
+ * entries themselves, so a caller physically cannot render them blurred,
+ * greyed, truncated or behind a lock. T10 forbids the fake-blur dark pattern,
+ * and a function that hands back the content it says is unavailable is one
+ * refactor away from putting it on screen.
+ *
+ * The count is what makes the prompt honest rather than vague: "42 older
+ * entries are still here" says the writing was not lost, which is the single
+ * thing someone needs to know before deciding whether to pay.
+ */
+export function currentWeekOnly(
+  entries: readonly JournalEntry[],
+  week: string,
+): { visible: JournalEntry[]; older: number } {
+  const visible: JournalEntry[] = [];
+  let older = 0;
+
+  for (const entry of entries) {
+    if (weekKey(new Date(entry.createdAt)) === week) visible.push(entry);
+    else older += 1;
+  }
+
+  return { visible, older };
 }

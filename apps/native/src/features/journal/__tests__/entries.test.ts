@@ -1,7 +1,13 @@
 import type { JournalEntry } from '@calma/domain';
+import { weekKey } from '@calma/domain';
 import { describe, expect, it } from 'vitest';
 
-import { groupByDay, previewOf, splitOnMatch } from '../entries';
+import {
+  currentWeekOnly,
+  groupByDay,
+  previewOf,
+  splitOnMatch,
+} from '../entries';
 
 function entry(patch: Partial<JournalEntry> = {}): JournalEntry {
   return {
@@ -113,5 +119,79 @@ describe('splitOnMatch', () => {
     // A needle that could match the empty string would loop forever. The
     // guard is the early return, and this is the negative control for it.
     expect(splitOnMatch('abc', ' ')).toEqual(['abc']);
+  });
+});
+
+/**
+ * Plan 11 T10 — "Journal history & search: Current week only" on free.
+ *
+ * The assertion that matters most is the last one: this must return a COUNT
+ * of what is withheld and never the entries themselves, so that no caller is
+ * in a position to render somebody's own writing blurred behind a lock. T10
+ * rules out that pattern by name.
+ */
+describe('currentWeekOnly', () => {
+  // Monday 9 Feb 2026 through Sunday 15 Feb 2026 is one ISO week.
+  const thisWeek = weekKey(new Date(2026, 1, 11));
+
+  it('keeps entries from the current ISO week', () => {
+    const split = currentWeekOnly(
+      [
+        entry({ id: 'mon', createdAt: new Date(2026, 1, 9, 9).getTime() }),
+        entry({ id: 'sun', createdAt: new Date(2026, 1, 15, 23).getTime() }),
+      ],
+      thisWeek,
+    );
+
+    expect(split.visible.map((e) => e.id)).toEqual(['mon', 'sun']);
+    expect(split.older).toBe(0);
+  });
+
+  it('counts anything outside the week without returning it', () => {
+    const split = currentWeekOnly(
+      [
+        entry({ id: 'in', createdAt: new Date(2026, 1, 11).getTime() }),
+        entry({ id: 'lastWeek', createdAt: new Date(2026, 1, 8, 23).getTime() }),
+        entry({ id: 'january', createdAt: new Date(2026, 0, 3).getTime() }),
+      ],
+      thisWeek,
+    );
+
+    expect(split.visible.map((e) => e.id)).toEqual(['in']);
+    expect(split.older).toBe(2);
+  });
+
+  it('treats Sunday night and the following Monday as different weeks', () => {
+    // ISO weeks start on Monday, and this is the boundary a Sunday-start
+    // definition would get wrong -- someone writing at 23:00 on Sunday would
+    // lose the entry from view an hour later.
+    const split = currentWeekOnly(
+      [
+        entry({ id: 'sun', createdAt: new Date(2026, 1, 15, 23, 59).getTime() }),
+        entry({ id: 'mon', createdAt: new Date(2026, 1, 16, 0, 1).getTime() }),
+      ],
+      thisWeek,
+    );
+
+    expect(split.visible.map((e) => e.id)).toEqual(['sun']);
+    expect(split.older).toBe(1);
+  });
+
+  it('withholds the older entries entirely, not just their text', () => {
+    const split = currentWeekOnly(
+      [entry({ id: 'old', situation: 'private', createdAt: 0 })],
+      thisWeek,
+    );
+
+    expect(split.visible).toEqual([]);
+    expect(split.older).toBe(1);
+    // Nothing in the return value can be rendered. There is no `hidden`
+    // array, no truncated preview, and no placeholder holding the real text.
+    expect(JSON.stringify(split)).not.toContain('private');
+  });
+
+  it('returns everything when nothing is older', () => {
+    const entries = [entry({ createdAt: new Date(2026, 1, 12).getTime() })];
+    expect(currentWeekOnly(entries, thisWeek).visible).toHaveLength(1);
   });
 });
