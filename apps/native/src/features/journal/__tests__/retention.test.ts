@@ -1,5 +1,5 @@
 import { readFileSync, readdirSync } from 'node:fs';
-import { dirname, join, resolve } from 'node:path';
+import { dirname, join, resolve, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
 
@@ -50,8 +50,22 @@ function stripComments(body: string): string {
   return body.replace(/\/\*[\s\S]*?\*\//g, '').replace(/^\s*\/\/.*$/gm, '');
 }
 
+/**
+ * Relative path, forward slashes on every platform.
+ *
+ * `join` uses a backslash on Windows, and line 89 compares against a literal.
+ * This one happens to pass anyway because `store.ts` sits at the root of the
+ * folder and has no separator in it — so it is not a bug today, and it is one
+ * the moment a rule names a file in a subdirectory. Its twin in
+ * `onboarding/__tests__/guards.test.ts` was not so lucky and failed on the
+ * owner's machine while passing everywhere it was usually run.
+ */
+function relativePath(absolute: string): string {
+  return absolute.slice(journal.length + 1).split(sep).join('/');
+}
+
 const files = sourceFiles(journal).map((path) => ({
-  path: path.slice(journal.length + 1),
+  path: relativePath(path),
   body: stripComments(readFileSync(path, 'utf8')),
 }));
 

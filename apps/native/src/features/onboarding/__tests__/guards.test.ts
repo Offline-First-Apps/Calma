@@ -1,5 +1,5 @@
 import { readFileSync, readdirSync } from 'node:fs';
-import { dirname, join, resolve } from 'node:path';
+import { dirname, join, resolve, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
 
@@ -49,8 +49,24 @@ function stripComments(body: string): string {
   return body.replace(/\/\*[\s\S]*?\*\//g, '').replace(/^\s*\/\/.*$/gm, '');
 }
 
+/**
+ * Relative path, with forward slashes on every platform.
+ *
+ * `node:path`'s `join` uses a backslash on Windows, so `path.slice(...)`
+ * produced `steps\Notifications.tsx` there and `steps/Notifications.tsx`
+ * everywhere else — and the assertion below compares against a literal. The
+ * whole suite passed on Linux and failed on the owner's machine, which is the
+ * worst version of a test to have: it looks green wherever it is usually run.
+ *
+ * Normalising here rather than at each assertion, so a future rule cannot
+ * reintroduce it by writing one more literal path.
+ */
+function relativePath(absolute: string): string {
+  return absolute.slice(onboarding.length + 1).split(sep).join('/');
+}
+
 const files = sourceFiles(onboarding).map((path) => ({
-  path: path.slice(onboarding.length + 1),
+  path: relativePath(path),
   body: stripComments(readFileSync(path, 'utf8')),
 }));
 
