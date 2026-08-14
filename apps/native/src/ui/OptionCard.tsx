@@ -1,4 +1,7 @@
+import Ionicons from '@expo/vector-icons/Ionicons';
+import { amber } from '@calma/tokens';
 import { Pressable, View } from 'react-native';
+import { useUniwind } from 'uniwind';
 
 import { Text } from './Text';
 
@@ -36,6 +39,10 @@ export function OptionCard({
   selected?: boolean;
   onPress?: () => void;
 }) {
+  // The label colour ON the amber fill, not the accent itself.
+  const { theme } = useUniwind();
+  const tick = theme === 'dark' ? amber.dark.on : amber.light.on;
+
   return (
     <Pressable
       onPress={onPress}

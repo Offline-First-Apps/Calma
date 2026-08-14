@@ -10,7 +10,11 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { playSound } from '@/src/lib/audio';
 import { hapticJournalSaved } from '@/src/lib/haptics';
 import { useRepositories } from '@/src/lib/repositories';
+import { useLimitNotice } from '@/src/features/entitlement/LimitNotice';
+import { usePaywallHold } from '@/src/features/entitlement/gateStore';
+import { useLimit } from '@/src/features/entitlement/useLimit';
 import { Button } from '@/src/ui/Button';
+import { Enter } from '@/src/ui/Enter';
 import { Text } from '@/src/ui/Text';
 
 import { IntensityScale } from './IntensityScale';
@@ -49,6 +53,37 @@ export function EditorScreen({ id }: { id: string }) {
 
   const finish = useJournalStore((state) => state.finish);
   const { save, flush } = useAutosave(repositories.journal, id);
+
+  const limit = useLimit('journal');
+  const { offer, notice } = useLimitNotice('journal', limit);
+
+  /**
+   * T09 — the third save of the ISO week.
+   *
+   * The entry stays a DRAFT and nothing is cleared. This file's own opening
+   * comment is the rule: a hit limit "blocks the *finish*, not the writing,
+   * and the draft is still there afterwards" (R3). So `finish` is not called,
+   * `setSaved` is not set, and every word is exactly where it was — reachable
+   * again from the drafts list, and finishable the moment the week rolls over
+   * or Plus is bought.
+   *
+   * It is deliberately NOT the same answer as the worry gate, which stores the
+   * fourth worry anyway. A worry refused at 2am is a promise broken at the
+   * moment it mattered; an entry that stays a draft has cost nobody a word.
+   */
+  const [blocked, setBlocked] = useState(false);
+
+  /*
+   * T12. Held at every step, not just while a field has focus — someone
+   * re-reading what they wrote is still mid-entry.
+   *
+   * RELEASED ONCE THE SAVE HAS BEEN DECLINED, which is what lets the queued
+   * sheet through. The hold protects someone who is still writing; by this
+   * point they have tapped Save and are owed an explanation, and holding on
+   * would turn that tap into a silent no-op — the one outcome worse than the
+   * paywall itself.
+   */
+  usePaywallHold('editor', !blocked);
 
   const [entry, setEntry] = useState<JournalEntry | null>(null);
   const [index, setIndex] = useState(0);
@@ -92,7 +127,15 @@ export function EditorScreen({ id }: { id: string }) {
     if (now - lastSave.current < SAVE_LOCKOUT_MS) return;
     lastSave.current = now;
 
+    // Whatever happens next, the writing is on disk first.
     flush();
+
+    if (limit.atLimit) {
+      setBlocked(true);
+      offer();
+      return;
+    }
+
     void finish(repositories.journal, id);
 
     // The pencil and a selection haptic, together (T08). One event, not two
@@ -101,7 +144,7 @@ export function EditorScreen({ id }: { id: string }) {
     void playSound('journalSaved');
 
     setSaved(true);
-  }, [finish, flush, id, repositories.journal]);
+  }, [finish, flush, id, limit, offer, repositories.journal]);
 
   /**
    * Home, and nowhere else.
@@ -160,6 +203,11 @@ export function EditorScreen({ id }: { id: string }) {
             className="px-[30px]"
           />
         </View>
+
+        {/* The sheet the first time this week, one quiet line every time
+            after. Rendered inside the scroll view so the entry stays visible
+            behind it — T09: the written content stays on screen. */}
+        {notice}
       </ScrollView>
     </KeyboardAvoidingView>
   );
@@ -177,7 +225,9 @@ function StepBody({
   const { t } = useTranslation('journal');
 
   return (
-    <View className="flex-1">
+    // Keyed on the prompt, so each of the six questions settles in instead of
+    // the words swapping under a cursor that is already in the field.
+    <Enter key={step.prompt} className="flex-1">
       <Text variant="heading" className="text-[32px] leading-[40px]">
         {t(step.prompt)}
       </Text>
@@ -262,6 +312,6 @@ function StepBody({
           ) : null}
         </View>
       ) : null}
-    </View>
+    </Enter>
   );
 }

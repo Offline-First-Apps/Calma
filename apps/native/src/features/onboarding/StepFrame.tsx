@@ -2,6 +2,8 @@ import type { ReactNode } from 'react';
 import { View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import { Enter } from '@/src/ui/Enter';
+
 import { CrisisExit } from './CrisisExit';
 import { Progress } from './Progress';
 
@@ -44,12 +46,15 @@ export function StepFrame({
   progress,
   onEscape,
   children,
+  stepKey,
 }: {
   ground?: StepGround;
   /** Hairline position, or `null` on the steps that show none (b1, b7). */
   progress: number | null;
   onEscape: () => void;
   children: ReactNode;
+  /** Identity of the current step. Re-triggers the entrance when it changes. */
+  stepKey?: string;
 }) {
   const insets = useSafeAreaInsets();
 
@@ -65,7 +70,17 @@ export function StepFrame({
         style={{ paddingTop: 14, paddingBottom: Math.max(insets.bottom, 16) + 24 }}
       >
         <CrisisExit onEscape={onEscape} />
-        {children}
+        {/*
+          Every onboarding step's content settles in rather than appearing.
+          
+          `key` is what makes this re-run per step: without it React reuses the
+          same `Enter` across the whole flow and only the first screen animates.
+          The step's identity IS the animation trigger, which is also why this
+          belongs in the frame rather than in each of the ten steps.
+        */}
+        <Enter key={stepKey} className="flex-1">
+          {children}
+        </Enter>
       </View>
     </View>
   );

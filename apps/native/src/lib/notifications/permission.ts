@@ -1,3 +1,8 @@
+import {
+  getPermissionsAsync,
+  requestPermissionsAsync,
+} from 'expo-notifications';
+
 /**
  * The notification permission, and the one rule about it.
  *
@@ -9,22 +14,13 @@
  * reach the OS at all — declining our screen costs nothing and can be changed
  * later; declining the OS costs the capability permanently.
  *
- * ---------------------------------------------------------------------------
- * THIS IS A STUB, ON PURPOSE, AND IT IS THE HONEST KIND.
+ * `prefs.notificationsAsked` records that we have asked and survives a
+ * permission change, so the pre-prompt cannot reappear.
  *
- * `plans/12-notifications.md` is not built and `expo-notifications` is not a
- * dependency yet. Rather than have onboarding import a package that does not
- * exist, or fake a granted permission it never asked for, this returns
- * `false` — "we did not get permission" — which is true, and which every
- * caller already has to handle because a real user can decline.
- *
- * The consequence is contained and visible: someone who taps "Yes, remind me"
- * today gets their preference recorded and no notifications, because there is
- * no notification system to schedule against. Nothing silently half-works.
- *
- * Plan 12 T02 replaces the body of `requestNotificationPermission` and
- * nothing else. Onboarding does not change.
- * ---------------------------------------------------------------------------
+ * REMOTE NOTIFICATIONS ARE NEVER REGISTERED. There is no
+ * `getExpoPushTokenAsync` anywhere in this app and there must never be: a push
+ * token is a device identifier, and rule 1 is that no data leaves the phone.
+ * `notifications.test.ts` asserts its absence across the whole source tree.
  */
 
 export type PermissionOutcome = 'granted' | 'denied' | 'unavailable';
@@ -36,8 +32,41 @@ export type PermissionOutcome = 'granted' | 'denied' | 'unavailable';
  * guard in here that can enforce that — a guard would have to know what
  * screen it was called from — so it is a rule about call sites, and
  * `features/onboarding/steps/Notifications.tsx` is currently the only one.
+ * `guards.test.ts` asserts that it stays the only one.
  */
 export async function requestNotificationPermission(): Promise<PermissionOutcome> {
-  // Plan 12 T02: replace with expo-notifications' requestPermissionsAsync.
-  return 'unavailable';
+  try {
+    const existing = await getPermissionsAsync();
+
+    // Already answered. Asking again is a no-op on iOS and a second dialog on
+    // some Android versions, so it is short-circuited rather than attempted.
+    if (existing.granted) return 'granted';
+    if (!existing.canAskAgain) return 'denied';
+
+    const result = await requestPermissionsAsync({
+      ios: {
+        allowAlert: true,
+        allowSound: true,
+        // No badge. A number on the app icon is a standing demand for
+        // attention that nobody agreed to, and `systems/06` rules out badges
+        // in the same breath as it rules out re-engagement.
+        allowBadge: false,
+      },
+    });
+
+    return result.granted ? 'granted' : 'denied';
+  } catch {
+    // A simulator without a notification service, or a stripped build. Not an
+    // error worth showing anybody: everything else in the app still works.
+    return 'unavailable';
+  }
+}
+
+/** Whether we may schedule. Read on every reschedule; never cached. */
+export async function hasNotificationPermission(): Promise<boolean> {
+  try {
+    return (await getPermissionsAsync()).granted;
+  } catch {
+    return false;
+  }
 }

@@ -41,5 +41,10 @@
     "lifetime": "Bought once. Nothing renews.",
     "stop": "Stop Plus",
     "survives": "If you stop, everything you've written stays here and breathing keeps working."
+  },
+  "plus": {
+    "trends": "Your months and the longer view come with Calma Plus. Everything already recorded stays recorded.",
+    "olderEntries": "Your older writing is still here, and stays here. Calma Plus opens your full history and search.",
+    "searchScope": "Search covers this week. Calma Plus searches everything you have written."
   }
 }

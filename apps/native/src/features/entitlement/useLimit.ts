@@ -12,7 +12,12 @@ import { useStorage } from '@/src/lib/repositories';
 
 import { useEntitlementStore, useTier } from './store';
 import { usePaywallGate } from './gateStore';
-import { paywallDecision, type LimitKind } from './paywallGate';
+import {
+  isDeferral,
+  paywallDecision,
+  type LimitKind,
+  type PaywallContext,
+} from './paywallGate';
 
 /**
  * How much of an allowance is used, derived and never counted separately.
@@ -46,6 +51,8 @@ export interface Limit {
   atLimit: boolean;
   /** What may be shown right now for this limit: a sheet, a line, or nothing. */
   decide: () => ReturnType<typeof paywallDecision>;
+  /** Whether a `silent` answer will change later. See `isDeferral`. */
+  deferrable: () => boolean;
   /** Records that the sheet was shown, so today's second hit gets a line. */
   record: () => void;
   refresh: () => void;
@@ -90,24 +97,37 @@ export function useLimit(kind: 'worry' | 'journal'): Limit {
       ? worriesRemaining(tier, used)
       : journalEntriesRemaining(tier, used));
 
-  const decide = useCallback(
-    () =>
-      paywallDecision(kind as LimitKind, {
-        blockers,
-        completedAt,
-        now: Date.now(),
-        today: dayKey(new Date()),
-        shown,
-        markerDay,
-        suppressed,
-      }),
-    [kind, blockers, completedAt, shown, markerDay, suppressed],
+  /**
+   * The gate's view of right now, built in one place.
+   *
+   * `decide` and `deferrable` are two questions about the same instant, so
+   * they must not each assemble their own `now` — a few milliseconds apart is
+   * enough for one to see the settle window closed and the other open.
+   */
+  const context = useCallback(
+    (): PaywallContext => ({
+      blockers,
+      completedAt,
+      now: Date.now(),
+      today: dayKey(new Date()),
+      shown,
+      markerDay,
+      suppressed,
+    }),
+    [blockers, completedAt, shown, markerDay, suppressed],
   );
+
+  const decide = useCallback(
+    () => paywallDecision(kind as LimitKind, context()),
+    [kind, context],
+  );
+
+  const deferrable = useCallback(() => isDeferral(context()), [context]);
 
   const record = useCallback(
     () => markShown(stores.cache, kind as LimitKind),
     [markShown, stores.cache, kind],
   );
 
-  return { used, allowed, atLimit, decide, record, refresh };
+  return { used, allowed, atLimit, decide, deferrable, record, refresh };
 }

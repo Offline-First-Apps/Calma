@@ -2,16 +2,19 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import type { JournalEntry } from '@calma/domain';
 import { radius } from '@calma/tokens';
 import { useRouter } from 'expo-router';
+import { weekKey } from '@calma/domain';
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Pressable, ScrollView, TextInput, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { useRepositories } from '@/src/lib/repositories';
+import { PlusPrompt } from '@/src/features/entitlement/PlusPrompt';
+import { useTier } from '@/src/features/entitlement/store';
 import { Text } from '@/src/ui/Text';
 
 import { useDayLabel } from './dayLabel';
-import { previewOf, splitOnMatch } from './entries';
+import { currentWeekOnly, previewOf, splitOnMatch } from './entries';
 
 /**
  * Search your writing (g7).
@@ -42,10 +45,13 @@ const DEBOUNCE_MS = 220;
 
 export function SearchScreen() {
   const { t } = useTranslation('journal');
+  const { t: tEntitlement } = useTranslation('entitlement');
   const insets = useSafeAreaInsets();
   const repositories = useRepositories();
   const dayLabel = useDayLabel();
   const router = useRouter();
+
+  const tier = useTier();
 
   const [query, setQuery] = useState('');
   const [results, setResults] = useState<JournalEntry[] | null>(null);
@@ -63,12 +69,28 @@ export function SearchScreen() {
 
     const timer = setTimeout(() => {
       void repositories.journal.search(needle).then((found) => {
-        if (generation.current === mine) setResults(found);
+        if (generation.current !== mine) return;
+
+        /*
+         * T10 — "Journal history & search: Current week only" on free.
+         *
+         * The FIELD IS NEVER DISABLED and the scan still runs; what narrows is
+         * the scope. Free gets a real search over this week, which is a
+         * working feature rather than a demonstration of one, and the prompt
+         * below says plainly what was and was not looked at.
+         *
+         * Older matches are dropped here and never enter state, so there is no
+         * array of somebody's private writing sitting in this component
+         * waiting to be rendered blurred behind a lock (T10).
+         */
+        setResults(
+          tier === 'free' ? currentWeekOnly(found, weekKey(new Date())).visible : found,
+        );
       });
     }, DEBOUNCE_MS);
 
     return () => clearTimeout(timer);
-  }, [query, repositories.journal]);
+  }, [query, repositories.journal, tier]);
 
   return (
     <ScrollView
@@ -95,6 +117,13 @@ export function SearchScreen() {
           className="flex-1 font-sans text-[17px] text-foreground"
         />
       </View>
+
+      {/* Always visible once searching, including when this week had no
+          match — "nothing here" and "nothing here that I looked at" are
+          different sentences, and only one of them is true on free. */}
+      {tier === 'free' && results !== null ? (
+        <PlusPrompt message={tEntitlement('plus.searchScope')} />
+      ) : null}
 
       {results === null ? (
         <Text variant="callout" className="mx-1 mt-[18px]">

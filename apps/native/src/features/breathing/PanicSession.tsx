@@ -23,8 +23,10 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { playSound, setBreathingSessionActive } from '@/src/lib/audio';
 import { useReduceMotion } from '@/src/lib/motion';
+import { usePaywallHold } from '@/src/features/entitlement/gateStore';
 import { Text } from '@/src/ui/Text';
 
+import { PhaseLabel } from './PhaseLabel';
 import { Orb } from './Orb';
 import { PanicEnding } from './PanicEnding';
 import { useBreathHaptics } from './useBreathHaptics';
@@ -93,14 +95,31 @@ export function PanicSession() {
   // touching the screen, which is exactly what the idle timer watches for.
   useKeepAwake();
 
+  // T12. The panic path is the one place a price must never appear, and the
+  // hold covers the ending as well as the breathing.
+  usePaywallHold('panic');
+
   const pattern = useMemo(() => getPattern('physiological-sigh'), []);
 
   const [timeline, setTimeline] = useState<BreathTimeline | null>(null);
   const [ended, setEnded] = useState(false);
   const [extended, setExtended] = useState(false);
-  // Held so the phase callbacks stay cheap; nothing renders it. The panic
-  // screen shows no phase word -- e2 has one line and then nothing.
-  const labelRef = useRef<BreathLabel | null>(null);
+  /*
+   * THE PHASE WORD, ADDED IN SESSION 18 AGAINST e2's CAPTION.
+   *
+   * e2 says "one line and then nothing", and this screen showed no phase word
+   * for six sessions on that basis. The owner ran it and reported the opposite
+   * problem: a pulsing orb with no words is not calm, it is unexplained — and
+   * the panic path is reached by people who have never seen the app before and
+   * who are, by definition, in no state to infer a rhythm from an animation.
+   *
+   * So the word is here, but it keeps the screen's register: it fades in only
+   * after the opening line has gone, uses the panic ground's warm ink rather
+   * than the usual foreground, and is still never a countdown.
+   *
+   * Recorded as a divergence in `plans/07` T05.
+   */
+  const [label, setLabel] = useState<BreathLabel | null>(null);
 
   const haptics = useBreathHaptics(timeline);
 
@@ -110,7 +129,7 @@ export function PanicSession() {
     (index: number) => {
       haptics.onPhaseStart(index);
       const step = timeline?.steps[index];
-      if (step?.labelChanges) labelRef.current = step.label;
+      if (step?.labelChanges) setLabel(step.label);
     },
     [haptics, timeline],
   );
@@ -291,6 +310,10 @@ export function PanicSession() {
             {t('panic.opening')}
           </Text>
         </Animated.View>
+
+        {/* Fades in behind the opening line rather than competing with it.
+            `PhaseLabel` owns its own cross-fade, so the word never snaps. */}
+        <PhaseLabel label={label} />
 
         <PanicExit onPress={dismiss} label={t('panic.dismiss')} />
       </View>

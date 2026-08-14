@@ -233,7 +233,14 @@ export function OnboardingFlow() {
   }, [step, answers, advance, session]);
 
   return (
-    <StepFrame ground={ground} progress={progressFor(state)} onEscape={escape}>
+    <StepFrame
+      ground={ground}
+      progress={progressFor(state)}
+      onEscape={escape}
+      // The step's identity, so each screen's content settles in rather than
+      // swapping instantly under a hairline that is already moving.
+      stepKey={state.steps[state.index]}
+    >
       {/*
         Keyed on the step, so each one mounts fresh and cross-fades. The key
         is what makes the transition happen at all -- without it React

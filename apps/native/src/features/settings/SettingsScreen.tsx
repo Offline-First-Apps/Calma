@@ -1,4 +1,3 @@
-import { formatWindowTime } from '@calma/i18n';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { ScrollView, View } from 'react-native';
@@ -8,8 +7,7 @@ import { usePrefsStore } from '@/src/stores/prefs';
 import { Screen } from '@/src/ui/Screen';
 import { Text } from '@/src/ui/Text';
 
-import { LinkRow, Section, ToggleRow, ValueRow } from './Rows';
-import { windowRange } from './windowRange';
+import { LinkRow, Section, ToggleRow } from './Rows';
 
 /**
  * j1 — Settings.
@@ -28,9 +26,17 @@ import { windowRange } from './windowRange';
  *   - no account section, because there is no account (rule 1);
  *   - no analytics or diagnostics toggle, because there is nothing to send;
  *   - no version-and-build row dressed up as About. It is one line.
+ *
+ * AND, SINCE SESSION 18: NO ROW THAT LEADS NOWHERE.
+ *
+ * Name, "what you told us", the worry window and Appearance were all rows
+ * pushing to routes that do not exist — so tapping them did nothing at all,
+ * which is worse than the setting being absent. A settings screen where half
+ * the rows are inert teaches people not to trust any of them. They come back
+ * when their destinations do (plan 14 T02-T05, T08).
  */
 export function SettingsScreen() {
-  const { t, i18n } = useTranslation('settings');
+  const { t } = useTranslation('settings');
   const router = useRouter();
   const repositories = useRepositories();
   const prefs = usePrefsStore((state) => state.prefs);
@@ -49,48 +55,7 @@ export function SettingsScreen() {
           {t('title')}
         </Text>
 
-        <Section title={t('sections.you')}>
-          <ValueRow
-            label={t('rows.name')}
-            value={prefs.name ?? t('rows.nameUnset')}
-            onPress={() => router.push('/settings/name')}
-          />
-          <LinkRow
-            label={t('rows.answers')}
-            hint={t('rows.answersHint')}
-            onPress={() => router.push('/settings/answers')}
-            last
-          />
-        </Section>
-
-        <Section title={t('sections.breathing')}>
-          <ValueRow
-            label={t('rows.rhythm')}
-            value={t(`breathing:patterns.${patternKey(prefs.customRatio)}.name`, {
-              ns: 'breathing',
-            })}
-            onPress={() => router.push('/breathe')}
-          />
-          <ToggleRow
-            label={t('rows.haptics')}
-            hint={t('rows.hapticsHint')}
-            value={prefs.hapticsEnabled}
-            onChange={(hapticsEnabled) => set({ hapticsEnabled })}
-            last
-          />
-        </Section>
-
         <Section title={t('sections.worries')}>
-          <ValueRow
-            label={t('rows.window')}
-            value={windowRange(
-              prefs.worryWindowTime,
-              prefs.worryWindowMinutes,
-              i18n.language,
-              formatWindowTime,
-            )}
-            onPress={() => router.push('/settings/window')}
-          />
           {/*
             This toggle NEVER fires the OS dialog. A permission can only be
             spent once, and `permission.ts` is explicit that the prompt belongs
@@ -107,6 +72,8 @@ export function SettingsScreen() {
           />
         </Section>
 
+        {/* One section, because two sections of one row each is a list
+            pretending to be organised. */}
         <Section title={t('sections.soundAndFeel')}>
           <ToggleRow
             label={t('rows.sound')}
@@ -114,10 +81,11 @@ export function SettingsScreen() {
             value={prefs.soundEnabled}
             onChange={(soundEnabled) => set({ soundEnabled })}
           />
-          <ValueRow
-            label={t('rows.appearance')}
-            value={t(`appearanceValue.${prefs.theme}`)}
-            onPress={() => router.push('/settings/appearance')}
+          <ToggleRow
+            label={t('rows.haptics')}
+            hint={t('rows.hapticsHint')}
+            value={prefs.hapticsEnabled}
+            onChange={(hapticsEnabled) => set({ hapticsEnabled })}
             last
           />
         </Section>
@@ -165,7 +133,3 @@ export function SettingsScreen() {
   );
 }
 
-/** The stored rhythm, as a `breathing:patterns.*` key. */
-function patternKey(customRatio: readonly number[] | null): string {
-  return customRatio ? 'custom' : 'sigh';
-}

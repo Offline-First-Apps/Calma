@@ -13,6 +13,7 @@ import Animated, {
 } from 'react-native-reanimated';
 import { useUniwind } from 'uniwind';
 
+import { usePaywallHold } from '@/src/features/entitlement/gateStore';
 import { playSound } from '@/src/lib/audio';
 import { hapticWorryCaptured } from '@/src/lib/haptics';
 import { Text } from '@/src/ui/Text';
@@ -86,6 +87,15 @@ export function CaptureField({ onCapture, windowTime }: CaptureFieldProps) {
   const [confirming, setConfirming] = useState(false);
 
   const lastSubmit = useRef(0);
+
+  /*
+   * T12's "any text field in the app has focus", at the field that made the
+   * rule necessary. Scoped to `focused` rather than to mount, because this
+   * screen exists to be typed in and a hold that never lifts is a paywall
+   * that never appears -- see the queue in `useLimitNotice`, which is what
+   * lets the offer survive until the keyboard goes down.
+   */
+  usePaywallHold('field', focused);
 
   const dissolve = useSharedValue(0);
 

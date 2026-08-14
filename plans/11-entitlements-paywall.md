@@ -170,31 +170,94 @@ showing.
 
 ## T08 — Gate worry capture
 
-- [ ]
+- [x] `c474c74`
 - **Commit:** `feat(entitlement): gate worry capture at three per day`
 - **Depends on:** T05, T06, `08-worry-postponement` T02
 - **Touches:** `apps/native/src/features/worry/CaptureField.tsx`
 - **Done when:** the field is never disabled; the 4th capture attempt triggers the worry paywall copy; the window and all pending worries remain fully usable; and the count resets at local midnight.
 
+
+**Note (session 19): THE FOURTH WORRY IS STORED.** The todo says the attempt
+"triggers the worry paywall copy" and does not say it is refused, and three
+things settle the ambiguity the same way: this plan's own header ("No hard
+blocks anywhere"), `systems/05`'s "the action is attempted, then a gentle card
+appears", and that file's note that the worry copy points at what someone can
+still do because "a limit should never be a dead end".
+
+R1 and R5 are the deciding argument. They are about spirals producing worries
+three seconds apart. An app that declines the fourth one at 2am has broken
+this screen's entire promise at the moment it mattered, to save a few pence.
+
+**If the owner wants it refused instead**, it is one branch in
+`CaptureScreen.onCapture` -- skip the `capture()` call and keep the text. Note
+that `CaptureField` clears on submit by design (T16), so refusing also means
+solving text restoration, which is why it is not the default.
+
+The capture screen dismisses the keyboard before offering. It holds `'field'`
+while focused, so the gate's answer at the moment of capture is always
+`silent`; the blur is the boundary that releases the queued offer. Leaving the
+screen instead would unmount the queue with it.
+
 ---
 
 ## T09 — Gate journal entries
 
-- [ ]
+- [x] `c474c74`
 - **Commit:** `feat(entitlement): gate journal saves at two per week`
 - **Depends on:** T05, T06, `09-journaling` T08
 - **Touches:** `apps/native/src/features/journal/EditorScreen.tsx`
 - **Done when:** the editor always opens and drafts always save; the 3rd **save** in an ISO week triggers the paywall; the written content stays on screen and is retained as a draft rather than being lost.
 
+
+**Note (session 19):** the opposite answer to T08, and deliberately so.
+`EditorScreen`'s own standing comment is the rule -- a hit limit blocks "the
+*finish*, not the writing, and the draft is still there afterwards" (R3). So
+`finish` is not called, `setSaved` is not set, nothing is cleared, and every
+word stays on screen and on disk as a draft.
+
+The asymmetry is the point. A worry refused is a promise broken at the moment
+it mattered; an entry that stays a draft has cost nobody a word and is
+finishable the moment the week rolls over.
+
+The editor RELEASES its `'editor'` hold once the save is declined. The hold
+protects someone still writing; by then they have tapped Save, and holding on
+would turn that tap into a silent no-op -- the one outcome worse than the
+paywall itself.
+
 ---
 
 ## T10 — Gate history, search, and trends
 
-- [ ]
+- [x] `a11c6ea`
 - **Commit:** `feat(entitlement): gate history, search and trends`
 - **Depends on:** T05, `10-progress-dashboard` T06, `09-journaling` T12
 - **Touches:** `HistoryList.tsx`, `SearchScreen.tsx`, `TrendChart.tsx`
 - **Done when:** free tier sees the current week fully and older sections show a soft prompt rather than blurred or teased content — no fake-blur dark pattern.
+
+
+**Note (session 19):** the file names in "Touches" are from the blueprint and
+do not exist. The three real surfaces are `progress/HistoryView.tsx` (the
+"Longer" segment), `journal/EntryList.tsx`, and `journal/SearchScreen.tsx`.
+
+THE NO-BLUR RULE IS ENFORCED BY THE DATA SHAPE, not by remembering it.
+`currentWeekOnly` returns `{ visible, older: number }` -- a count, never the
+withheld entries -- so no component is ever holding text it must not draw, and
+no later edit can accidentally render it greyed behind a lock. There is an
+assertion that the returned object does not contain the withheld text at all.
+
+`HistoryView` is REPLACED rather than reduced on free: there is no such thing
+as one week of monthly bars, and drawing the axis with a single stub in it
+would be a chart of an absence with a price on it.
+
+Search keeps working on free and narrows its SCOPE to this week. A real search
+over seven days is a working feature; a disabled field is a demonstration of
+one. The prompt is shown whenever a search has run, including when this week
+had no match -- "nothing here" and "nothing here that I looked at" are
+different sentences and only one is true.
+
+No count is printed for withheld entries. `listPaged` returns a page, so a
+number taken from it would undercount someone's own archive; the prompt says
+the writing is still here instead, which is the part that needed saying.
 
 ---
 
@@ -255,10 +318,25 @@ focus", which catches the cases nobody enumerates.
 An in-flight blocker returns `'silent'`, not `'inline'`. "That's 3 for today"
 is still the app talking about money while someone is mid-task.
 
-**The holds are not yet placed.** `usePaywallHold` exists and no screen calls
-it. Until the capture field, the session screens, the worry window and the
-editor each register one, the gate is a correct mechanism with nothing feeding
-it. That is the first thing to do when plan 11 resumes.
+**Note (session 19): the holds are placed** -- `session`, `panic`,
+`worryWindow`, `editor`, and `field` on the capture input while focused.
+`animation` is deliberately still unheld: `Enter` now wraps most screens, and
+holding through every entrance would suppress the gate for the first third of
+a second everywhere, which buys nothing and hides real behaviour.
+
+Placing them exposed the missing half of this todo. T12 says the paywall is
+"suppressed and QUEUED TO THE NEXT BOUNDARY" and only suppression existed, so
+every offer made while a hold was active was discarded. Since the capture
+field holds `'field'` through a submit (T16 keeps focus), T08 could never have
+fired at all.
+
+`isDeferral` is the added distinction between "not yet" and "not at all": a
+blocker or an open settle window resolves; a suppressed build never does and
+must not queue; a limit already seen today is not silence. Twelve assertions,
+including the backwards-clock case, which both functions must read the same
+way. `useLimitNotice` holds the deferred offer and re-presents it when the
+gate opens, with its own timer for the settle window -- a released blocker
+re-renders, four seconds passing does not.
 
 ---
 

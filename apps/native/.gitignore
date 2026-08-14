@@ -19,3 +19,7 @@ web-build/
 # UniWind generated types
 uniwind-types.d.ts
 
+# Expo generated types. Written on `expo start`, so it turns up untracked on
+# every machine that has ever run the app and must not be committed.
+expo-env.d.ts
+

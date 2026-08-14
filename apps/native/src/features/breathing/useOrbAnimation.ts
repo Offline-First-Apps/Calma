@@ -2,7 +2,7 @@ import {
   type BreathTimeline,
   SCALE_EXHALED,
 } from '@calma/domain';
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import {
   Easing,
   cancelAnimation,
@@ -107,13 +107,38 @@ export function useOrbAnimation({
   const haloBreath = useSharedValue(SCALE_EXHALED);
   const drift = useSharedValue(1);
 
-  // Wrapped so the worklets below close over a stable identity and the
-  // sequence is not rebuilt -- restarting it would restart the breath.
-  const notifyPhase = useCallback(
-    (index: number) => onPhaseStart?.(index),
-    [onPhaseStart],
-  );
-  const notifyFinished = useCallback(() => onFinished?.(), [onFinished]);
+  /*
+   * THE LATEST-REF PATTERN, AND THE BUG THAT MADE IT NECESSARY.
+   *
+   * These used to be `useCallback(..., [onPhaseStart])`, with a comment
+   * claiming the identity was stable. It was not: `useCallback` returns a new
+   * function whenever its dependency changes, and `SessionScreen` rebuilds
+   * `onPhaseStart` on every render. The effect below lists these as
+   * dependencies, so every render rebuilt the whole `withSequence` — which
+   * RESTARTS THE BREATH FROM PHASE ZERO.
+   *
+   * And phase changes cause renders, because the phase word is state. So the
+   * sigh went "Breathe in" (2s) -> phase change -> re-render -> sequence
+   * restarts -> "Breathe in" again, and the label jumped between "Breathe in"
+   * and "One sip of air" instead of moving through the cycle once. The owner
+   * reported it as the breath being jumpy and words repeating; it was the
+   * animation being silently rebuilt underneath them, several times a second.
+   *
+   * A ref holds the newest callback while the wrapper identity never changes,
+   * so the sequence is built exactly once per timeline. `useEffect` with no
+   * dependency array updates the ref after every commit, which is what keeps
+   * the callbacks current without making them a dependency.
+   */
+  const phaseRef = useRef(onPhaseStart);
+  const finishedRef = useRef(onFinished);
+
+  useEffect(() => {
+    phaseRef.current = onPhaseStart;
+    finishedRef.current = onFinished;
+  });
+
+  const notifyPhase = useCallback((index: number) => phaseRef.current?.(index), []);
+  const notifyFinished = useCallback(() => finishedRef.current?.(), []);
 
   // --- the breath -------------------------------------------------------
   useEffect(() => {

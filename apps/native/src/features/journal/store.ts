@@ -72,12 +72,12 @@ export const useJournalStore = create<JournalState>((set, get) => ({
       repo.listByWeek(weekKey(new Date())),
     ]);
 
-    set({ drafts, weekCount: thisWeek.length, hydrated: true });
+    set({ drafts: newestFirst(drafts), weekCount: thisWeek.length, hydrated: true });
   },
 
   async startDraft(repo, linkedSessionId = null) {
     const entry = await repo.create(blankEntry(linkedSessionId));
-    set((state) => ({ drafts: [entry, ...state.drafts] }));
+    set((state) => ({ drafts: newestFirst([entry, ...state.drafts]) }));
     return entry;
   },
 
@@ -93,7 +93,9 @@ export const useJournalStore = create<JournalState>((set, get) => ({
   async patch(repo, id, patch) {
     const updated = await repo.update(id, patch);
     set((state) => ({
-      drafts: state.drafts.map((draft) => (draft.id === id ? updated : draft)),
+      drafts: newestFirst(
+        state.drafts.map((draft) => (draft.id === id ? updated : draft)),
+      ),
     }));
   },
 
@@ -120,9 +122,32 @@ export const useJournalStore = create<JournalState>((set, get) => ({
   },
 }));
 
-/** Drafts, newest first. */
-export const selectDrafts = (state: JournalState): JournalEntry[] =>
-  [...state.drafts].sort((a, b) => b.updatedAt - a.updatedAt);
+/**
+ * Newest first, applied on WRITE rather than on read.
+ *
+ * THIS FUNCTION EXISTS BECAUSE THE ALTERNATIVE CRASHED THE WRITE TAB.
+ *
+ * `selectDrafts` used to be `[...state.drafts].sort(...)`, which returns a NEW
+ * ARRAY EVERY TIME IT IS CALLED. zustand v5 reads through
+ * `useSyncExternalStore`, which compares snapshots by reference: a selector
+ * that allocates can never return an equal snapshot, so React re-renders,
+ * calls it again, gets another new array, and loops until it gives up with
+ * "Maximum update depth exceeded" and "The result of getSnapshot should be
+ * cached to avoid an infinite loop".
+ *
+ * Sorting at the point of mutation makes the stored array the sorted array, so
+ * the selector can return the very same reference each time.
+ *
+ * THE RULE THIS ESTABLISHES: a zustand selector must return something already
+ * in the store, or a primitive. Never a `.map`, `.filter`, `.sort`, object
+ * literal or spread. `store-selectors.test.ts` asserts it across every store.
+ */
+function newestFirst(drafts: JournalEntry[]): JournalEntry[] {
+  return [...drafts].sort((a, b) => b.updatedAt - a.updatedAt);
+}
+
+/** Drafts, newest first. Already sorted in the store — see `newestFirst`. */
+export const selectDrafts = (state: JournalState): JournalEntry[] => state.drafts;
 
 /**
  * The first step of an entry that has nothing in it yet.

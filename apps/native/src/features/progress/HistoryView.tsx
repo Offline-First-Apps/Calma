@@ -3,6 +3,8 @@ import { useUniwind } from 'uniwind';
 import { useTranslation } from 'react-i18next';
 import { ScrollView, View } from 'react-native';
 
+import { PlusPrompt } from '@/src/features/entitlement/PlusPrompt';
+import { useTier } from '@/src/features/entitlement/store';
 import { Text } from '@/src/ui/Text';
 
 import { Bars } from './Bars';
@@ -19,11 +21,36 @@ import { useHistory } from './useHistory';
  * last week and no expectation set for the rest of this one."*
  */
 export function HistoryView() {
-  const { t, i18n } = useTranslation('progress');
+  const { t, i18n } = useTranslation(['progress', 'entitlement']);
   const { theme } = useUniwind();
   const { months, monthBars, suds, ready } = useHistory();
+  const tier = useTier();
 
   if (!ready) return null;
+
+  /*
+   * T10 — "Progress dashboard: Current week + streak" on free.
+   *
+   * This whole segment is the longer view, so on free it is REPLACED rather
+   * than reduced: there is no such thing as one week of monthly bars, and
+   * drawing the axis with a single stub in it would be a chart of an absence
+   * with a price attached.
+   *
+   * The current week is untouched and lives in the other segments, which is
+   * what "sees the current week fully" means — no lock icon appears anywhere
+   * on the parts that are free.
+   */
+  if (tier === 'free') {
+    return (
+      <ScrollView
+        className="mt-4"
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{ paddingBottom: 24 }}
+      >
+        <PlusPrompt message={t('entitlement:plus.trends')} />
+      </ScrollView>
+    );
+  }
 
   const palette = theme === 'dark' ? barGradient.dark : barGradient.light;
 

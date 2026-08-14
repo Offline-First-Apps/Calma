@@ -23,6 +23,7 @@ import { AppThemeProvider } from '@/contexts/app-theme-context';
 import { BootError } from '@/src/components/BootError';
 import { useEntitlementStore } from '@/src/features/entitlement/store';
 import { useAppStateEffects } from '@/src/lib/appState';
+import { useReschedule } from '@/src/lib/notifications/useReschedule';
 import { boot, type BootResult } from '@/src/lib/boot';
 import { transitionFor, useReduceMotion } from '@/src/lib/motion';
 import { StorageProvider, useStorage } from '@/src/lib/repositories';
@@ -178,6 +179,11 @@ function Routes({
 
   useAppStateEffects();
   useEntitlement();
+  // Rebuilds the whole notification schedule whenever anything it depends on
+  // changes — window time, duration, tier, pending count, permission, boot.
+  // Mounted here so that list is one dependency array rather than seven call
+  // sites, one of which would eventually be forgotten.
+  useReschedule();
 
   const sent = useRef(false);
 
