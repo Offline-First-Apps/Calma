@@ -1,3 +1,94 @@
+## Session 19
+
+**Plan 14 finished: 11/11. Every settings row now leads somewhere.**
+
+Session 18 removed four rows from j1 because their destinations did not
+exist, which was the right call and left a screen with holes in it. All four
+destinations are built, plus the two todos that never had rows at all.
+
+### The four open todos
+
+**T05, breathing.** Needed a preference that did not exist, so
+`prefs.defaultPattern` is new — declared with `.default()` rather than as a
+bare enum, because `createPrefsRepo` treats a whole-schema parse failure as
+corruption and a required field would have logged a corruption that never
+happened on every existing device's first launch. It changes exactly one
+thing: what Home offers. Not the panic path, which is the sigh always.
+`resolveUsualPattern` is pure and covers the one state that would crash Home
+— a stored `'custom'` whose ratio has been erased, where `getPattern` throws.
+
+**T08, the answers.** The same `OptionCard` b4-b6 use, so "every option is
+identical in weight" stays one rule in one place. Every tap saves as it is
+made except one: changing "when is it hardest" *offers* to move the worry
+window. `suggestedWindowMove` returns null twice — when the seeded window is
+already theirs, and when the question has been **cleared**. The second is the
+one worth remembering: `worryWindowFor([])` returns 19:00, so a cleared
+answer would otherwise propose a window on the strength of an absence.
+
+**T09, Calma Plus.** Free reads "Free", never "Not active". No price in
+Settings — prices live on i1 behind a deliberate tap. `plusSectionState`'s
+third answer is `hidden`: on a build with no RevenueCat key the section is
+absent rather than disabled, including for a cached Plus user, because the
+tier survives a key-less build and neither manage nor restore works there.
+Restore is on both tiers (the person who needs it has a tier that reads free)
+and runs in place. Closes the Settings half of plan 11 T04.
+
+**T02, language.** The row is **conditional**, not absent and not
+unconditional. With English alone, "Match my phone" and "English" both
+resolve to English — a question with two identical answers, which the owner's
+standing instruction removes. `offersLanguageChoice(LANGUAGES)` reads the
+registry, so the row appears by itself the day a second locale lands, which
+is what `supported.ts` promises. `LanguagePicker` is shared by b2 and
+Settings with **no variant prop** — two copies of a list of languages drift
+the first time one is added, and a picker missing an entry looks exactly like
+a picker. Closes `18-i18n` T13.
+
+### And the three that were half-done
+
+**Appearance** (T06's other half — the screen the owner asked for by name).
+The important part is not the picker: `AppThemeProvider` has wrapped
+`Uniwind.setTheme` since it was written and never read a preference, so a
+chosen theme would have applied on the tap and reverted on the next launch.
+`useThemePreference` is mounted at the root. `'system'` is stored as a
+sentinel and passed through, so "match my phone" stays a live binding — the
+same decision `prefs.locale` makes. Wave and bloom are listed and
+unselectable, enforced by `isOrbThemeAvailable` rather than by remembering to
+disable two rows.
+
+**The worry window picker** (T04's missing screen). **A knowing divergence:**
+T04 says "native picker", which means `@react-native-community/datetimepicker`
+— a native module, so a prebuild, drawing a platform wheel in the platform's
+own type in the middle of an app whose argument is that it does not look like
+one. It uses d7's steppers instead. There is no design file for this screen;
+j1-j4 are the whole set. The time wraps at midnight rather than clamping,
+because somebody whose worst hour is 1am gets there by pressing down from
+midnight. Nothing calls `rescheduleAll()` and nothing needs to —
+`useReschedule` has window time and duration in its dependency array.
+
+**The name** (T03's missing screen). "Leave it blank" is a full-size pill
+directly beneath Done. Empty stays `null`, never `''`.
+
+### One copy fix
+
+`common:locked.body` read "Face ID, or your passcode." The owner's standing
+instruction is that no lock copy names a biometric. It now says "However you
+unlock this phone", which is also more accurate — `lock.ts` takes whatever
+the device offers and falls back to no lock when it offers none.
+
+### State
+
+`pnpm check-types`, `pnpm lint` and `pnpm test` all clean. 274 native
+assertions (up from 234), 1146 across the workspace.
+`expo export --platform android` produces an 8.8MB bundle.
+
+**Still never run on a device.** Everything here is written and typechecked
+and none of it has been seen. Typed routes are **off** in `app.json` — there
+is no `experiments.typedRoutes`, so `.expo/types/router.d.ts` is never
+generated and `router.push('/settings/anything')` is an unchecked string. Six
+new routes went in under that. Worth turning on.
+
+---
+
 ## Session 16
 
 **Three gaps closed, and two recurring mistakes turned into machinery.**
