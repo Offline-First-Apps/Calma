@@ -144,6 +144,8 @@ export const themedColors: readonly ThemedVar[] = [
   { cssVar: 'plus-label', lightValue: light.textPlusLabel, darkValue: dark.textPlusLabel },
   { cssVar: 'sage-mark', lightValue: light.sageMark, darkValue: dark.sageMark },
   { cssVar: 'sage-mark-core', lightValue: light.sageMarkCore, darkValue: dark.sageMarkCore },
+  { cssVar: 'sage-mark-edge', lightValue: light.sageMarkEdge, darkValue: dark.sageMarkEdge },
+  { cssVar: 'label-quiet', lightValue: light.labelQuiet, darkValue: dark.labelQuiet },
   { cssVar: 'surface-streak-note', lightValue: light.surfaceStreakNote, darkValue: dark.surfaceStreakNote },
   { cssVar: 'border-streak-note', lightValue: light.borderStreakNote, darkValue: dark.borderStreakNote },
 

@@ -1,15 +1,65 @@
 {
+  "title": "Progress",
+  "segment": {
+    "week": "Week",
+    "longer": "Longer"
+  },
+  "week": {
+    "title": "This week",
+    "range": "Mon–Sun",
+    "opener_one": "Once this week.",
+    "opener_other": "{{count}} times this week.",
+    "openerNight_one": "Once this week, and it was at night.",
+    "openerNight_other": "{{count}} times this week, {{night}} at night.",
+    "whenYouSatDown": "When you sat down to breathe",
+    "quiet": "A quiet week is a fine week."
+  },
+  "tiles": {
+    "breathingLabel": "Breathing",
+    "breathing_one": "One minute",
+    "breathing_other": "{{count}} minutes",
+    "breathingApprox_one": "About a minute",
+    "breathingApprox_other": "About {{count}} minutes",
+    "breathingBrief": "A short one",
+    "worriesLabel": "Worries",
+    "worries_one": "One, looked at",
+    "worries_other": "{{count}}, all looked at",
+    "writingLabel": "Writing",
+    "writing_one": "One entry",
+    "writing_other": "{{count}} entries",
+    "streakLabel": "Showing up"
+  },
   "streak_one": "That's day one.",
-  "streak_other": "{{count}} days in a row. You're showing up for yourself.",
-  "thisWeek": "This week",
+  "streak_other": "{{count}} days in a row.",
+  "streakSupport": "You're showing up for yourself.",
+  "streakMoment_one": "That's day one.",
+  "streakMoment_other": "That's {{count}} days in a row.",
+  "history": {
+    "title": "Since the spring",
+    "titlePlain": "Everything so far",
+    "months": "6 months",
+    "year": "Year",
+    "howOften": "How often you came here",
+    "often": "Often",
+    "rarely": "Rarely",
+    "beforeSessions": "Where you were, before sessions",
+    "heavier": "Heavier",
+    "steadier": "Steadier"
+  },
   "empty": "We'll start keeping track as you go.",
-  "sessions_one": "1 session",
-  "sessions_other": "{{count}} sessions",
-  "minutes_one": "1 minute",
-  "minutes_other": "{{count}} minutes",
-  "worriesProcessed_one": "1 worry worked through",
-  "worriesProcessed_other": "{{count}} worries worked through",
-  "worriesReleased_one": "1 let go",
-  "worriesReleased_other": "{{count}} let go",
-  "history": "Everything so far"
+  "days": {
+    "mon": "M",
+    "tue": "T",
+    "wed": "W",
+    "thu": "T",
+    "fri": "F",
+    "sat": "S",
+    "sun": "S"
+  },
+  "a11y": {
+    "weekChart": "Breathing sessions, Monday to Sunday",
+    "monthChart": "How often you opened Calma, by month",
+    "sudsChart": "How you rated yourself before each session, oldest first",
+    "openWeek": "See this week in full"
+  }
 }

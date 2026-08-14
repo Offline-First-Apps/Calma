@@ -322,6 +322,24 @@ export const light = {
   sageMark: '#8FA383',
   /** The inner stop of h3's medallion radial. */
   sageMarkCore: '#C7D3BC',
+  /**
+   * The outer stop of h3's medallion.
+   *
+   * Equals `sageMark` in light and does NOT in dark (#6E8062 against
+   * #7E9070). A lit sphere needs its edge to fall away further than a flat
+   * dot does, and over navy that difference is visible where over sand it is
+   * not. One name, so the divergence is expressible rather than averaged.
+   */
+  sageMarkEdge: '#8FA383',
+  /**
+   * The unselected segment label, and h1's weekday letters.
+   *
+   * Between `textMuted` and `textSecondary` in both themes, and it is neither.
+   * The unselected half of a two-way control has to read as available rather
+   * than as disabled, which `textMuted` (#5B6873) does not quite manage at
+   * 15px against the segment track.
+   */
+  labelQuiet: '#5F6C78',
   /** h3's card, which stands on `bgLift` and is the app's only sage card. */
   surfaceStreakNote: '#F3F3EC',
   borderStreakNote: '#DEE3D6',
@@ -529,6 +547,9 @@ export const dark = {
   textPlusLabel: '#A2B296',
   sageMark: '#7E9070',
   sageMarkCore: '#A8B89C',
+  /** Not `sageMark` here. See the note in the light block. */
+  sageMarkEdge: '#6E8062',
+  labelQuiet: '#93A0AC',
   surfaceStreakNote: '#1F2721',
   borderStreakNote: '#2E3729',
   surfacePlus: '#1E2620',
@@ -781,6 +802,45 @@ export const barGradient = {
  * `chartBandFor` in the progress feature for how a month is banded.
  */
 export type ChartBand = 'often' | 'middle' | 'rarely';
+
+/**
+ * h5's distress dots, heaviest first. EIGHT STOPS, NOT THREE.
+ *
+ * Session 14 first built this as three buckets off `clay.base`, `amber.base`
+ * and `sage.base`, which is the anti-pattern table's "simplifying a fill"
+ * exactly: plausible in code, and visibly coarser than the design, which runs
+ * a continuous ramp from clay through amber into sage across eight dots.
+ * Three buckets make a chart of someone's own feelings look like a traffic
+ * light with the middle light on — which is also uncomfortably close to the
+ * traffic-light semantics `systems/03` forbids outright.
+ *
+ * The ramp is indexed by the RATING, never by the dot's position in the
+ * series. Position would mean the colour improved because time passed, which
+ * is the app narrating a trend at someone (plan 10 T09). Value means an
+ * improving run and a worsening run are drawn by one rule.
+ */
+export const sudsRamp = {
+  light: [
+    '#BE7458',
+    '#C98159',
+    '#D68B36',
+    '#E39A45',
+    '#E7A957',
+    '#EFC08C',
+    '#A9BA9E',
+    '#8FA383',
+  ],
+  dark: [
+    '#A0654D',
+    '#AC7050',
+    '#B87A3A',
+    '#C68A45',
+    '#D19249',
+    '#D3A468',
+    '#8B9C7F',
+    '#718262',
+  ],
+} as const;
 
 export const clayGradient = {
   light: {

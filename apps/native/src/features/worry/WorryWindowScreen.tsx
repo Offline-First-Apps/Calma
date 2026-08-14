@@ -16,6 +16,8 @@ import Svg, { Defs, Ellipse, RadialGradient, Stop } from 'react-native-svg';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useUniwind } from 'uniwind';
 
+import { StreakMoment } from '@/src/features/progress/StreakNote';
+import { useStreakMoment } from '@/src/features/progress/useStreakMoment';
 import { useRepositories, useStorage } from '@/src/lib/repositories';
 import { Button } from '@/src/ui/Button';
 import { Text } from '@/src/ui/Text';
@@ -113,6 +115,16 @@ export function WorryWindowScreen() {
       .then(setCapturedToday);
   }, [repositories.worry]);
 
+  /*
+   * h3 fires on the summary and nowhere else.
+   *
+   * The window is what made today qualify (`aggregates.qualifyingDays`), so
+   * the summary is the first moment the streak is true — and it is a screen
+   * someone is reading rather than acting on, which is what "in context, over
+   * the screen you were already on" asks for.
+   */
+  const streakMoment = useStreakMoment(window?.stage === 'summary');
+
   function leave() {
     closeWindow(stores.data);
     router.back();
@@ -174,14 +186,28 @@ export function WorryWindowScreen() {
         />
       ) : null}
 
+      {/*
+        h3 — the streak moment, over f8.
+        The summary dims to 55% behind it, which is the design's only
+        concession to the note: nothing is blocked, nothing is dismissed, and
+        the screen underneath stays live. The dimming is done here rather than
+        inside `StreakMoment` so that component can never block anything.
+      */}
       {window.stage === 'summary' ? (
-        <WindowSummary
-          shape={summaryShape(window)}
-          tally={tally(window)}
-          capturedToday={capturedToday}
-          onClose={leave}
-        />
+        <View
+          className="flex-1"
+          style={{ opacity: streakMoment.streak ? 0.55 : 1 }}
+        >
+          <WindowSummary
+            shape={summaryShape(window)}
+            tally={tally(window)}
+            capturedToday={capturedToday}
+            onClose={leave}
+          />
+        </View>
       ) : null}
+
+      {streakMoment.streak ? <StreakMoment streak={streakMoment.streak} /> : null}
 
       {/* The way out, on every screen except the summary, which has its own.
           Always visible, always the same place, never a confirmation. */}

@@ -10,7 +10,15 @@ Reflection, not gamification. No scores, no comparisons, no badges.
 
 ## T01 — Build the progress store
 
-- [ ]
+- [x] `pending-T01`
+- **Note (session 14):** built as `useProgress.ts` / `useHistory.ts` hooks, **not**
+  a zustand store. A store is for state two screens must agree about, and there
+  is exactly one reader. Adding one means a second copy of numbers that already
+  live in the aggregate cache plus an invalidation path to get wrong every time
+  a worry is released — the bug invited is a Progress tab quietly showing last
+  week's numbers. The aggregates are recomputed on write, so a read is two MMKV
+  gets; doing it on every focus is what makes the screen incapable of being
+  stale. Reversible: the hooks return plain data and a store could wrap them.
 - **Commit:** `feat(progress): add progress zustand store`
 - **Depends on:** `03-storage-layer` T10
 - **Touches:** `apps/native/src/features/progress/store.ts`
@@ -20,7 +28,7 @@ Reflection, not gamification. No scores, no comparisons, no badges.
 
 ## T02 — Build the this-week card
 
-- [ ]
+- [x] `pending-T02`
 - **Commit:** `feat(progress): build this-week summary card`
 - **Depends on:** T01
 - **Touches:** `apps/native/src/features/progress/WeekCard.tsx`
@@ -30,7 +38,7 @@ Reflection, not gamification. No scores, no comparisons, no badges.
 
 ## T03 — Build the streak display
 
-- [ ]
+- [x] `pending-T03`
 - **Commit:** `feat(progress): build streak display`
 - **Depends on:** T01
 - **Touches:** `apps/native/src/features/progress/StreakCard.tsx`
@@ -40,7 +48,14 @@ Reflection, not gamification. No scores, no comparisons, no badges.
 
 ## T04 — Add the streak achievement moment
 
-- [ ]
+- [x] `pending-T04`
+- **Note (session 14):** the two glass notes ship; **the success haptic does
+  not**. h3 lands over a screen someone is reading rather than touching, and a
+  buzz from a screen you are not interacting with reads as a notification —
+  which is the one thing the caption's "noticed, not applauded" rules out. The
+  frequency cap is a stored day key rather than a boolean, so a force-quit
+  mid-window and a second window the same evening both get the right answer
+  with no reset path to forget.
 - **Commit:** `feat(progress): add streak achievement feedback`
 - **Depends on:** T03, `04-audio-haptics` T03
 - **Touches:** `apps/native/src/features/progress/useStreakCelebration.ts`
@@ -50,7 +65,7 @@ Reflection, not gamification. No scores, no comparisons, no badges.
 
 ## T05 — Build the empty state
 
-- [ ]
+- [x] `pending-T05`
 - **Commit:** `feat(progress): build progress empty state`
 - **Depends on:** T02
 - **Touches:** `apps/native/src/features/progress/EmptyState.tsx`
@@ -60,7 +75,7 @@ Reflection, not gamification. No scores, no comparisons, no badges.
 
 ## T06 — Build the history list
 
-- [ ]
+- [x] `pending-T06`
 - **Commit:** `feat(progress): build paginated history list`
 - **Depends on:** T01
 - **Touches:** `apps/native/src/features/progress/HistoryList.tsx`
@@ -70,7 +85,13 @@ Reflection, not gamification. No scores, no comparisons, no badges.
 
 ## T07 — Build the monthly trend chart
 
-- [ ]
+- [x] `pending-T07`
+- **Note (session 14):** the plan says "an SVG line chart ... sessions per week
+  and average pre-SUDS over 12 weeks". h5 draws **two** charts: six months of
+  banded frequency bars, and pre-SUDS as **dots, not a line**. Built from the
+  design (rank 1). A line asserts the values between two sessions and there are
+  none — nobody was measuring on the days the app stayed shut. Averaging SUDS
+  per week would also hide the thing worth seeing, which is the spread.
 - **Commit:** `feat(progress): build monthly trend chart`
 - **Depends on:** T06
 - **Touches:** `apps/native/src/features/progress/TrendChart.tsx`
@@ -81,6 +102,13 @@ Reflection, not gamification. No scores, no comparisons, no badges.
 ## T08 — Build session statistics
 
 - [ ]
+- **Note (session 14):** **not built, and should be cut.** No screen in the
+  design set shows pattern distribution, average duration or completion rate.
+  "Completion rate" in particular is a percentage of sessions you stopped early
+  — the H-group caption's "one decision away from becoming another thing to
+  fail at", almost verbatim. `durationSec` is already "what actually happened,
+  not what was intended"; the product's own answer to a short session is to
+  count it, not to score it. Owner's call.
 - **Commit:** `feat(progress): build session statistics view`
 - **Depends on:** T06
 - **Touches:** `apps/native/src/features/progress/SessionStats.tsx`
@@ -90,7 +118,7 @@ Reflection, not gamification. No scores, no comparisons, no badges.
 
 ## T09 — Add the no-improvement guardrail
 
-- [ ]
+- [x] `pending-T09`
 - **Commit:** `feat(progress): suppress discouraging trend framing`
 - **Depends on:** T07
 - **Touches:** `apps/native/src/features/progress/TrendChart.tsx`
@@ -100,7 +128,13 @@ Reflection, not gamification. No scores, no comparisons, no badges.
 
 ## T10 — Build the Progress tab and verify
 
-- [ ]
+- [ ] `pending-T10` — **built, NOT verified**
+- **Note (session 14):** the tab composes and renders from the aggregate cache,
+  and the 0-day case is covered (`hasAnything` → the empty state). **The
+  "Done when" cannot be honestly ticked**: nothing has been seen on a device,
+  and "verified on iOS and Android at 200% font scale" needs a device and a
+  Mac. The seeded 1/7/365-day cases are covered by `week.test.ts` and
+  `history.test.ts` as logic, which is not the same as rendering them.
 - **Commit:** `feat(progress): assemble progress tab`
 - **Depends on:** T02–T09
 - **Touches:** `apps/native/src/app/(tabs)/progress.tsx`
