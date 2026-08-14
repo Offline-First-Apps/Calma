@@ -7,6 +7,7 @@ import { Pressable, View } from 'react-native';
 
 import { useRepositories } from '@/src/lib/repositories';
 import { Button } from '@/src/ui/Button';
+import { EmptyPage } from '@/src/features/states/EmptyPage';
 import { Text } from '@/src/ui/Text';
 
 import { useDayLabel } from './dayLabel';
@@ -41,6 +42,7 @@ const PAGE_DAYS = 30;
 
 export function EntryList() {
   const { t } = useTranslation('journal');
+  const { t: tCommon } = useTranslation('common');
   const repositories = useRepositories();
   const dayLabel = useDayLabel();
 
@@ -77,11 +79,20 @@ export function EntryList() {
    */
   if (!loaded) return null;
 
+  /*
+   * k1 — the empty state, and it is a screen rather than a sentence.
+   *
+   * This used to be one line of callout text. The design draws a page mark and
+   * two sentences, and the second one is the one that matters: "Some people
+   * write every night, some never do." A bare "Nothing written yet" states the
+   * absence without the permission, which is the whole difference between an
+   * empty state and a reproach.
+   */
   if (entries.length === 0) {
     return (
-      <Text variant="callout" className="mt-3">
-        {t('empty')}
-      </Text>
+      <View className="mt-3 py-10">
+        <EmptyPage title={tCommon('empty.title')} body={tCommon('empty.body')} />
+      </View>
     );
   }
 

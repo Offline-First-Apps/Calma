@@ -20,5 +20,20 @@
   "done": "Done",
   "yes": "Yes",
   "saveFailed": "That didn't save. Want to try again?",
-  "tryAgain": "Try again"
+  "tryAgain": "Try again",
+  "offline": "No connection at the moment. Everything here works anyway.",
+  "locked": {
+    "title": "Calma is locked",
+    "body": "Face ID, or your passcode.",
+    "breathe": "Breathe without unlocking",
+    "unlock": "Unlock"
+  },
+  "returning": {
+    "title": "Good to see you.",
+    "body": "Everything's where you left it. Shall we breathe?"
+  },
+  "empty": {
+    "title": "Nothing here yet, and that's fine.",
+    "body": "Some people write every night, some never do."
+  }
 }

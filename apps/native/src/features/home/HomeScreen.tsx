@@ -7,6 +7,9 @@ import { View } from 'react-native';
 
 import { PANIC_FAB_CLEARANCE } from '@/src/components/PanicFab';
 import { ReOffer } from '@/src/features/onboarding/ReOffer';
+import { OfflineNote } from '@/src/features/states/OfflineNote';
+import { ReturningScreen } from '@/src/features/states/ReturningScreen';
+import { useReturning } from '@/src/features/states/useReturning';
 import { useRepositories } from '@/src/lib/repositories';
 import { usePrefsStore } from '@/src/stores/prefs';
 import { Button } from '@/src/ui/Button';
@@ -57,9 +60,38 @@ export function HomeScreen() {
    */
   const lead = leadToolFor(prefs.onboardingAnswers);
 
+  /*
+   * k6 — returning after a month.
+   *
+   * Home is the right host: it is where someone lands, and the screen is a
+   * greeting rather than an interruption. It replaces Home's contents for one
+   * launch instead of appearing over them, because "Good to see you" competing
+   * with "One obvious next thing" is two greetings at once.
+   */
+  const returning = useReturning();
+
+  if (returning.show) {
+    return (
+      <Screen>
+        <View className="flex-1" style={{ paddingBottom: PANIC_FAB_CLEARANCE }}>
+          <ReturningScreen
+            onBreathe={() => {
+              returning.acknowledge();
+              startSigh();
+            }}
+          />
+        </View>
+      </Screen>
+    );
+  }
+
   return (
     <Screen>
       <View className="flex-1 gap-8" style={{ paddingBottom: PANIC_FAB_CLEARANCE }}>
+        {/* k2. A note, never a banner: being offline changes nothing about
+            what this app can do, so it answers the question and stops. */}
+        <OfflineNote />
+
         <Text variant="title">
           {prefs.name
             ? t('common:greeting.named', { name: prefs.name })

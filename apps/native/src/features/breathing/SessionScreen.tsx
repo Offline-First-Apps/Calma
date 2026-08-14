@@ -14,7 +14,7 @@ import { useNavigation, useRouter } from 'expo-router';
 import { useKeepAwake } from 'expo-keep-awake';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { View } from 'react-native';
+import { AppState, Pressable, View } from 'react-native';
 
 import { JournalOffer } from '@/src/features/journal/JournalOffer';
 import { useJournalStore } from '@/src/features/journal/store';
@@ -23,6 +23,7 @@ import { useReduceMotion } from '@/src/lib/motion';
 import { useRepositories } from '@/src/lib/repositories';
 import { Button } from '@/src/ui/Button';
 import { Screen } from '@/src/ui/Screen';
+import { SessionInterrupted } from '@/src/features/states/SessionInterrupted';
 import { Text } from '@/src/ui/Text';
 
 import { FeelingPicker } from './FeelingPicker';
@@ -177,6 +178,31 @@ export function SessionScreen({
     return () => setBreathingSessionActive(false);
   }, [stage]);
 
+  /*
+   * k3 — the call that arrives mid-breath.
+   *
+   * `inactive` is the state iOS reports for an incoming call, Control Centre,
+   * or the app switcher; Android reports `background`. Both mean the same
+   * thing here: something took the screen and this person did not choose it.
+   *
+   * THE SESSION IS NOT STOPPED, PAUSED OR DISCARDED. `useSession` keeps its
+   * clock — `appState.ts` already establishes that "animation and haptics
+   * pause but session logic does not" — so this is purely what is drawn when
+   * they come back. The session is exactly where they left it, which is what
+   * the screen says out loud.
+   */
+  const [interrupted, setInterrupted] = useState(false);
+  const breathing = stage === 'breathing' || stage === 'extend';
+
+  useEffect(() => {
+    if (!breathing) return;
+
+    const sub = AppState.addEventListener('change', (next) => {
+      if (next !== 'active') setInterrupted(true);
+    });
+    return () => sub.remove();
+  }, [breathing]);
+
   const close = useCallback(() => {
     setBreathingSessionActive(false);
     if (router.canGoBack()) router.back();
@@ -274,6 +300,20 @@ export function SessionScreen({
   }, [navigation, stage, confirmingStop]);
 
   // --- render -----------------------------------------------------------
+
+  /*
+   * Shown until they touch it. There is no button and no timer: the screen
+   * has nothing to ask, so dismissing it is any tap anywhere. A "Resume"
+   * button would be asking permission to continue something that never
+   * stopped.
+   */
+  if (interrupted && breathing) {
+    return (
+      <Pressable className="flex-1" onPress={() => setInterrupted(false)}>
+        <SessionInterrupted reduceMotion={reduceMotion} />
+      </Pressable>
+    );
+  }
 
   if (stage === 'intensity') {
     return (

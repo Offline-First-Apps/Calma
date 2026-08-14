@@ -79,5 +79,9 @@
     "more": "One second more",
     "tooShort": "A little longer, and it'll be easier to follow.",
     "tooLong": "That's a long cycle. Shorten one of them if it starts to feel like work."
+  },
+  "interrupted": {
+    "title": "Take the call.",
+    "body": "This will be here after, exactly where you left it."
   }
 }

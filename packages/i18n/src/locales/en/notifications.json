@@ -10,5 +10,6 @@
     "prompt": "Want a nudge 10 minutes before your window? That's the only thing we'll send.",
     "yes": "Yes, remind me",
     "no": "No thanks"
-  }
+  },
+  "worryWindowOpenSoft": "Your worry window is open, if you want it."
 }
