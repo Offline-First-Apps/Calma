@@ -36,5 +36,10 @@
   "empty": {
     "title": "Nothing here yet, and that's fine.",
     "body": "Some people write every night, some never do."
+  },
+  "notFound": {
+    "title": "That link has gone.",
+    "body": "Whatever it pointed at isn't here any more. Nothing of yours has been lost.",
+    "home": "Back to Calma"
   }
 }
