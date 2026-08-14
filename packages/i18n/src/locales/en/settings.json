@@ -24,5 +24,79 @@
   "help": {
     "title": "Need more help?",
     "body": "Calma is a set of tools, not treatment. If things feel like too much, these lines are staffed by people who can help."
+  },
+  "sections": {
+    "you": "You",
+    "breathing": "Breathing",
+    "worries": "Worries",
+    "soundAndFeel": "Sound & feel",
+    "thisPhone": "This phone",
+    "plus": "Calma Plus",
+    "about": "About"
+  },
+  "rows": {
+    "name": "What we call you",
+    "nameUnset": "Nothing yet",
+    "rhythm": "Your usual rhythm",
+    "haptics": "Gentle buzz on each breath",
+    "hapticsHint": "Something to follow with your eyes closed",
+    "sound": "Sounds",
+    "soundHint": "A pebble, a bowl, a bell. Never speech",
+    "window": "Your window",
+    "windowNotify": "Tell me when it opens",
+    "windowNotifyHint": "One quiet note, never a badge",
+    "lock": "Lock with Face ID",
+    "lockHint": "Ask before opening your writing",
+    "writing": "Your writing",
+    "answers": "What you told us",
+    "answersHint": "Three answers, and all of them changeable",
+    "appearance": "Appearance",
+    "plus": "Calma Plus",
+    "seePlans": "See plans",
+    "restore": "Restore a purchase",
+    "restoreHint": "If you've changed phones",
+    "crisis": "When it's more than this"
+  },
+  "appearanceValue": {
+    "system": "Match my phone",
+    "light": "Light",
+    "dark": "Dark"
+  },
+  "windowLength_one": "{{count}} minute",
+  "windowLength_other": "{{count}} minutes",
+  "privacyScreen": {
+    "title": "Your writing",
+    "body": "Everything you've written lives on this phone, in an encrypted file only you can open. We can't read it, and it never leaves unless you send it somewhere yourself.",
+    "icloud": "Keep a copy in iCloud",
+    "icloudHint": "Still encrypted, still only yours",
+    "export": "Send yourself everything",
+    "delete": "Delete everything",
+    "footer": "No analytics on what you write. No advertising, ever."
+  },
+  "crisis": {
+    "title": "When it's more than this",
+    "body": "Calma is a breathing app. It isn't care, and some nights need a person.",
+    "samaritansName": "Samaritans",
+    "samaritansDetail": "116 123, any hour, free",
+    "shoutName": "Shout",
+    "shoutDetail": "Text SHOUT to 85258",
+    "gpName": "Your GP",
+    "gpDetail": "Worth saying out loud to someone who can follow up",
+    "footer": "Reachable from Settings at any time, and offered — never pushed — if things look heavy for a while."
+  },
+  "deleteSheet": {
+    "counts": "This deletes {{entries}} and {{worries}}.",
+    "entries_one": "{{count}} entry",
+    "entries_other": "{{count}} entries",
+    "worries_one": "{{count}} worry",
+    "worries_other": "{{count}} worries",
+    "nothing": "There's nothing here to delete yet.",
+    "body": "They'll be gone from this phone for good — we don't keep a copy anywhere to restore from.",
+    "keep": "Keep them",
+    "confirm": "Delete everything"
+  },
+  "a11y": {
+    "openSettings": "Settings",
+    "back": "Back"
   }
 }

@@ -100,12 +100,41 @@ describe('tone', () => {
     expect(offenders).toEqual([]);
   });
 
-  it('contains no all-caps words', () => {
-    // Two or more capitals in a row. Sentence case, always.
-    const offenders = enLeaves.filter((l) =>
-      /\b[A-Z]{2,}\b/.test(l.value.replace(/\{\{[^}]+\}\}/g, '')),
-    );
+  /**
+   * The rule is "never all-caps, it reads as shouting" — which is about
+   * SETTING WORDS IN CAPS FOR EMPHASIS, not about the handful of names that
+   * are simply spelled that way.
+   *
+   * Session 14 added j1, j3 and k4 and hit four: "Face ID" twice, "Your GP",
+   * and "Text SHOUT to 85258". None of them is emphasis. `Face ID` is Apple's
+   * product name and lowercasing it is wrong on the platform's own terms; `GP`
+   * is how everyone in the UK writes it; and `SHOUT` is the literal SMS
+   * keyword a person types to reach a crisis service — the one string in the
+   * app where altering the casing could plausibly stop something working.
+   *
+   * So the allowance is an explicit list rather than a looser pattern. A
+   * pattern like "ignore words under five letters" would quietly permit
+   * "STOP" and "FREE" and every other shouted word this test exists to
+   * catch. Adding a name here should require the same argument these four
+   * had to make.
+   */
+  it('contains no all-caps words, proper nouns aside', () => {
+    const PROPER_NOUNS = ['Face ID', 'GP', 'SHOUT'];
+
+    const offenders = enLeaves.filter((l) => {
+      let text = l.value.replace(/\{\{[^}]+\}\}/g, '');
+      for (const name of PROPER_NOUNS) text = text.split(name).join('');
+      return /\b[A-Z]{2,}\b/.test(text);
+    });
     expect(offenders).toEqual([]);
+  });
+
+  /** The allowance above must not have turned the rule off. */
+  it('still catches a genuinely shouted word', () => {
+    const shouted = 'Tap START to begin';
+    let text = shouted;
+    for (const name of ['Face ID', 'GP', 'SHOUT']) text = text.split(name).join('');
+    expect(/\b[A-Z]{2,}\b/.test(text)).toBe(true);
   });
 
   it('contains no emoji', () => {
