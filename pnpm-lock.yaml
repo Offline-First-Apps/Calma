@@ -254,15 +254,9 @@ importers:
 
   apps/web:
     dependencies:
-      '@calma/env':
-        specifier: workspace:*
-        version: link:../../packages/env
       '@calma/tokens':
         specifier: workspace:*
         version: link:../../packages/tokens
-      '@calma/ui':
-        specifier: workspace:*
-        version: link:../../packages/ui
       '@swc/helpers':
         specifier: ^0.5.23
         version: 0.5.23
@@ -272,24 +266,15 @@ importers:
       dotenv:
         specifier: 'catalog:'
         version: 17.4.2
-      lucide-react:
-        specifier: 'catalog:'
-        version: 1.30.0(react@19.2.3)
       next:
         specifier: ^16.3.0
         version: 16.3.0(@types/node@20.19.43)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
-      next-themes:
-        specifier: 'catalog:'
-        version: 0.4.6(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       react:
         specifier: 19.2.3
         version: 19.2.3
       react-dom:
         specifier: 19.2.3
         version: 19.2.3(react@19.2.3)
-      sonner:
-        specifier: 'catalog:'
-        version: 2.0.7(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       zod:
         specifier: 'catalog:'
         version: 4.4.3

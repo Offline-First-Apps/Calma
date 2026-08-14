@@ -1,4 +1,3 @@
-import "@calma/env/web";
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
