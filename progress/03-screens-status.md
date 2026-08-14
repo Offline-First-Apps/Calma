@@ -1,9 +1,9 @@
 # Screens — what exists, screen by screen
 
-**58 screens designed. 47 built, 1 cut, 10 not started.
+**58 screens designed. 57 built, 1 cut, 0 not started.
 0 verified — nothing has ever rendered.**
 
-As of end of session 14.
+As of end of session 15. Every designed screen now exists in code.
 
 This file is the answer to "is X done?". It talks in **screens**, not features,
 because a feature being "done" is not a thing anyone can look at. Designs are
@@ -193,90 +193,97 @@ Both live at `/paywall`, chosen by tier — one destination, two states.
 > RevenueCat means the app can never see a card number or a receipt list.
 > "Stop Plus" deep-links to the platform subscription page.
 
-## J · Settings — 0 of 4
+## J · Settings — 4 of 4 built
 
-Plan 14 is 0 of 11. Nothing exists — there is no settings route at all.
+Plan 14 is 6 of 11. T02 is blocked on i18n; T05, T08, T09 and T11 are open.
 
-| Screen | Status |
-|---|---|
-| j1 settings | — |
-| j2 privacy & data | — |
-| j3 crisis resources | — |
-| j4 delete everything | — |
+| Screen | Status | Where |
+|---|---|---|
+| j1 settings | **Built** | `features/settings/SettingsScreen.tsx` at `/settings` |
+| j2 privacy & data | **Built** | `features/settings/PrivacyScreen.tsx` at `/settings/privacy` |
+| j3 crisis resources | **Built** | `features/settings/CrisisScreen.tsx` at `/settings/crisis` |
+| j4 delete everything | **Built** | `features/settings/DeleteSheet.tsx`, inside j2 |
 
-**Everything onboarding collects — name, language, worry window, breathing
-preference, notifications — is currently uneditable.** It is also where plan
-11 T04's restore row belongs, and the only home for `deleteBreathingSession`,
-which session 13 built and nothing calls.
+> **NOTHING LINKS TO `/settings` YET.** c1's design draws no settings
+> affordance, and inventing one on the app's calmest screen is the owner's
+> call rather than a side effect of this plan. Reachable by route only.
 
-## K · States — 0 of 6
+> Erase clears all three MMKV instances and re-seeds `defaultPrefs`, with
+> twelve assertions behind it. It does **not** destroy the SecureStore key or
+> cancel notifications — see the Note (session 15) in `plans/14` T11. Neither
+> leaves user content on the device.
 
-| Screen | Status |
-|---|---|
-| k1 empty state | — |
-| k2 offline | — |
-| k3 session interrupted | — |
-| k4 locked | — |
-| k5 notification | — (a notification, not a screen; plan 12) |
-| k6 returning after a month | — |
+> Two rows on j2 are **drawn and inert**: iCloud backup and export. Both need
+> machinery that does not exist, and a toggle that silently does nothing is
+> worse than an absence.
+
+## K · States — 6 of 6 built
+
+**Each is wired into the screen that owns it**, not just written. A state
+component nobody renders is a state that has not been handled.
+
+| Screen | Status | Where |
+|---|---|---|
+| k1 empty state | **Built** | `features/states/EmptyPage.tsx`, rendered by `EntryList` |
+| k2 offline | **Built** | `features/states/OfflineNote.tsx`, at the top of Home |
+| k3 session interrupted | **Built** | `features/states/SessionInterrupted.tsx`, on `SessionScreen`'s AppState change |
+| k4 locked | **Built, unreachable** | `features/states/LockedScreen.tsx`. No lock exists to trigger it — see below |
+| k5 notification | **Copy built** | `notifications.json`. Delivery is plan 12's |
+| k6 returning | **Built** | `features/states/ReturningScreen.tsx`, replacing Home for one launch |
+
+> **k4 is the most important screen in this block.** Its caption: "breathing
+> is reachable without authenticating, and it's the primary button". Rule 3
+> cannot survive a lock that gates everything. The amber button bypasses the
+> lock; "Unlock" is the quiet link. Getting that the usual way round would be
+> the worst decision available in this app.
+
+> **k4 has no trigger yet.** j1's "Lock with Face ID" row is not built and
+> there is no `expo-local-authentication` dependency. The screen is correct
+> and nothing calls it; that is plan 14 T06's remaining half.
+
+> k6 fires at **21 days**, not a month — three weeks is already past the point
+> where someone wonders whether their writing survived. Six months and three
+> weeks get the identical screen.
 
 ---
 
-# Handover — the 10 screens still to build
+# Handover — every screen is built. What is left is not screens.
 
-In the order I would take them, and why.
+58 designed, 57 built, 1 cut, and **0 seen by a human being**. That second
+number has not moved in fifteen sessions and it is now the only number worth
+moving.
 
-### ~~1. Finish E · Panic~~ — done, session 12 (plan 07, 7/8)
+### 1. Run the app
 
-### ~~2. Finish G · Journal~~ — done, session 13 (plan 09, 14/14)
+`pnpm install && pnpm check-types && pnpm lint && pnpm test` all pass, and
+`npx expo export --platform android` produces a bundle. None of that is
+evidence that a screen looks right. Session 14's audit found four deviations
+in H after a careful build, and session 15 found four more in K — both times
+by opening the design file, and both times in work that had just been called
+done. A device will find things neither audit could.
 
-### ~~3. I · Plus and d7~~ — done, session 13 (plan 11, 8/13)
+### 2. Connect the things that exist and are not called
 
-### 1. Wire what session 13 left unconnected — 0 screens
+None of these is a screen; all of them are a screen not doing its job.
 
-Not a screen job, and it is first because it is small and it closes a loop
-that is otherwise easy to forget exists.
+- **Nothing links to `/settings`.** Four screens, reachable only by typing a
+  route. c1 draws no affordance, so this needs an owner's decision about
+  where it goes.
+- **k4 has no trigger.** No lock, no `expo-local-authentication`. Plan 14 T06.
+- **`usePaywallHold` is called by nothing.** Five one-line additions and plan
+  11 T12's guarantee becomes real. The test is already written.
+- **`useLimit` is called by nothing.** Plan 11 T08, T09, T10.
+- **`deleteBreathingSession` is called by nothing**, two sessions on.
 
-- `usePaywallHold` is called by nothing. Five one-line additions —
-  `CaptureField`, `SessionScreen`, `PanicSession`, `WorryWindowScreen`,
-  `EditorScreen` — and plan 11 T12's guarantee becomes real rather than
-  merely correct. The test is already written.
-- `useLimit` is called by nothing. Plan 11 T08, T09 and T10 are those call
-  sites.
+### 3. Plan 12, notifications
 
-### ~~2. H · Progress~~ — done, session 14 (plan 10, 8/10)
+The last unbuilt feature. `permission.ts` is a stub that returns
+`'unavailable'`, b10 is built on top of it, k5's copy is written, and the
+worry-window reminder is the only thing Calma ever sends. It is also what
+unblocks the last of plan 14 T07 and T11.
 
-Replaces a placeholder tab, and it is the screen that shows whether B7's
-onboarding breath was actually written. Mostly reads aggregates
-`packages/db` already computes, so it is more screen work than logic.
+### 4. The remaining plan-14 rows
 
-Watch the tone rules hard here: no scoring, no comparison to previous weeks,
-no chart that implies a target. h3 (streak moment) is the single most likely
-screen in the app to accidentally congratulate someone.
-
-### 2. J · Settings — 4 screens, plan 14 (0/11)
-
-Every answer onboarding collects is meant to be editable and none of it is.
-Also the only home for "erase everything", which a privacy-first app is weak
-without, and for j3 crisis resources — and for plan 11 T04's restore row,
-which cannot be finished until this exists.
-
-No new plumbing needed: prefs, the repositories and `deleteBreathingSession`
-all exist.
-
-### 3. K · States — 6 screens
-
-Cheapest per screen and the easiest to defer, but k3 (session interrupted)
-matters more than the others — it is what someone sees when a call arrives
-mid-breath.
-
-### Before any of it
-
-**Run the app.** 42 screens are marked Built and not one has rendered. The
-first run will find things this table cannot, and building 15 more on top of
-42 unverified ones compounds whatever is wrong at the bottom.
-
-`commit-session-12.ps1` → `commit-session-13.ps1` → `pnpm install` →
-`pnpm check-types` → `pnpm test` → `pnpm --filter native android`. See
-`00-START-HERE.md`; note that `check-types` and `eslint` both hung with no
-output in session 13, which is the first thing to establish.
+T02 (language, blocked on i18n T13), T05 (breathing pattern), T08 (onboarding
+answers), T09 (Plus section), T11 (the SecureStore key and notification
+cancellation that "erase everything" still does not do).

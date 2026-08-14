@@ -8,13 +8,14 @@ Android. This file is self-contained. Read it fully before touching anything.
 > and what "leaving the repo correct" means. This file is only *what* to build
 > next. That one is *how*.
 
-Last updated: end of session 14.
+Last updated: end of session 15.
 
 > **For "is screen X done?", read `progress/03-screens-status.md`.** It is all
 > 58 screens in one table — built, cut, or not started — plus the handover
 > order for the 15 that remain. It talks in screens rather than features,
 > because a feature being "done" is not something anyone can look at.
-> **Current count: 47 built, 0 partial, 1 cut, 10 not started, 0 verified.**
+> **Current count: 57 built, 0 partial, 1 cut, 0 not started, 0 verified.**
+> Every designed screen exists in code. None has been seen.
 
 ---
 
@@ -44,12 +45,13 @@ when someone opens the design file.
 | 11 | `--worry` and `--write`, two whole grounds | Nobody had opened the f- or g- screens. |
 | 12 | `--panic` and `--ending`, two more | The panic screens rendered on `--immersive`. Two dim warm sands that are not the same dim warm sand. |
 | 13 | `--saved`, `--offer`, `--highlight`, and eleven more | `--saved` is #FBF4E7. `--lift` is #FBF4E9 and `--ending` is #FBF3E6. Three warm off-whites, two points apart, none of them the other two. |
+| 15 | twenty-two for j1-j4, k1-k6 and the tab shelf | `designs.test.ts` caught an invented padlock colour mid-write, and the audit found four more in k1 and k3. The test is one session old and has now paid for itself twice. |
 | 14 | nineteen for h1-h5, **and two that were simply wrong** | `--surface-tile-neutral`/`--border-tile-neutral` were #F1EEE7/#E2DCD1. Neither hex occurs in any of the 116 screens. Invented in session 11, wrong for five sessions, and the parity test could never have caught it because both layers carried the same invented value. |
 
 **Assume the ground you need does not exist yet.** Check `global.css` against
 the design file before you write a single `bg-` class.
 
-There are now 101 themed variables and the parity test covers all of them, in
+There are now 125 themed variables and the parity test covers all of them, in
 `colors.ts`, `global.css` and `tailwind.ts`. **Change a colour in all three.**
 
 **And there is now a second test that the previous five sessions did not have.**
@@ -67,17 +69,18 @@ The one deliberate exception: **the orb's proportions follow `systems/03`
 
 ## Your task
 
-**Run the app. Everything else is downstream of that.**
+**Run the app. There is no longer anything else at the top of this list.**
 
-Thirteen sessions of code, eight features' worth of screens, and **not one
-screen has ever rendered.** This has been the stated task for five sessions.
-Nothing below matters as much.
+Every screen in the design set now exists in code — 57 built, 1 cut — and
+**not one has ever rendered.** Fifteen sessions. This has been the stated
+task for six of them, and it is now the *only* task, because there are no
+screens left to build behind which to defer it.
 
 ```bash
 pnpm install
-pnpm check-types      # ~11s, clean
+pnpm check-types      # ~9s, clean
 pnpm lint             # clean
-pnpm test             # 881 assertions, all green
+pnpm test             # 980 assertions, all green
 npx expo prebuild --clean
 pnpm --filter native android
 ```
@@ -280,11 +283,25 @@ until a streak breaks.
 `phrasing.ts` returns **i18n keys and params, never built strings** — the
 rounding is the logic, the wording is the locale's.
 
+### Settings and the states — plans 14 and 17, new in session 15
+
+`apps/native/src/features/settings/` and `.../states/`. j1-j4 and k1-k6.
+
+**Every K state is wired into the screen that owns it**, not merely written —
+k1 into `EntryList`, k2 and k6 into Home, k3 into `SessionScreen`'s AppState
+change. k4 is the exception and is unreachable: no lock exists to trigger it.
+
+**Nothing links to `/settings`.** c1 draws no affordance and inventing one on
+the app's calmest screen is the owner's call.
+
+`erase.ts` clears all three MMKV instances and re-seeds `defaultPrefs`. It
+does **not** destroy the SecureStore key or cancel notifications — both are
+named in `plans/14` T11 and neither leaves user content on the device.
+
 ### Not built
 
-Notifications (12), settings (14), web (15), release (16). Plus the rest of
-plan 11: T03, T04, T08, T09, T10. Plan 10's T08 is **recommended for cutting**
-— see its Note (session 14).
+Notifications (12), web (15), release (16). Plus plan 11's T03, T04, T08,
+T09, T10, and plan 14's T02, T05, T08, T09, T11.
 
 ---
 
@@ -421,64 +438,59 @@ routes are actually in `apps/native/app/`. Read `src/app/` as `app/`.
 
 ## Open items, in priority order
 
-1. **Nothing has rendered. Five sessions running, now eight features deep.**
-   47 screens are marked Built and the number a human has seen is zero.
-   `pnpm test` now passes 881 assertions, which raises confidence in the pure
-   logic and says nothing at all about whether a screen looks right.
+1. **Run the app.** 57 screens, zero seen, fifteen sessions. There is no
+   longer a screen left to build in front of this. `pnpm test` passes 980
+   assertions, which raises confidence in the pure logic and says nothing at
+   all about whether a screen looks right — session 14's audit found four
+   deviations in H after a careful build, and session 15 found four more in K.
 
-2. **The tab bar is wrong on every tab, and it is a small fix.** The designs
-   draw a floating shelf — `#F1E6D7` / `#E4D6C1` in light, `#1C2530` /
-   `#2A3542` in dark, radius 28, `margin: 0 16px 30px`, height 78.
-   `app/(tabs)/_layout.tsx` renders a full-width bar in `background`. Visible
-   on all five tabs, so it is the highest-leverage cosmetic fix in the repo.
-   Cross-cutting, so give it its own commit.
+2. **Four things exist and are called by nothing.** Each is a screen not
+   doing its job, and all four are small:
+   - `/settings` has no entry point. Four screens reachable only by route.
+   - k4 has no trigger: no lock, no `expo-local-authentication` (plan 14 T06).
+   - `usePaywallHold` — five one-line additions, test already written.
+   - `useLimit` — plan 11 T08, T09, T10.
+   - `deleteBreathingSession`, built in session 13 and still uncalled.
 
-3. **Place the paywall holds.** `usePaywallHold` exists and no screen calls
-   it. Five one-line additions — `CaptureField`, `SessionScreen`,
-   `PanicSession`, `WorryWindowScreen`, `EditorScreen` — and plan 11 T12's
-   guarantee becomes real rather than merely correct. The test is written.
+3. **Plan 12, notifications.** The last unbuilt feature. `permission.ts` is a
+   stub returning `'unavailable'`, b10 is built on top of it, k5's copy is
+   written. It unblocks the rest of plan 14 T07 and T11.
 
-4. **Finish plan 11: T08, T09, T10** — the three call sites for `useLimit`.
-   The hook, the sheet, the frequency cap and the gate all exist and are
-   tested; nothing calls them. Cheapest remaining work in the repo.
+4. **Anything SHARED needs its own audit.** The tab bar was wrong on all five
+   tabs for five sessions and no screen's audit caught it, because the audit
+   step looks at screens and the bar is furniture. Same applies to the FAB and
+   anything else that appears on top of everything.
 
-5. **Plan 14, settings — the next screens.** 4 screens, and the copy already
-   exists in `settings.json`. Everything onboarding collects is uneditable,
-   there is no home for "erase everything" or j3 crisis resources, and plan 11
-   T04's restore row is blocked on it. `deleteBreathingSession` was built in
-   session 13 and is still called by nothing.
-
-6. **T03 and T04 are blocked on you, the owner.** A RevenueCat project, the
-   three products, the `plus` entitlement, and the two public SDK keys in
+5. **T03 and T04 are blocked on you, the owner.** A RevenueCat project, the
+   three products, the `plus` entitlement, and two public SDK keys in
    `apps/native/.env`. Until then the app runs correctly with no paywalls.
 
-7. **`panic.m4a` is missing and must be regenerated.** ~31 Hz fundamental,
-   90% of its energy below 300 Hz — no phone speaker reproduces it. It is the
-   one sound a person hears at their worst moment. `soundManifest.panic.module`
-   is `null` and the bank treats that as a silent no-op, so nothing is blocked,
-   but plan 07 T03 cannot be done until it exists.
+6. **`panic.m4a` is missing and must be regenerated.** ~31 Hz fundamental, 90%
+   of its energy below 300 Hz — no phone speaker reproduces it. It is the one
+   sound a person hears at their worst moment. The bank treats the `null` as a
+   silent no-op, so nothing is blocked, but plan 07 T03 cannot be done.
 
-8. **f8's italic aside is `#A99B8A` in dark** and renders `text-faint`
-   (`#8996A2`). One class, found in session 14's audit, left alone because it
-   is outside the H block.
+7. **Plan 10 T08 should probably be cut.** "Completion rate" is a percentage
+   of the sessions you stopped early, and no design draws it. Owner's call.
 
-9. **Plan 10 T08 should probably be cut.** "Completion rate" is a percentage
-   of the sessions you stopped early, and no design draws it. Owner's call —
-   see the Note (session 14).
+8. **Three known design divergences**, all recorded: j4's dark "Keep them"
+   border is one point off `border-ending`; k3 brightens the shared orb's core
+   stop on that one screen; and i1 shows three price rows where the design
+   draws one (session 13, resolved in favour of the systems doc).
 
-10. **d7's orb does not follow the numbers**, and its caption says it should.
-    See `plans/11` T11 for why the naive version is worse.
+9. **d7's orb does not follow the numbers**, and its caption says it should.
+   See `plans/11` T11 for why the naive version is worse.
 
-11. `systems/04-audio-and-haptics.md`'s ffmpeg command uses `loudnorm`, which
+10. `systems/04-audio-and-haptics.md`'s ffmpeg command uses `loudnorm`, which
     normalises loudness rather than peak — it contradicts the doc's own
     "-3 dBFS peak" requirement.
 
-12. `apps/native/app/+not-found.tsx` is still Expo template boilerplate:
+11. `apps/native/app/+not-found.tsx` is still Expo template boilerplate:
     untranslated English, an emoji, and classes from outside the design
     system. It is the only consumer of the leftover `components/container.tsx`.
 
-13. No CI config. Everything now runs — `pnpm check-types && pnpm lint &&
-    pnpm test` is a working pipeline and nothing is stopping it being one.
+12. No CI config. `pnpm check-types && pnpm lint && pnpm test` is a working
+    pipeline and nothing is stopping it being one.
 
 ## The test
 

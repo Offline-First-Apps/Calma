@@ -1,3 +1,95 @@
+## Session 15
+
+**Every designed screen now exists. 57 built, 1 cut, 0 seen.**
+
+### J · Settings and K · States — ten screens
+
+Three sessions of preferences had been write-once; `systems/11-onboarding.md`
+promises that someone who mis-taps at 2am is not stuck with it, and until j1
+there was nowhere for that promise to land.
+
+The decisions worth keeping:
+
+- **j4 makes "Keep them" the filled button** and "Delete everything" the one
+  on the ground with a hairline. The dangerous option is never the one the
+  eye lands on first. No red anywhere; no streak warning; a real count read
+  from the key space so nobody confirms an abstraction.
+- **The switch is drawn, not RN's `Switch`** — the platform control is
+  green-when-on and Calma's only green is sage, which means "settled", not
+  "correct". The off track is a warm sand: a setting that is off is a thing
+  that is not happening, not a thing that is wrong.
+- **j3 puts the staffed lines on sage and the GP on the ordinary surface**,
+  and the GP card is not tappable. Calma does not know who it is, and asking
+  would mean collecting a medical contact onto a device whose whole promise is
+  that it collects nothing.
+- **k4 makes breathing the primary button and unlocking the quiet link.**
+  Rule 3 cannot survive a lock that gates everything. Someone at 3am who
+  cannot get Face ID to read their face has the least patience they will ever
+  have. The usual arrangement would be the worst decision available here.
+- **k3 has no buttons at all.** The session never stopped, so there is nothing
+  to resume and nothing to decide. The orb keeps breathing at 62% behind the
+  sentence, which is the whole reassurance the sentence is making.
+- **k6 fires at 21 days, not a month.** Three weeks is already past the point
+  where someone wonders whether their writing survived. Six months and three
+  weeks get the identical screen — escalating would be the app grading how
+  long somebody was away.
+
+Every K state is **wired into the screen that owns it**, not merely written.
+A state component nobody renders is a state that has not been handled.
+
+### The tab bar was wrong on all five tabs
+
+Fixed. The designs draw a floating shelf — 78px, inset 16, radius 28, on
+`--shelf`, with a shadow and an inset top highlight. What shipped was React
+Navigation's default bar in `--background`. It survived five sessions because
+it is *furniture*: nobody opens the tab bar's design file alongside a screen's.
+
+Worth generalising: the audit step catches screens, and it did not catch this.
+Anything shared — the bar, the FAB, the status area — needs looking at on its
+own, because no screen's audit will ever cover it.
+
+### `designs.test.ts` earned its keep twice more
+
+It is one session old. It caught me inventing `#4A5563` for k4's padlock
+(delivered: `#3A4753`), and the K audit then found four more deviations in
+work I had just called done: k1's dark border and rule were both guessed, and
+k3's dark title and body were the wrong tokens.
+
+### The "pure logic in a .ts file" rule caught itself again
+
+`isReturning` lived beside a hook that imports the repository context, which
+imports React, so the Node test could not load it. Identical to `dotColour`
+last session. Two for two: if a function has a decision in it, it needs its
+own module *before* the test is written, not after.
+
+### A bug I wrote and then found
+
+`useReturning` first exposed a `markSeen` for the boot gate — and nothing
+called it, so k6 could never fire. Wiring it into boot would have written
+today's key *before* Home read it, killing the screen the other way. It is
+now a `useState` initialiser, the one place a read is guaranteed to precede
+the write. Worth remembering: "expose a function for someone else to call"
+is a design that fails silently when nobody does.
+
+### The tone test needed an allowance, and got a narrow one
+
+"Face ID", "GP" and "SHOUT" trip the no-all-caps rule. The rule means "do not
+shout for emphasis", and SHOUT is the literal SMS keyword for a crisis line —
+the one string in the app where changing the casing could stop something
+working. An explicit three-name list rather than a looser pattern, plus a new
+assertion that the rule still catches a genuinely shouted word.
+
+### What is verified and what is not
+
+Typecheck, lint, 980 assertions, and an 8.6MB android bundle. **Nothing has
+rendered.** Fifteen sessions, 57 screens, zero seen.
+
+### Next
+
+Not screens — there are none left. Run the app; then connect the four things
+that exist and are called by nothing (`/settings` has no entry point, k4 has
+no trigger, `usePaywallHold` and `useLimit` have no call sites); then plan 12.
+
 ## Session 14
 
 **The toolchain works, the build was broken in four places, and H is built.**

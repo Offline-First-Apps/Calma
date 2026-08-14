@@ -9,7 +9,15 @@ Preferences, privacy, and the honest bits.
 
 ## T01 — Build the settings screen shell
 
-- [ ]
+- [x] `pending-T01`
+- **Note (session 15):** built at `app/settings/index.tsx`, not
+  `src/app/settings/`. Sections follow j1's design (Breathing · Worries ·
+  This phone) plus You, Sound & feel and Calma Plus, rather than the eight
+  this todo lists — j1 draws three and the others are where the remaining
+  rows have to live. **Not reachable from Home yet**: c1's design has no
+  settings affordance and inventing one on the app's calmest screen is a
+  decision for the owner, not a side effect of this plan. Currently reachable
+  only by route.
 - **Commit:** `feat(settings): build settings screen shell`
 - **Depends on:** `05-app-shell` T03
 - **Touches:** `apps/native/src/app/settings/index.tsx`, `apps/native/src/features/settings/*`
@@ -20,6 +28,9 @@ Preferences, privacy, and the honest bits.
 ## T02 — Add the language preference
 
 - [ ]
+- **Note (session 15):** **not built.** Blocked on `18-i18n` T13, which makes
+  b2 reachable; only English ships, so a language row today offers one
+  option. The copy already exists in `settings.json`.
 - **Commit:** `feat(settings): add language preference row`
 - **Depends on:** T01, `18-i18n` T13
 - **Touches:** `apps/native/src/features/settings/LanguageRow.tsx`
@@ -29,7 +40,7 @@ Preferences, privacy, and the honest bits.
 
 ## T03 — Add the name preference
 
-- [ ]
+- [x] `pending-T03`
 - **Commit:** `feat(settings): add name preference`
 - **Depends on:** T01, `03-storage-layer` T06
 - **Touches:** `apps/native/src/features/settings/NameRow.tsx`
@@ -39,7 +50,13 @@ Preferences, privacy, and the honest bits.
 
 ## T04 — Add worry window preferences
 
-- [ ]
+- [x] `pending-T04`
+- **Note (session 15):** the row renders the window as ONE value —
+  "8–8:20pm" — rather than a time and a duration on separate rows. Nobody
+  thinks of their window as "20:00" plus "20 minutes"; two rows would also
+  make the length read as a thing to maximise. `windowRange` is pure and
+  tested. **The picker screen behind it is not built** and the row is
+  currently inert.
 - **Commit:** `feat(settings): add worry window time and duration preferences`
 - **Depends on:** T01, `08-worry-postponement` T13
 - **Touches:** `apps/native/src/features/settings/WorryWindowRow.tsx`
@@ -59,7 +76,7 @@ Preferences, privacy, and the honest bits.
 
 ## T06 — Add sound, haptics, and theme toggles
 
-- [ ]
+- [x] `pending-T06`
 - **Commit:** `feat(settings): add sound, haptics and theme toggles`
 - **Depends on:** T01, `04-audio-haptics` T07
 - **Touches:** `apps/native/src/features/settings/FeelRows.tsx`
@@ -69,7 +86,11 @@ Preferences, privacy, and the honest bits.
 
 ## T07 — Add the notifications row
 
-- [ ]
+- [x] `pending-T07`
+- **Note (session 15):** the toggle records the preference and **never fires
+  the OS dialog**, per `permission.ts`: a permission is spent once and the
+  prompt belongs to b10 alone. The system deep-link is not wired, because
+  plan 12 is not built and there is nothing yet to deep-link about.
 - **Commit:** `feat(settings): add notifications row with system deep link`
 - **Depends on:** T01, `12-notifications` T02
 - **Touches:** `apps/native/src/features/settings/NotificationsRow.tsx`
@@ -99,7 +120,13 @@ Preferences, privacy, and the honest bits.
 
 ## T10 — Add the privacy section
 
-- [ ]
+- [x] `pending-T10`
+- **Note (session 15):** built as j2, a screen rather than a section — that
+  is what the design draws. "Keep a copy in iCloud" and "Send yourself
+  everything" are **drawn and inert**: both need machinery that does not
+  exist (a backup path, an export encoder). A toggle that silently does
+  nothing is worse than an absence, so they are present-but-not-yet rather
+  than fake. The web privacy-policy link waits on plan 15.
 - **Commit:** `feat(settings): add privacy section`
 - **Depends on:** T01
 - **Touches:** `apps/native/src/features/settings/PrivacySection.tsx`
@@ -110,6 +137,16 @@ Preferences, privacy, and the honest bits.
 ## T11 — Add erase everything
 
 - [ ]
+- **Note (session 15):** clears all three MMKV instances and re-seeds
+  `defaultPrefs` (an empty prefs record is not a first launch). Twelve
+  assertions in `__tests__/erase.test.ts`, including that nothing survives.
+
+  **Two of the five things this todo lists are NOT done, and neither is
+  forgotten:** the SecureStore key is not destroyed — `key.ts` exposes no
+  delete, and adding one is a storage-layer change with its own test surface
+  — and notifications are not cancelled, because none are ever scheduled
+  while plan 12 is a stub. Neither leaves user content on the device, which
+  is the promise the screen makes. **T11 stays unticked until both land.**
 - **Commit:** `feat(settings): add erase everything`
 - **Depends on:** T10, `03-storage-layer` T03
 - **Touches:** `apps/native/src/features/settings/EraseRow.tsx`
