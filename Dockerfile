@@ -93,24 +93,29 @@ FROM node:22-slim AS runner
 
 WORKDIR /app
 
-RUN corepack enable && corepack prepare pnpm@11.4.0 --activate
-
-# next.config.ts doesn't set `output: "standalone"`, so `next start` needs the full node_modules
-# tree rather than a pruned bundle — copied wholesale from the builder instead of reinstalled
-# here (a fresh `pnpm install --prod` would drop next itself from the workspace links).
-COPY --from=builder /app/package.json ./
-COPY --from=builder /app/pnpm-workspace.yaml ./
-COPY --from=builder /app/.npmrc ./
-COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/apps/web ./apps/web
-COPY --from=builder /app/packages ./packages
+# `next.config.ts` sets `output: "standalone"`, which traces only the modules this app
+# actually imports at runtime and writes them, already pruned, to `.next/standalone` --
+# server.js, a package.json, and a node_modules that holds ~40MB rather than the roughly
+# 600-package, several-GB install the builder needed to run Turbopack, TypeScript and
+# Tailwind's engine. This used to copy the builder's whole node_modules wholesale (see the
+# git history on this line if the reason ever needs re-litigating): a deploy on a host with
+# limited disk died mid `unpacking` with no error text, which is what that failure mode
+# looks like from the outside. This is the actual fix, not a workaround for it.
+#
+# Standalone deliberately excludes `.next/static` and `public/` -- both are meant to be
+# served by a CDN in some deployment shapes, so Next never assumes it should bundle them.
+# Here there is no CDN, so both are copied in by hand.
+#
+# No `pnpm`, no `corepack`, no `package.json` at the image root: `node apps/web/server.js`
+# is a complete Node program by itself.
+COPY --from=builder /app/apps/web/.next/standalone ./
+COPY --from=builder /app/apps/web/.next/static ./apps/web/.next/static
+COPY --from=builder /app/apps/web/public ./apps/web/public
 
 ENV NODE_ENV=production
 ENV PORT=3001
 ENV HOSTNAME=0.0.0.0
 
-WORKDIR /app/apps/web
-
 EXPOSE 3001
 
-CMD ["pnpm", "start"]
+CMD ["node", "apps/web/server.js"]
