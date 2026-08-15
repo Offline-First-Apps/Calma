@@ -1,33 +1,46 @@
 import type { Metadata, Viewport } from "next";
-import { Figtree, Newsreader } from "next/font/google";
+import localFont from "next/font/local";
 
 import "../index.css";
 import Footer from "@/components/footer";
 import Header from "@/components/header";
 
 /**
- * SELF-HOSTED, NOT FETCHED.
+ * VENDORED, NOT FETCHED — AT BUILD TIME AS WELL AS AT RUNTIME.
  *
- * `next/font/google` downloads the files at build time and serves them from
- * this origin — no request ever reaches Google from a visitor's browser. That
- * is a privacy claim rather than a performance one, and it has to be true of
- * the website as well as the app (plan 15 T06): a page that promises nothing
- * leaves your device should not phone a third party to render its own
- * heading.
+ * This used to be `next/font/google`, which self-hosts for visitors but still
+ * reaches out to `fonts.gstatic.com` during `next build` to fetch the actual
+ * files. That is invisible on a machine with ordinary internet access, and a
+ * hard build failure on one without it — exactly what happened on a
+ * deployment host with restricted or slow outbound access: `next build`
+ * failed with a font module-not-found rather than a network error, because
+ * that is how Turbopack reports it.
+ *
+ * The two `.woff2` files in `../fonts/` are the same latin-subset files
+ * `next/font/google` would have downloaded for this exact configuration —
+ * fetched once from `fonts.gstatic.com` and checked into the repo — so the
+ * build has no external dependency left to fail on. This is also a stricter
+ * reading of the original privacy claim: no request ever reaches Google, not
+ * even from the build.
+ *
+ * Both are variable fonts, hence the range syntax in `weight` rather than a
+ * single number — one file each covers the whole span, matching what Google's
+ * own CSS API serves for a range query.
  *
  * The two families are the app's (D-017). Newsreader for sentences meant to
  * be felt, Figtree for everything meant to be read.
  */
-const figtree = Figtree({
+const figtree = localFont({
+  src: "../fonts/Figtree-Variable.woff2",
+  weight: "300 800",
   variable: "--font-figtree",
-  subsets: ["latin"],
   display: "swap",
 });
 
-const newsreader = Newsreader({
+const newsreader = localFont({
+  src: "../fonts/Newsreader-Variable.woff2",
+  weight: "400 500",
   variable: "--font-newsreader",
-  subsets: ["latin"],
-  weight: ["400", "500"],
   display: "swap",
 });
 
