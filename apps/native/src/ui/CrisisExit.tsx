@@ -1,5 +1,6 @@
-import { Pressable, View } from 'react-native';
+import { View } from 'react-native';
 import { Text } from './Text';
+import { Touchable } from '@/src/ui/Touchable';
 
 /**
  * "I need this now" — the one non-negotiable in onboarding (D-014).
@@ -24,7 +25,7 @@ export function CrisisExit({
   onPress: () => void;
 }) {
   return (
-    <Pressable
+    <Touchable
       onPress={onPress}
       accessibilityRole="button"
       accessibilityLabel={label}
@@ -37,6 +38,6 @@ export function CrisisExit({
     >
       <View className="h-2 w-2 rounded-full bg-clay" />
       <Text variant="label" className="text-clay-foreground">{label}</Text>
-    </Pressable>
+    </Touchable>
   );
 }

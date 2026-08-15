@@ -1,9 +1,19 @@
 import { amber, dark, light } from '@calma/tokens';
-import type { ReactNode } from 'react';
-import { Pressable, View } from 'react-native';
+import { type ReactNode, useEffect } from 'react';
+import { View } from 'react-native';
+import Animated, {
+  Easing,
+  interpolateColor,
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming,
+} from 'react-native-reanimated';
 import { useUniwind } from 'uniwind';
 
+import { useReduceMotion } from '@/src/lib/motion';
+import { SELECT_MS } from '@/src/ui/press';
 import { Text } from '@/src/ui/Text';
+import { Touchable } from '@/src/ui/Touchable';
 
 /**
  * The settings row vocabulary (j1, j2).
@@ -93,14 +103,13 @@ export function ValueRow({
   return (
     <>
       {onPress ? (
-        <Pressable
+        <Touchable
           onPress={onPress}
           accessibilityRole="button"
           accessibilityLabel={`${label}, ${value}`}
-          className="active:opacity-70"
         >
           {body}
-        </Pressable>
+        </Touchable>
       ) : (
         body
       )}
@@ -118,15 +127,15 @@ export function LinkRow({
 }: RowText & { onPress: () => void; last?: boolean }) {
   return (
     <>
-      <Pressable
+      <Touchable
         onPress={onPress}
         accessibilityRole="button"
         accessibilityLabel={label}
-        className="flex-row items-center justify-between gap-[14px] px-5 py-[18px] active:opacity-70"
+        className="flex-row items-center justify-between gap-[14px] px-5 py-[18px]"
       >
         <Labels label={label} hint={hint} />
         <Chevron />
-      </Pressable>
+      </Touchable>
       <Divider last={last} />
     </>
   );
@@ -176,38 +185,81 @@ export function ToggleRow({
   const isDark = theme === 'dark';
   const tokens = isDark ? dark : light;
   const on = isDark ? amber.dark.base : amber.light.base;
+  const reduceMotion = useReduceMotion();
+
+  /*
+   * THE KNOB USED TO TELEPORT.
+   *
+   * `alignItems: value ? 'flex-end' : 'flex-start'` moves it 20px between two
+   * frames, and the track colour swapped on the same frame. That is the
+   * clearest "this is a checkbox in a form" signal a settings screen can send,
+   * on a screen whose caption says every switch should say what it does to
+   * you.
+   *
+   * Translation and colour share `SELECT_MS`, so the switch reads as one
+   * object moving rather than as a dot jumping while a background repaints.
+   *
+   * `interpolateColor` rather than two className states, for the same reason
+   * the OptionCard wash is an overlay: Uniwind resolves classes to a
+   * stylesheet and there is nothing to interpolate between two of them.
+   */
+  const progress = useSharedValue(value ? 1 : 0);
+
+  useEffect(() => {
+    progress.value = withTiming(value ? 1 : 0, {
+      // Reduce Motion keeps the switch legible without sliding it: the colour
+      // still crosses, the knob simply arrives.
+      duration: reduceMotion ? 0 : SELECT_MS,
+      easing: Easing.out(Easing.cubic),
+    });
+  }, [value, progress, reduceMotion]);
+
+  const trackStyle = useAnimatedStyle(() => ({
+    backgroundColor: interpolateColor(
+      progress.value,
+      [0, 1],
+      [tokens.toggleTrackOff, on],
+    ),
+  }));
+
+  const knobStyle = useAnimatedStyle(() => ({
+    // 52 wide, 3 padding each side, 26 knob -> 20px of travel.
+    transform: [{ translateX: progress.value * 20 }],
+    backgroundColor: interpolateColor(
+      progress.value,
+      [0, 1],
+      [tokens.toggleKnobOff, tokens.toggleKnob],
+    ),
+  }));
 
   return (
     <>
-      <Pressable
+      <Touchable
         onPress={() => onChange(!value)}
         accessibilityRole="switch"
         accessibilityState={{ checked: value }}
         accessibilityLabel={hint ? `${label}. ${hint}` : label}
-        className="flex-row items-center justify-between gap-[14px] px-5 py-[18px] active:opacity-70"
+        className="flex-row items-center justify-between gap-[14px] px-5 py-[18px]"
       >
         <Labels label={label} hint={hint} />
-        <View
-          style={{
-            width: 52,
-            height: 32,
-            borderRadius: 16,
-            padding: 3,
-            justifyContent: 'center',
-            alignItems: value ? 'flex-end' : 'flex-start',
-            backgroundColor: value ? on : tokens.toggleTrackOff,
-          }}
+        <Animated.View
+          style={[
+            {
+              width: 52,
+              height: 32,
+              borderRadius: 16,
+              padding: 3,
+              justifyContent: 'center',
+              alignItems: 'flex-start',
+            },
+            trackStyle,
+          ]}
         >
-          <View
-            style={{
-              width: 26,
-              height: 26,
-              borderRadius: 13,
-              backgroundColor: value ? tokens.toggleKnob : tokens.toggleKnobOff,
-            }}
+          <Animated.View
+            style={[{ width: 26, height: 26, borderRadius: 13 }, knobStyle]}
           />
-        </View>
-      </Pressable>
+        </Animated.View>
+      </Touchable>
       <Divider last={last} />
     </>
   );

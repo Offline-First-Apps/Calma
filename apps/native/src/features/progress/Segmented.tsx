@@ -1,6 +1,7 @@
-import { Pressable, View } from 'react-native';
+import { View } from 'react-native';
 
 import { Text } from '@/src/ui/Text';
+import { Touchable } from '@/src/ui/Touchable';
 
 /**
  * The Week/Longer and 6 months/Year toggle (h1, h5).
@@ -39,7 +40,7 @@ export function Segmented<T extends string>({
         const selected = option.value === value;
 
         return (
-          <Pressable
+          <Touchable
             key={option.value}
             onPress={() => onChange(option.value)}
             accessibilityRole="tab"
@@ -58,7 +59,7 @@ export function Segmented<T extends string>({
             >
               {option.label}
             </Text>
-          </Pressable>
+          </Touchable>
         );
       })}
     </View>

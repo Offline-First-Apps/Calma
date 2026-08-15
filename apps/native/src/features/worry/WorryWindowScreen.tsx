@@ -11,7 +11,7 @@ import { windowLamp } from '@calma/tokens';
 import { useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Pressable, View } from 'react-native';
+import { View } from 'react-native';
 import Svg, { Defs, Ellipse, RadialGradient, Stop } from 'react-native-svg';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useUniwind } from 'uniwind';
@@ -24,6 +24,7 @@ import { Button } from '@/src/ui/Button';
 import { Collapsed } from '@/src/ui/Collapsed';
 import { Enter } from '@/src/ui/Enter';
 import { Text } from '@/src/ui/Text';
+import { Touchable } from '@/src/ui/Touchable';
 
 import { TriageAction } from './TriageAction';
 import { TriageQuestion } from './TriageQuestion';
@@ -282,17 +283,17 @@ export function WorryWindowScreen() {
       {/* The way out, on every screen except the summary, which has its own.
           Always visible, always the same place, never a confirmation. */}
       {window.stage !== 'summary' && window.stage !== 'intro' ? (
-        <Pressable
+        <Touchable
           accessibilityRole="button"
           accessibilityLabel={t('window.leave')}
           onPress={leave}
-          className="absolute right-8 h-12 justify-center active:opacity-70"
+          className="absolute right-8 h-12 justify-center"
           style={{ top: Math.max(insets.top, 20) + 8 }}
         >
           <Text variant="callout" className="text-[17px]">
             {t('window.leave')}
           </Text>
-        </Pressable>
+        </Touchable>
       ) : null}
     </Ground>
   );

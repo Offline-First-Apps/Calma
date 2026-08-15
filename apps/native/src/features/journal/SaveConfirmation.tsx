@@ -1,11 +1,12 @@
 import { amber } from '@calma/tokens';
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Pressable, View } from 'react-native';
+import { View } from 'react-native';
 import Svg, { Defs, LinearGradient, Rect, Stop } from 'react-native-svg';
 import { useUniwind } from 'uniwind';
 
 import { Text } from '@/src/ui/Text';
+import { Touchable } from '@/src/ui/Touchable';
 
 /**
  * "Saved. That's yours." (g4)
@@ -39,7 +40,7 @@ export function SaveConfirmation({ onDone }: { onDone: () => void }) {
   }, [onDone]);
 
   return (
-    <Pressable
+    <Touchable
       accessibilityRole="button"
       accessibilityLabel={t('saved')}
       onPress={onDone}
@@ -50,7 +51,7 @@ export function SaveConfirmation({ onDone }: { onDone: () => void }) {
       <Text variant="display" className="text-center text-[40px] leading-[48px]">
         {t('saved')}
       </Text>
-    </Pressable>
+    </Touchable>
   );
 }
 

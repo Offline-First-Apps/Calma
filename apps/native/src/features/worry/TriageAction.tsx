@@ -1,11 +1,12 @@
 import { radius, sage } from '@calma/tokens';
 import { useCallback, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Pressable, TextInput, View } from 'react-native';
+import { TextInput, View } from 'react-native';
 import { useUniwind } from 'uniwind';
 
 import { Button } from '@/src/ui/Button';
 import { Text } from '@/src/ui/Text';
+import { Touchable } from '@/src/ui/Touchable';
 
 /**
  * The action step (f6).
@@ -97,16 +98,16 @@ export function TriageAction({
           It stays visible once there IS text, because changing your mind
           about whether you have a plan is allowed.
         */}
-        <Pressable
+        <Touchable
           accessibilityRole="button"
           accessibilityLabel={t('window.stepEmpty')}
           onPress={() => onDone('')}
-          className="h-12 flex-row items-center justify-center active:opacity-70"
+          className="h-12 flex-row items-center justify-center"
         >
           <Text variant="callout" className="text-[17px] leading-[26px]">
             {t('window.stepEmpty')}
           </Text>
-        </Pressable>
+        </Touchable>
       </View>
     </>
   );

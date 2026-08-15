@@ -42,21 +42,44 @@ export interface SoundSpec {
 }
 
 /**
- * PANIC IS DELIBERATELY UNSHIPPED. READ THIS BEFORE FILLING IT IN.
+ * PANIC, AND WHY THIS ONE FILE IS SYNTHESISED RATHER THAN RECORDED.
  *
  * The delivered file assigned to `panic` by elimination
- * (`Create_a_very_short__#1-...mp3`) is not the sound the spec describes. Its
- * fundamental sits at roughly 31 Hz, with 86% of its energy between 30 and
- * 60 Hz and only 1.9% in the specified 80-120 Hz band. Nearly 90% of it is
- * below 300 Hz, which no phone speaker can reproduce.
+ * (`Create_a_very_short__#1-...mp3`) was not the sound the spec describes.
+ * Its fundamental sat at roughly 31 Hz, with 86% of its energy between 30 and
+ * 60 Hz and only 1.9% in the specified 80-120 Hz band. On a laptop with a
+ * subwoofer it was a deep, convincing drum. On the device it is meant for it
+ * was close to silence with a faint click in it, because no phone speaker
+ * moves air that low.
  *
- * On a laptop with a subwoofer it is a deep, convincing drum. On the device
- * it is meant for, it is close to silence with a faint click in it.
+ * It shipped as `null` for four sessions rather than shipping wrong, which
+ * plan 04 T02 asks for. `null` is a silent no-op in the bank, so the panic
+ * path worked and made no sound at all.
  *
- * This is the one sound a person hears at their worst moment, so plan 04 T02
- * says to stop and flag rather than ship the wrong one. That is what this
- * `null` is. It needs regenerating with a fundamental in the 80-120 Hz band
- * before the panic path in plan 07 can be called done.
+ * `panic.wav` is a generated one-shot: a 100 Hz drum head with its Bessel
+ * modes, a wooden shell at 137 Hz, a downward pitch glide over the first
+ * 60ms, a low-passed mallet transient and a 1.25s decay. It carries integer
+ * harmonics at 200, 300 and 400 Hz deliberately -- a phone speaker is deaf
+ * below roughly 400 Hz, and those are what let the ear reconstruct a
+ * fundamental it cannot actually hear. Measured against the old file: 100 Hz
+ * is now the loudest component and everything below 80 Hz is at least 28 dB
+ * down.
+ *
+ * WAV RATHER THAN M4A, AND THAT IS AN IMPROVEMENT ON THE SPEC.
+ *
+ * `systems/04` converts to m4a because MP3 encoding inserts 20-50ms of
+ * encoder-delay padding, and this sound must fire on the same frame as the
+ * haptic. WAV has no encoder delay at all -- it is the case m4a was the
+ * workaround for. 110KB for the one sound that has to be right.
+ *
+ * NORMALISED TO -3 dBFS PEAK, not to a loudness target. `systems/04`'s own
+ * ffmpeg line uses `loudnorm`, which contradicts the "-3 dBFS peak" the same
+ * document requires; that contradiction is open item 10 in
+ * `progress/00-START-HERE.md` and this file resolves it in favour of what was
+ * asked for.
+ *
+ * IT HAS NOT BEEN HEARD BY ANYONE. Generated and measured, never played.
+ * This is the first sound to check on a real device, at low volume, at night.
  */
 export const soundManifest: Readonly<Record<SoundKey, SoundSpec>> = {
   sessionEnd: {
@@ -85,10 +108,10 @@ export const soundManifest: Readonly<Record<SoundKey, SoundSpec>> = {
     description: 'Two soft glass notes struck in sequence, briefly overlapping.',
   },
   panic: {
-    module: null,
+    module: require('@/assets/audio/panic.wav'),
     volume: 1,
     description:
-      'A deep wooden drum, fundamental 80-120 Hz. NOT YET DELIVERED - see above.',
+      'A deep wooden drum, fundamental 100 Hz. Synthesised - see above.',
   },
   tierLimit: {
     module: require('@/assets/audio/tier-limit.m4a'),

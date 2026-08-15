@@ -10,7 +10,7 @@ import { useKeepAwake } from 'expo-keep-awake';
 import { useRouter } from 'expo-router';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Pressable, View } from 'react-native';
+import { View } from 'react-native';
 import Animated, {
   Easing,
   useAnimatedStyle,
@@ -25,6 +25,7 @@ import { playSound, setBreathingSessionActive } from '@/src/lib/audio';
 import { useReduceMotion } from '@/src/lib/motion';
 import { usePaywallHold } from '@/src/features/entitlement/gateStore';
 import { Text } from '@/src/ui/Text';
+import { Touchable } from '@/src/ui/Touchable';
 
 import { PhaseLabel } from './PhaseLabel';
 import { Orb } from './Orb';
@@ -335,18 +336,18 @@ export function PanicSession() {
  */
 function PanicExit({ onPress, label }: { onPress: () => void; label: string }) {
   return (
-    <Pressable
+    <Touchable
       onPress={onPress}
       accessibilityRole="button"
       accessibilityLabel={label}
       // Big, because the hand pressing it is shaking.
       hitSlop={16}
-      className="h-[60px] items-center justify-center rounded-[30px] border border-border-panic-exit bg-surface-panic-exit px-[34px] active:opacity-80"
+      className="h-[60px] items-center justify-center rounded-[30px] border border-border-panic-exit bg-surface-panic-exit px-[34px]"
       style={{ marginTop: 6 }}
     >
       <Text variant="control" className="text-panic-exit-foreground">
         {label}
       </Text>
-    </Pressable>
+    </Touchable>
   );
 }

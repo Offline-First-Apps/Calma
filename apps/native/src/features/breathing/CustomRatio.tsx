@@ -10,15 +10,19 @@ import { radius } from '@calma/tokens';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Pressable, ScrollView, View } from 'react-native';
+import { ScrollView, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import { PlusPrompt } from '@/src/features/entitlement/PlusPrompt';
+import { mayUseCustomRatio } from '@/src/features/entitlement/paywallGate';
+import { useEntitlementStore, useTier } from '@/src/features/entitlement/store';
 import { useReduceMotion } from '@/src/lib/motion';
 import { useRepositories } from '@/src/lib/repositories';
 import { usePrefsStore } from '@/src/stores/prefs';
 import { Button } from '@/src/ui/Button';
 import { Orb } from '@/src/ui/Orb';
 import { Text } from '@/src/ui/Text';
+import { Touchable } from '@/src/ui/Touchable';
 
 /**
  * The rhythm builder (d7).
@@ -66,7 +70,7 @@ const PHASES = [
 const DEFAULT_RATIO: CustomRatio = [4, 7, 8, 2];
 
 export function CustomRatioScreen() {
-  const { t } = useTranslation('breathing');
+  const { t } = useTranslation(['breathing', 'entitlement']);
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const reduceMotion = useReduceMotion();
@@ -75,7 +79,13 @@ export function CustomRatioScreen() {
   const stored = usePrefsStore((state) => state.prefs.customRatio);
   const update = usePrefsStore((state) => state.update);
 
+  const tier = useTier();
+  const suppressed = useEntitlementStore((state) => state.suppressed);
+  const mayUse = mayUseCustomRatio(tier, suppressed);
+
   const [ratio, setRatio] = useState<CustomRatio>(stored ?? DEFAULT_RATIO);
+  /** Revealed by pressing "Use this one" on free. Never shown on arrival. */
+  const [offered, setOffered] = useState(false);
 
   const problem = customRatioProblem(ratio);
 
@@ -97,7 +107,31 @@ export function CustomRatioScreen() {
   async function use() {
     if (problem !== null) return;
 
-    await update(repositories.prefs, { customRatio: ratio });
+    /*
+     * The gate, and the reason it is here rather than on the row that opens
+     * this screen.
+     *
+     * A padlock on d1's custom card would turn a menu into a shop, and
+     * arriving at a locked screen teaches someone the app has rooms they are
+     * not allowed in. So the whole screen works, the numbers move, and the
+     * offer is made once at the moment it is actually relevant -- when
+     * somebody has decided on a rhythm and wants to keep it.
+     *
+     * Inline, never a sheet: `PaywallSheet` opens with a sound and a haptic
+     * and is for a limit that has been REACHED. Nothing ran out here.
+     */
+    if (!mayUse) {
+      setOffered(true);
+      return;
+    }
+
+    await update(repositories.prefs, {
+      customRatio: ratio,
+      // Choosing a rhythm here is choosing it, full stop. Saving a ratio and
+      // then making someone go to Settings to actually use it would be two
+      // steps for one decision.
+      defaultPattern: 'custom',
+    });
     router.back();
   }
 
@@ -179,6 +213,8 @@ export function CustomRatioScreen() {
         </Text>
       ) : null}
 
+      {offered ? <PlusPrompt message={t('entitlement:paywall.customRatio')} /> : null}
+
       <View className="flex-1" />
 
       <Button
@@ -207,16 +243,16 @@ function Stepper({
   onPress: () => void;
 }) {
   return (
-    <Pressable
+    <Touchable
       accessibilityRole="button"
       accessibilityLabel={label}
       onPress={onPress}
       hitSlop={6}
-      className="h-[46px] w-[46px] items-center justify-center bg-surface-stepper active:opacity-80"
+      className="h-[46px] w-[46px] items-center justify-center bg-surface-stepper"
       style={{ borderRadius: 14 }}
     >
       <Ionicons name={icon} size={18} color="#7A6552" />
-    </Pressable>
+    </Touchable>
   );
 }
 

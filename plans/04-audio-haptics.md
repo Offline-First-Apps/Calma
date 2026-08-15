@@ -26,6 +26,26 @@ Shared services. Built against placeholders so nothing blocks on asset delivery.
 - **Touches:** `apps/native/assets/audio/*`
 - **Done when:** all seven files are converted to AAC 128kbps mono `.m4a` using the ffmpeg command in the systems doc, renamed per the mapping table, peak-normalised to −3 dBFS, free of clicks, within their specified lengths, and the source `.mp3` files are deleted. Each file is listened to and confirmed to match its written description — **especially `panic.m4a`**, which must be a deep wooden drum with an 80–120 Hz fundamental. If it isn't, stop and flag it rather than shipping the wrong sound on the panic path.
 
+- **Note (session 19): SEVEN OF SEVEN. `panic` is shipped, synthesised rather
+  than converted.** No usable source existed, so it is generated: a 100 Hz
+  drum head with its Bessel modes, a wooden shell at 137 Hz, a downward pitch
+  glide over the first 60ms, a low-passed mallet transient and a 1.25s decay.
+  It carries integer harmonics at 200/300/400 Hz on purpose — a phone speaker
+  is deaf below roughly 400 Hz and those are what let the ear reconstruct a
+  fundamental it cannot hear. Measured: 100 Hz is the loudest component and
+  everything below 80 Hz is at least 28 dB down, which is the exact inverse of
+  the file it replaces.
+
+  **`.wav`, not `.m4a`, and that is better rather than a compromise.** The
+  conversion to m4a exists because MP3 inserts 20-50ms of encoder-delay
+  padding and this sound must fire on the same frame as the haptic. WAV has no
+  encoder delay at all — it is the case m4a was the workaround for. 110KB.
+
+  Peak-normalised to exactly -3.00 dBFS, which also settles the `loudnorm`
+  contradiction in the note below in favour of what the doc actually asks for.
+
+  **NOBODY HAS HEARD IT.** Generated and measured, never played. First thing
+  to check on a device, at low volume, at night.
 - **Note (session 9): SIX OF SEVEN CONVERTED. `panic.m4a` DELIBERATELY NOT
   SHIPPED.** The file assigned to `panic` by elimination is not the sound the
   spec describes. Measured: fundamental ~31 Hz, 86% of its energy between 30

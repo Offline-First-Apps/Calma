@@ -1,5 +1,5 @@
-import { Pressable } from 'react-native';
 import { Text } from './Text';
+import { Touchable } from './Touchable';
 
 /** 46px pill — the most repeated dimension in the design set. Radius 23. */
 export function Chip({
@@ -8,7 +8,7 @@ export function Chip({
   onPress,
 }: { label: string; selected?: boolean; onPress?: () => void }) {
   return (
-    <Pressable
+    <Touchable
       onPress={onPress}
       accessibilityRole="button"
       accessibilityState={{ selected }}
@@ -17,6 +17,6 @@ export function Chip({
       }`}
     >
       <Text variant="label">{label}</Text>
-    </Pressable>
+    </Touchable>
   );
 }

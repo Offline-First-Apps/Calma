@@ -5,13 +5,14 @@ import { useRouter } from 'expo-router';
 import { weekKey } from '@calma/domain';
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Pressable, ScrollView, TextInput, View } from 'react-native';
+import { ScrollView, TextInput, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { useRepositories } from '@/src/lib/repositories';
 import { PlusPrompt } from '@/src/features/entitlement/PlusPrompt';
 import { useTier } from '@/src/features/entitlement/store';
 import { Text } from '@/src/ui/Text';
+import { Touchable } from '@/src/ui/Touchable';
 
 import { useDayLabel } from './dayLabel';
 import { currentWeekOnly, previewOf, splitOnMatch } from './entries';
@@ -147,12 +148,12 @@ export function SearchScreen() {
 
           <View className="gap-3">
             {results.map((entry) => (
-              <Pressable
+              <Touchable
                 key={entry.id}
                 accessibilityRole="button"
                 accessibilityLabel={previewOf(entry) || t('untitledEntry')}
                 onPress={() => router.push(`/journal/${entry.id}`)}
-                className="border border-border-strong bg-surface-tertiary p-5 active:opacity-80"
+                className="border border-border-strong bg-surface-tertiary p-5"
                 style={{ borderRadius: radius.xl }}
               >
                 <Text
@@ -165,7 +166,7 @@ export function SearchScreen() {
                   text={previewOf(entry) || t('untitledEntry')}
                   needle={query.trim()}
                 />
-              </Pressable>
+              </Touchable>
             ))}
           </View>
         </>

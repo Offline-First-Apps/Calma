@@ -1,3 +1,9 @@
+import {
+  LANGUAGES,
+  SYSTEM_LOCALE,
+  formatWindowTime,
+  languageFor,
+} from '@calma/i18n';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { ScrollView, View } from 'react-native';
@@ -7,7 +13,11 @@ import { usePrefsStore } from '@/src/stores/prefs';
 import { Screen } from '@/src/ui/Screen';
 import { Text } from '@/src/ui/Text';
 
-import { LinkRow, Section, ToggleRow } from './Rows';
+import { offersLanguageChoice } from './languageRow';
+import { PlusSection } from './PlusSection';
+import { LinkRow, Section, ToggleRow, ValueRow } from './Rows';
+import { PATTERN_KEY, resolveUsualPattern } from './usualRhythm';
+import { windowRange } from './windowRange';
 
 /**
  * j1 — Settings.
@@ -36,7 +46,7 @@ import { LinkRow, Section, ToggleRow } from './Rows';
  * when their destinations do (plan 14 T02-T05, T08).
  */
 export function SettingsScreen() {
-  const { t } = useTranslation('settings');
+  const { t, i18n } = useTranslation(['settings', 'breathing']);
   const router = useRouter();
   const repositories = useRepositories();
   const prefs = usePrefsStore((state) => state.prefs);
@@ -44,6 +54,16 @@ export function SettingsScreen() {
 
   const set = (patch: Parameters<typeof update>[1]) =>
     void update(repositories.prefs, patch);
+
+  /*
+    Resolved, not read raw. A stored `'custom'` whose ratio has since gone
+    would name a rhythm that cannot be started, and this row is the label on
+    the thing Home actually does.
+  */
+  const rhythm =
+    PATTERN_KEY[resolveUsualPattern(prefs.defaultPattern, prefs.customRatio)];
+
+  const offersLanguage = offersLanguageChoice(LANGUAGES);
 
   return (
     <Screen>
@@ -55,7 +75,81 @@ export function SettingsScreen() {
           {t('title')}
         </Text>
 
+        {/*
+          Not drawn by j1, which has no You section — the three onboarding
+          answers have to live somewhere, and they are the most personal thing
+          in here. The row says "what you told us" rather than "your profile",
+          because it is a record of three sentences somebody typed and not a
+          conclusion the app drew about them.
+        */}
+        <Section title={t('sections.you')}>
+          <ValueRow
+            label={t('rows.name')}
+            value={prefs.name ?? t('rows.nameUnset')}
+            onPress={() => router.push('/settings/name')}
+          />
+          {/*
+            Absent while English ships alone, because a picker whose two
+            answers both resolve to English is a setting that does nothing —
+            and this screen's rule since session 18 is that no row leads
+            nowhere. The condition is `offersLanguageChoice`, so the row
+            appears by itself the day a second locale folder lands.
+          */}
+          {offersLanguage ? (
+            <ValueRow
+              label={t('language')}
+              hint={t('languageHint')}
+              value={
+                prefs.locale === SYSTEM_LOCALE
+                  ? t('languageSystem')
+                  : languageFor(prefs.locale)?.nativeName ?? t('languageSystem')
+              }
+              onPress={() => router.push('/settings/language')}
+            />
+          ) : null}
+          <LinkRow
+            label={t('rows.answers')}
+            hint={t('rows.answersHint')}
+            onPress={() => router.push('/settings/answers')}
+            last
+          />
+        </Section>
+
+        {/*
+          j1's first section, and its two rows are the design's: the rhythm
+          you usually breathe, and the buzz you follow it with. The buzz sits
+          here rather than under Sound & feel because that is where j1 draws
+          it, and because it is a breathing feature — it is the thing you
+          follow with your eyes closed, which is not a preference about sound.
+        */}
+        <Section title={t('sections.breathing')}>
+          <ValueRow
+            label={t('rows.rhythm')}
+            value={t(`breathing:patterns.${rhythm}.name`)}
+            onPress={() => router.push('/settings/breathing')}
+          />
+          <ToggleRow
+            label={t('rows.haptics')}
+            hint={t('rows.hapticsHint')}
+            value={prefs.hapticsEnabled}
+            onChange={(hapticsEnabled) => set({ hapticsEnabled })}
+            last
+          />
+        </Section>
+
         <Section title={t('sections.worries')}>
+          {/* One value, not a time plus a length: nobody thinks of their
+              window as "20:00" plus "20 minutes". `windowRange` is pure. */}
+          <ValueRow
+            label={t('rows.window')}
+            value={windowRange(
+              prefs.worryWindowTime,
+              prefs.worryWindowMinutes,
+              i18n.language,
+              formatWindowTime,
+            )}
+            onPress={() => router.push('/settings/window')}
+          />
           {/*
             This toggle NEVER fires the OS dialog. A permission can only be
             spent once, and `permission.ts` is explicit that the prompt belongs
@@ -72,8 +166,6 @@ export function SettingsScreen() {
           />
         </Section>
 
-        {/* One section, because two sections of one row each is a list
-            pretending to be organised. */}
         <Section title={t('sections.soundAndFeel')}>
           <ToggleRow
             label={t('rows.sound')}
@@ -81,11 +173,15 @@ export function SettingsScreen() {
             value={prefs.soundEnabled}
             onChange={(soundEnabled) => set({ soundEnabled })}
           />
-          <ToggleRow
-            label={t('rows.haptics')}
-            hint={t('rows.hapticsHint')}
-            value={prefs.hapticsEnabled}
-            onChange={(hapticsEnabled) => set({ hapticsEnabled })}
+          {/*
+            "Sound & feel" is where this belongs and it is not a stretch: the
+            theme is how the app feels at the hour someone opens it, which is
+            the same kind of preference as whether it makes a noise.
+          */}
+          <ValueRow
+            label={t('rows.appearance')}
+            value={t(`appearanceValue.${prefs.theme}`)}
+            onPress={() => router.push('/settings/appearance')}
             last
           />
         </Section>
@@ -112,13 +208,12 @@ export function SettingsScreen() {
           />
         </Section>
 
-        <Section title={t('sections.plus')}>
-          <LinkRow
-            label={t('rows.seePlans')}
-            onPress={() => router.push('/paywall')}
-            last
-          />
-        </Section>
+        {/*
+          Renders nothing at all on a build where nothing can be bought. See
+          `plusSectionState` — that is designed behaviour, not a missing
+          section.
+        */}
+        <PlusSection />
 
         {/*
           The silent-switch explainer, and it is a sentence rather than a row

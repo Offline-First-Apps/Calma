@@ -1,9 +1,10 @@
 import type { PostFeeling } from '@calma/domain';
 import { useTranslation } from 'react-i18next';
-import { Pressable, Text as RNText, View } from 'react-native';
+import { Text as RNText, View } from 'react-native';
 
 import { Button } from '@/src/ui/Button';
 import { Text } from '@/src/ui/Text';
+import { Touchable } from '@/src/ui/Touchable';
 
 /**
  * The post-session check.
@@ -46,7 +47,7 @@ export function FeelingPicker({ onSubmit }: FeelingPickerProps) {
 
       <View className="flex-row gap-3">
         {ORDER.map((feeling) => (
-          <Pressable
+          <Touchable
             key={feeling}
             onPress={() => onSubmit(feeling)}
             accessibilityRole="button"
@@ -54,7 +55,7 @@ export function FeelingPicker({ onSubmit }: FeelingPickerProps) {
             // "pensive face" instead of "worse" would be describing a picture
             // of the answer rather than the answer.
             accessibilityLabel={t(`suds.post.${feeling}`)}
-            className="flex-1 items-center justify-center gap-[14px] rounded-sheet border border-border bg-surface px-2 py-[26px] active:opacity-90"
+            className="flex-1 items-center justify-center gap-[14px] rounded-sheet border border-border bg-surface px-2 py-[26px]"
           >
             {/*
               Raw RN Text, not the app's `Text`: an emoji rendered in
@@ -68,7 +69,7 @@ export function FeelingPicker({ onSubmit }: FeelingPickerProps) {
             <Text variant="callout" className="text-center text-foreground">
               {t(`suds.post.${feeling}`)}
             </Text>
-          </Pressable>
+          </Touchable>
         ))}
       </View>
 

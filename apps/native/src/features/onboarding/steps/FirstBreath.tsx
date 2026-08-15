@@ -7,7 +7,7 @@ import {
 import { amberGradient, amberGradientStops } from '@calma/tokens';
 import { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Pressable, View } from 'react-native';
+import { View } from 'react-native';
 import Svg, { Circle, Defs, LinearGradient, Stop } from 'react-native-svg';
 import { useUniwind } from 'uniwind';
 
@@ -20,6 +20,7 @@ import { useReduceMotion } from '@/src/lib/motion';
 import { Button } from '@/src/ui/Button';
 import { Orb as AmbientOrb } from '@/src/ui/Orb';
 import { Text } from '@/src/ui/Text';
+import { Touchable } from '@/src/ui/Touchable';
 
 /**
  * B7 — the first breath. `designs/extracted/b7-first-breath-{light,dark}.html`.
@@ -243,13 +244,13 @@ function CalmButton({
   const stops = isDark ? amberGradient.dark.fab : amberGradient.light.fab;
 
   return (
-    <Pressable
+    <Touchable
       onPress={onPress}
       accessibilityRole="button"
       accessibilityLabel={label}
       accessibilityHint={hint}
       hitSlop={12}
-      className="items-center justify-center rounded-full active:opacity-90"
+      className="items-center justify-center rounded-full"
       style={{
         width: size,
         height: size,
@@ -274,6 +275,6 @@ function CalmButton({
         </Defs>
         <Circle cx="50%" cy="50%" r="50%" fill="url(#onboardingCalm)" />
       </Svg>
-    </Pressable>
+    </Touchable>
   );
 }

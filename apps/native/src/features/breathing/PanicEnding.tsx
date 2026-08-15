@@ -1,10 +1,11 @@
 import { useTranslation } from 'react-i18next';
-import { Pressable, View } from 'react-native';
+import { View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Svg, { Defs, RadialGradient, Rect, Stop } from 'react-native-svg';
 
 import { Orb } from './Orb';
 import { Text } from '@/src/ui/Text';
+import { Touchable } from '@/src/ui/Touchable';
 import { useOrbAnimation } from './useOrbAnimation';
 
 /**
@@ -129,14 +130,14 @@ export function PanicEnding({
  */
 function EndingButton({ label, onPress }: { label: string; onPress: () => void }) {
   return (
-    <Pressable
+    <Touchable
       onPress={onPress}
       accessibilityRole="button"
       accessibilityLabel={label}
       hitSlop={8}
-      className="h-16 flex-1 items-center justify-center rounded-[32px] border border-border-ending bg-surface-ending active:opacity-80"
+      className="h-16 flex-1 items-center justify-center rounded-[32px] border border-border-ending bg-surface-ending"
     >
       <Text variant="control">{label}</Text>
-    </Pressable>
+    </Touchable>
   );
 }

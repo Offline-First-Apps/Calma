@@ -2,6 +2,7 @@
   "title": "Settings",
   "name": "What should we call you?",
   "nameHint": "Only stored on this phone. Leave it blank if you'd rather.",
+  "nameClear": "Leave it blank",
   "privacy": "Everything you write stays on this phone. There are no accounts and no servers. Nothing is backed up — if you lose this phone, this is gone too.",
   "erase": "Erase everything",
   "eraseConfirm": "This deletes every worry, entry, and session. It can't be undone.",
@@ -46,7 +47,7 @@
     "windowNotify": "Tell me when it opens",
     "windowNotifyHint": "One quiet note, never a badge",
     "lock": "Lock Calma",
-    "lockHint": "Ask for your face, fingerprint or passcode before opening your writing",
+    "lockHint": "However you unlock this phone, before opening your writing",
     "writing": "Your writing",
     "answers": "What you told us",
     "answersHint": "Three answers, and all of them changeable",
@@ -56,6 +57,39 @@
     "restore": "Restore a purchase",
     "restoreHint": "If you've changed phones",
     "crisis": "When it's more than this"
+  },
+  "orbTheme": {
+    "title": "The shape you follow",
+    "hint": "What the breathing screen draws.",
+    "orb": "The orb",
+    "orbHint": "A warm light that grows and settles",
+    "wave": "The wave",
+    "bloom": "The bloom",
+    "notYet": "Not here yet"
+  },
+  "plusSection": {
+    "free": "Free",
+    "active": "Active",
+    "deviceChange": "There are no accounts here, so a purchase belongs to your app store rather than to Calma. On a new phone, restoring is how it comes back."
+  },
+  "answersScreen": {
+    "title": "What you told us",
+    "body": "Three things you said when you set Calma up. Change any of them, or all of them, or none. Nothing here is scored and nothing has to be filled in.",
+    "windowOffer": "Your worry window opens at {{current}}. Going by what you just changed, {{suggested}} might suit you better.",
+    "windowMove": "Move it to {{suggested}}",
+    "windowKeep": "Leave it where it is"
+  },
+  "rhythmScreen": {
+    "title": "Your usual rhythm",
+    "body": "The breath Calma offers when you open it. The others are always a tap away on the Breathe tab.",
+    "whenItApplies": "A change here takes effect the next time you start, never partway through a breath."
+  },
+  "windowScreen": {
+    "body": "When your worries get their twenty minutes. Set it for a time you are usually free, and a while before you want to sleep.",
+    "hour": "Hour",
+    "minutes": "Minutes",
+    "earlier": "Earlier",
+    "later": "Later"
   },
   "appearanceValue": {
     "system": "Match my phone",

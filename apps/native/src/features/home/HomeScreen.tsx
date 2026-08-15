@@ -8,6 +8,10 @@ import { ScrollView, View } from 'react-native';
 import { PANIC_FAB_CLEARANCE } from '@/src/components/PanicFab';
 import { ReOffer } from '@/src/features/onboarding/ReOffer';
 import { SettingsButton } from '@/src/features/settings/SettingsButton';
+import {
+  PATTERN_KEY,
+  resolveUsualPattern,
+} from '@/src/features/settings/usualRhythm';
 import { OfflineNote } from '@/src/features/states/OfflineNote';
 import { ReturningScreen } from '@/src/features/states/ReturningScreen';
 import { useReturning } from '@/src/features/states/useReturning';
@@ -48,9 +52,26 @@ export function HomeScreen() {
     };
   }, [repositories]);
 
-  const startSigh = useCallback(() => {
-    router.push('/session/physiological-sigh');
-  }, [router]);
+  /**
+   * The rhythm Home offers — j1's "your usual rhythm", and the only thing
+   * that preference changes.
+   *
+   * `resolveUsualPattern` rather than `prefs.defaultPattern` directly: a
+   * stored `'custom'` whose ratio has since been erased would make
+   * `getPattern` throw, on the one button this app cannot afford to have
+   * fail. It falls back to the sigh.
+   *
+   * The panic FAB is untouched and always the sigh. A preference is a thing
+   * someone set on a calm day; the panic path is for a moment when the last
+   * thing that should happen is the app doing something they have forgotten
+   * choosing (rule 3).
+   */
+  const usual = resolveUsualPattern(prefs.defaultPattern, prefs.customRatio);
+  const usualKey = PATTERN_KEY[usual];
+
+  const startUsual = useCallback(() => {
+    router.push({ pathname: '/session/[pattern]', params: { pattern: usual } });
+  }, [router, usual]);
 
   /**
    * What onboarding's third question changed.
@@ -79,7 +100,7 @@ export function HomeScreen() {
           <ReturningScreen
             onBreathe={() => {
               returning.acknowledge();
-              startSigh();
+              startUsual();
             }}
           />
         </View>
@@ -153,9 +174,21 @@ export function HomeScreen() {
             </>
           ) : (
             <>
-              <Button label={t('common:takeASigh')} onPress={startSigh} />
+              {/*
+                c1 draws "Take a sigh now", and for everyone who has not
+                changed their usual rhythm that is exactly what still renders.
+                A named alternative would have to be capitalised mid-sentence
+                in every locale, so the other three share one calm label and
+                the line underneath says which breath it is.
+              */}
+              <Button
+                label={usual === 'physiological-sigh'
+                  ? t('common:takeASigh')
+                  : t('common:startUsual')}
+                onPress={startUsual}
+              />
               <Text variant="callout" className="px-1">
-                {t('breathing:patterns.sigh.description')}
+                {t(`breathing:patterns.${usualKey}.description`)}
               </Text>
             </>
           )}
@@ -166,8 +199,14 @@ export function HomeScreen() {
         <Enter index={3} className="mt-4">
           <Button
             variant="secondary"
-            label={lead === 'journal' ? t('common:takeASigh') : t('common:breatheFor')}
-            onPress={lead === 'journal' ? startSigh : () => router.push('/breathe')}
+            label={
+              lead === 'journal'
+                ? usual === 'physiological-sigh'
+                  ? t('common:takeASigh')
+                  : t('common:startUsual')
+                : t('common:breatheFor')
+            }
+            onPress={lead === 'journal' ? startUsual : () => router.push('/breathe')}
           />
         </Enter>
 

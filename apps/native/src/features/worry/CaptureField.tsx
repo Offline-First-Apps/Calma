@@ -1,7 +1,7 @@
 import { clay, control, radius } from '@calma/tokens';
 import { useCallback, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Pressable, TextInput, View } from 'react-native';
+import { TextInput, View } from 'react-native';
 import Animated, {
   Easing,
   runOnJS,
@@ -17,6 +17,7 @@ import { usePaywallHold } from '@/src/features/entitlement/gateStore';
 import { playSound } from '@/src/lib/audio';
 import { hapticWorryCaptured } from '@/src/lib/haptics';
 import { Text } from '@/src/ui/Text';
+import { Touchable } from '@/src/ui/Touchable';
 
 import { ClayFill } from './ClayFill';
 import { Ripple } from './Ripple';
@@ -177,7 +178,7 @@ export function CaptureField({ onCapture, windowTime }: CaptureFieldProps) {
 
   return (
     <View>
-      <Pressable
+      <Touchable
         accessibilityRole="none"
         onPress={() => input.current?.focus()}
         className={`bg-surface-worry ${edge} px-[22px] pb-6 pt-[22px]`}
@@ -227,7 +228,7 @@ export function CaptureField({ onCapture, windowTime }: CaptureFieldProps) {
           className="font-sans text-[19px] leading-[29px] text-foreground"
           style={{ textAlignVertical: 'top' }}
         />
-      </Pressable>
+      </Touchable>
 
       {/*
         The button appears only once there is something to set down.
@@ -236,11 +237,11 @@ export function CaptureField({ onCapture, windowTime }: CaptureFieldProps) {
       */}
       {hasText ? (
         <View className="mt-[18px] self-end">
-          <Pressable
+          <Touchable
             accessibilityRole="button"
             accessibilityLabel={t('setDown')}
             onPress={submit}
-            className="h-button-compact flex-row items-center justify-center rounded-full px-7 active:opacity-90"
+            className="h-button-compact flex-row items-center justify-center rounded-full px-7"
           >
             <ClayFill height={control.compact} />
             <Text
@@ -249,7 +250,7 @@ export function CaptureField({ onCapture, windowTime }: CaptureFieldProps) {
             >
               {t('setDown')}
             </Text>
-          </Pressable>
+          </Touchable>
         </View>
       ) : null}
 

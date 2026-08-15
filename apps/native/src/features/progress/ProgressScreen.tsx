@@ -1,11 +1,12 @@
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Pressable, ScrollView, View } from 'react-native';
+import { ScrollView, View } from 'react-native';
 
 import { PANIC_FAB_CLEARANCE } from '@/src/components/PanicFab';
 import { Screen } from '@/src/ui/Screen';
 import { Text } from '@/src/ui/Text';
+import { Touchable } from '@/src/ui/Touchable';
 
 import { HistoryView } from './HistoryView';
 import { Segmented } from './Segmented';
@@ -72,13 +73,13 @@ export function ProgressScreen() {
               caption calls this a journal margin, and a disclosure arrow would
               make it a row in a settings list.
             */}
-            <Pressable
+            <Touchable
               onPress={() => router.push('/progress/week')}
               accessibilityRole="button"
               accessibilityLabel={t('a11y.openWeek')}
             >
               <WeekCard sessions={aggregate.sessions} shape={shape} />
-            </Pressable>
+            </Touchable>
 
             <StatTiles week={aggregate} streak={streak} />
           </ScrollView>

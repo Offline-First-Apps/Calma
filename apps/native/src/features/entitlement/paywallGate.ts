@@ -30,6 +30,8 @@
  * in Node with no device. That test is the point of the shape.
  */
 
+import type { Tier } from '@calma/domain';
+
 export type LimitKind = 'worry' | 'journal' | 'history' | 'customRatio';
 
 /**
@@ -92,6 +94,28 @@ export function paywallDecision(
 
   const seenToday = context.markerDay === context.today && context.shown.includes(kind);
   return seenToday ? 'inline' : 'sheet';
+}
+
+/**
+ * Whether a custom rhythm may be saved (plan 14 T05, plan 11 T11).
+ *
+ * THE BUILDER IS NEVER BLOCKED. Only the save is, which is EditorScreen's
+ * standing rule applied to a second feature: a limit blocks the finish, not
+ * the making. Someone on free can open d7, set four numbers, and see exactly
+ * what they would be buying — d1's caption forbids a padlock on the row and
+ * the same reasoning forbids a locked door in front of the screen.
+ *
+ * SUPPRESSED IS "YES", NOT "NO", AND THAT IS THE WHOLE POINT OF THIS FUNCTION.
+ *
+ * `suppressed` means no purchase could succeed on this build at all — no
+ * RevenueCat key, or the SDK failed to configure. Refusing the save there
+ * would be a hard block with no way past it, on a build where nobody can pay
+ * to remove it, which is the one thing systems/05 says never to build. So the
+ * ratio saves and no offer is made, which is the same "free tier, paywalls
+ * suppressed" state the rest of the app degrades to.
+ */
+export function mayUseCustomRatio(tier: Tier, suppressed: boolean): boolean {
+  return tier === 'plus' || suppressed;
 }
 
 /**

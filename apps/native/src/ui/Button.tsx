@@ -1,9 +1,10 @@
 import { amberGradient, amberGradientStops, control } from '@calma/tokens';
-import { Pressable, View, type PressableProps } from 'react-native';
+import { View, type PressableProps } from 'react-native';
 import Svg, { Defs, LinearGradient, Rect, Stop } from 'react-native-svg';
 import { useUniwind } from 'uniwind';
 
 import { Text } from './Text';
+import { Touchable } from './Touchable';
 
 /**
  * Buttons are fully rounded — the radius is always exactly half the height,
@@ -28,6 +29,12 @@ import { Text } from './Text';
  * className, and heroui's press feedback is a scale-and-ripple animation that
  * Calma's motion rules forbid anyway.
  *
+ * The press feedback is `Touchable`'s, which is why no variant carries an
+ * `active:` class any more. Those were instant state swaps -- 100% on one
+ * frame and 90% on the next -- and this is the animation that fires on every
+ * interaction in the app, so it sets the felt tempo more than any transition
+ * does. See `ui/press.ts`.
+ *
  * WHY AMBER IS A GRADIENT AND NOT A FILL.
  *
  * Every amber surface in the designs is a three-stop linear gradient with a
@@ -40,7 +47,7 @@ import { Text } from './Text';
  */
 const variants = {
   /** Amber gradient. The one obvious action on a screen. */
-  primary: 'active:opacity-90',
+  primary: '',
   /**
    * Sand fill. Used where nothing is allowed to out-shout the orb.
    *
@@ -51,7 +58,7 @@ const variants = {
    * gets its own, warmer pair. Nothing downstream noticed, because everything
    * downstream agreed with itself.
    */
-  secondary: 'bg-surface-quiet border border-border-quiet active:bg-border-strong',
+  secondary: 'bg-surface-quiet border border-border-quiet',
   /**
    * Secondary, but standing on the immersive ground.
    *
@@ -59,10 +66,9 @@ const variants = {
    * screen it reads washed out, so d4 and d5 use their own pair. This is the
    * variant for anything shown during a breathing session.
    */
-  immersive:
-    'bg-surface-immersive border border-border-immersive active:opacity-90',
+  immersive: 'bg-surface-immersive border border-border-immersive',
   /** Text only. Dismissals and skips. */
-  quiet: 'bg-transparent border border-transparent active:opacity-70',
+  quiet: 'bg-transparent border border-transparent',
 } as const;
 
 const labelColor = {
@@ -98,7 +104,7 @@ export function Button({
   const height = heights[variant];
 
   return (
-    <Pressable
+    <Touchable
       accessibilityRole="button"
       accessibilityLabel={label}
       className={`rounded-full flex-row items-center justify-center px-6 ${variants[variant]} ${className}`}
@@ -116,7 +122,7 @@ export function Button({
       <Text variant="control" className={labelColor[variant]}>
         {label}
       </Text>
-    </Pressable>
+    </Touchable>
   );
 }
 

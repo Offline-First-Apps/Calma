@@ -4,14 +4,16 @@ import { useRouter } from 'expo-router';
 import { weekKey } from '@calma/domain';
 import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Pressable, View } from 'react-native';
+import { View } from 'react-native';
 
 import { useRepositories } from '@/src/lib/repositories';
 import { PlusPrompt } from '@/src/features/entitlement/PlusPrompt';
 import { useTier } from '@/src/features/entitlement/store';
 import { Button } from '@/src/ui/Button';
+import { Collapsed } from '@/src/ui/Collapsed';
 import { EmptyPage } from '@/src/features/states/EmptyPage';
 import { Text } from '@/src/ui/Text';
+import { Touchable } from '@/src/ui/Touchable';
 
 import { useDayLabel } from './dayLabel';
 import { currentWeekOnly, groupByDay, previewOf } from './entries';
@@ -129,9 +131,28 @@ export function EntryList() {
             {dayLabel(day.entries[0]!.createdAt)}
           </Text>
 
-          {day.entries.map((entry) => (
-            <EntryCard key={entry.id} entry={entry} />
-          ))}
+          {/*
+            A HEAVY DAY MUST NOT BURY THE REST OF THE ARCHIVE.
+
+            Paging is by DAY -- thirty at a time -- which says nothing about
+            how many entries one day holds. Somebody working through a bad
+            night can write eight, and eight full-width cards under one date
+            pushes every other day, the Plus note and "Show more" off the
+            bottom of a screen they came to browse.
+
+            Five, then "+X more", per day. `Collapsed` scrolls the opened
+            group inside itself rather than growing the page, so nothing below
+            moves when it opens. The count is only ever shown as part of the
+            offer to see them, never as a tally of how much somebody wrote.
+          */}
+          <Collapsed
+            items={day.entries}
+            keyFor={(entry) => entry.id}
+            moreLabel={(hidden) => t('moreHere', { count: hidden })}
+            lessLabel={t('showFewer')}
+            gap={12}
+            renderItem={(entry) => <EntryCard entry={entry} />}
+          />
         </View>
       ))}
 
@@ -166,20 +187,20 @@ function EntryCard({ entry }: { entry: JournalEntry }) {
   const label = preview.length > 0 ? preview : t('untitledEntry');
 
   return (
-    <Pressable
+    <Touchable
       accessibilityRole="button"
       accessibilityLabel={label}
       onPress={() => router.push(`/journal/${entry.id}`)}
       className={
         entry.isDraft
-          ? 'border border-dashed border-border-draft bg-surface-draft p-[22px] active:opacity-80'
-          : 'border border-border-strong bg-surface-tertiary p-[22px] active:opacity-80'
+          ? 'border border-dashed border-border-draft bg-surface-draft p-[22px]'
+          : 'border border-border-strong bg-surface-tertiary p-[22px]'
       }
       style={{ borderRadius: radius.xl }}
     >
       <Text variant="headingSm" className="text-[23px] leading-[33px]">
         {label}
       </Text>
-    </Pressable>
+    </Touchable>
   );
 }

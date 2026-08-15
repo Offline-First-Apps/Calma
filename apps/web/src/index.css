@@ -1,1 +1,129 @@
-@import "@calma/ui/globals.css";
+@import "tailwindcss";
+@source "./**/*.{ts,tsx}";
+
+/*
+ * Calma, on the web.
+ *
+ * ---------------------------------------------------------------------------
+ * WHY THIS FILE IS THE THEME AND THERE IS NO TAILWIND CONFIG.
+ *
+ * Tailwind v4 is CSS-first and never loads a JS config. The native app learned
+ * this the expensive way -- `packages/tokens/src/tailwind.ts` exported a v3
+ * `theme.extend` object that nothing imported, and for three sessions the app
+ * was styled by a stock component library while the real palette sat in a file
+ * that was not plugged in. `@theme` is where the values have to be.
+ *
+ * WHY THE HEXES ARE WRITTEN OUT RATHER THAN IMPORTED FROM `@calma/tokens`.
+ *
+ * They cannot be. `@theme` is parsed by the CSS compiler and cannot evaluate
+ * a TypeScript module. This is exactly the gap `theme-parity.test.ts` guards
+ * on the native side, and the same gap exists here -- every value below is
+ * from `packages/tokens/src/colors.ts` and the site takes a much smaller
+ * subset than the app's 129.
+ * ---------------------------------------------------------------------------
+ *
+ * DARK MODE IS `prefers-color-scheme` AND NOTHING ELSE.
+ *
+ * No `next-themes`, no class toggle, no provider, no `suppressHydrationWarning`,
+ * and no flash of the wrong theme. It is also the only version that needs zero
+ * JavaScript, which matters for T06: a marketing site for an app that runs
+ * entirely offline should not need a runtime to pick a colour.
+ */
+
+@theme {
+  /* Type. Two families, exactly as in the app (D-017): the serif is for
+     sentences meant to be felt, the sans for everything meant to be read.
+     A third would be a third voice. */
+  --font-sans: var(--font-figtree), ui-sans-serif, system-ui, sans-serif;
+  --font-serif: var(--font-newsreader), ui-serif, Georgia, serif;
+
+  /* Grounds and ink. */
+  --color-ground: #fbf7f1;
+  --color-surface: #f3ebe0;
+  --color-surface-raised: #fdfcfa;
+  --color-ink: #2a3642;
+  --color-ink-secondary: #454f5a;
+  --color-ink-muted: #5f6c78;
+  --color-ink-faint: #7a6a5c;
+  --color-rule: #e2d5c3;
+
+  /* Amber. The one thing in this product that gives off light. */
+  --color-accent: #e39a45;
+  --color-accent-pressed: #d68b36;
+  --color-accent-soft: #f0b96d;
+  --color-accent-core: #f8dfb2;
+  --color-accent-ink: #9a6220;
+  --color-accent-on: #33230f;
+
+  /* Sage. "Settled", never "correct" — there is no green for success here,
+     and no red anywhere in the product at all. */
+  --color-sage: #7e8f72;
+  --color-sage-surface: #f1f2eb;
+  --color-sage-border: #dde2d5;
+  --color-sage-ink: #46523c;
+}
+
+@media (prefers-color-scheme: dark) {
+  @theme {
+    --color-ground: #141c26;
+    --color-surface: #1d2733;
+    --color-surface-raised: #2c3844;
+    --color-ink: #eae2d7;
+    --color-ink-secondary: #a8b4bf;
+    --color-ink-muted: #93a0ac;
+    --color-ink-faint: #8f98a3;
+    --color-rule: #2e3b4a;
+
+    --color-accent: #d19249;
+    --color-accent-pressed: #b87a3a;
+    --color-accent-soft: #dfa55b;
+    --color-accent-core: #f8dfb2;
+    --color-accent-ink: #dfae73;
+    --color-accent-on: #221708;
+
+    --color-sage: #9aaa8c;
+    --color-sage-surface: #232c24;
+    --color-sage-border: #333d32;
+    --color-sage-ink: #b7c6ab;
+  }
+}
+
+@layer base {
+  html {
+    color-scheme: light dark;
+    /* Nothing in Calma should arrive suddenly, including a jump down the
+       page from a skip link or an in-page anchor. */
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background-color: var(--color-ground);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* A visible focus ring everywhere, in the accent rather than the browser's
+     blue. Removing outlines is the single most common accessibility
+     regression on a marketing site, so the default is replaced rather than
+     switched off. */
+  :focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}

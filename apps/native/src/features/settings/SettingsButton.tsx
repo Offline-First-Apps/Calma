@@ -1,6 +1,7 @@
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
-import { Pressable, View } from 'react-native';
+import { View } from 'react-native';
+import { Touchable } from '@/src/ui/Touchable';
 
 /**
  * The way into Settings, and the only one.
@@ -27,12 +28,12 @@ export function SettingsButton() {
   const router = useRouter();
 
   return (
-    <Pressable
+    <Touchable
       onPress={() => router.push('/settings')}
       accessibilityRole="button"
       accessibilityLabel={t('a11y.openSettings')}
       hitSlop={12}
-      className="h-11 w-11 items-center justify-end gap-[5px] self-end py-[10px] active:opacity-60"
+      className="h-11 w-11 items-center justify-end gap-[5px] self-end py-[10px]"
     >
       {[24, 18, 12].map((width) => (
         <View
@@ -41,6 +42,6 @@ export function SettingsButton() {
           style={{ width, height: 2, borderRadius: 1 }}
         />
       ))}
-    </Pressable>
+    </Touchable>
   );
 }

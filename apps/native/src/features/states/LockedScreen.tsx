@@ -1,9 +1,10 @@
 import { useTranslation } from 'react-i18next';
-import { Pressable, View } from 'react-native';
+import { View } from 'react-native';
 
 import { Button } from '@/src/ui/Button';
 import { Screen } from '@/src/ui/Screen';
 import { Text } from '@/src/ui/Text';
+import { Touchable } from '@/src/ui/Touchable';
 
 /**
  * k4 — Calma is locked.
@@ -55,15 +56,15 @@ export function LockedScreen({
           {/* Primary. Breathing does not wait for authentication. */}
           <Button label={t('locked.breathe')} onPress={onBreathe} />
 
-          <Pressable
+          <Touchable
             onPress={onUnlock}
             accessibilityRole="button"
-            className="h-[52px] items-center justify-center active:opacity-70"
+            className="h-[52px] items-center justify-center"
           >
             <Text variant="callout" className="text-[17px] text-label-quiet">
               {t('locked.unlock')}
             </Text>
-          </Pressable>
+          </Touchable>
         </View>
       </View>
     </Screen>

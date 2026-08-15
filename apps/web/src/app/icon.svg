@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100">
+  <!--
+    The orb, at favicon size. The halo is dropped: below about 32px it is a
+    smudge rather than a glow, and what has to survive is the shape and the
+    amber. Flat sand behind it rather than transparency, so the mark reads on
+    a dark browser tab as well as a light one.
+  -->
+  <rect width="100" height="100" rx="22" fill="#FBF7F1"/>
+  <defs>
+    <radialGradient id="core" cx="45%" cy="38%" r="62%">
+      <stop offset="0%" stop-color="#F8DFB2"/>
+      <stop offset="62%" stop-color="#EFB86E"/>
+      <stop offset="100%" stop-color="#E39A45"/>
+    </radialGradient>
+  </defs>
+  <circle cx="50" cy="50" r="31" fill="url(#core)"/>
+</svg>

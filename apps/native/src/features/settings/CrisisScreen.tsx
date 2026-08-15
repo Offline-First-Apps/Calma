@@ -1,8 +1,9 @@
 import { useTranslation } from 'react-i18next';
-import { Linking, Pressable, ScrollView, View } from 'react-native';
+import { Linking, ScrollView, View } from 'react-native';
 
 import { Screen } from '@/src/ui/Screen';
 import { Text } from '@/src/ui/Text';
+import { Touchable } from '@/src/ui/Touchable';
 
 /**
  * j3 — When it's more than this.
@@ -120,13 +121,13 @@ function Resource({
   if (!onPress) return body;
 
   return (
-    <Pressable
+    <Touchable
       onPress={onPress}
       accessibilityRole="button"
       accessibilityLabel={`${name}. ${detail}`}
-      className="active:opacity-80"
+      className=""
     >
       {body}
-    </Pressable>
+    </Touchable>
   );
 }

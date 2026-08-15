@@ -30,7 +30,23 @@ One tap to breathing, from anywhere, always free, no questions. The strictest UX
 
 ## T03 — Add the panic activation sound and haptic
 
-- [ ]
+- [x] `54951ac`
+- **Note (session 19):** unblocked by `04-audio-haptics` T02 — the drum now
+  exists, so `playSound('panic')` stops being a silent no-op.
+
+  **It fires in `PanicFab`, not in `PanicSession`, and the todo's "Touches" is
+  wrong about that.** Activation is the press, not the mount. Firing it on
+  mount was tried in this session and reverted: the FAB already calls both, so
+  it double-fired for every FAB press.
+
+  It also means the three other routes into `/panic` — the boot-error screen
+  and onboarding's crisis exit — deliberately arrive in silence. A sudden Heavy
+  haptic and a drum for somebody stepping out of onboarding would be a startle,
+  which is the opposite of what the sound is for.
+
+  The haptic goes first and neither is awaited. The session is then silent for
+  its whole length apart from breath haptics, and `PRIORITY_SOUNDS` keeps
+  anything else from landing on top of it.
 - **Commit:** `feat(panic): add activation sound and heavy haptic`
 - **Depends on:** T02, `04-audio-haptics` T03
 - **Touches:** `apps/native/src/features/breathing/PanicSession.tsx`
