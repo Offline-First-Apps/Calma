@@ -17,6 +17,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
   return [
     { url: SITE, lastModified, priority: 1 },
+    { url: `${SITE}/terms`, lastModified, priority: 0.6 },
     { url: `${SITE}/privacy`, lastModified, priority: 0.6 },
     { url: `${SITE}/support`, lastModified, priority: 0.6 },
   ];
