@@ -29,6 +29,11 @@ export function Footer() {
 
         <ul className="mt-6 flex list-none flex-wrap gap-x-6 gap-y-2 p-0 text-[15px]">
           <li>
+            <Link href="/terms" className="text-ink-muted hover:text-ink">
+              Terms
+            </Link>
+          </li>
+          <li>
             <Link href="/privacy" className="text-ink-muted hover:text-ink">
               Privacy
             </Link>

@@ -72,6 +72,51 @@ export function Promise({
 }
 
 /**
+ * W1's summary card — "In plain words", then the three things that actually
+ * matter, as bullets.
+ *
+ * W2 states its promises as two side-by-side sage cards; W1 draws one wide
+ * card with a heading and a short list. They are not the same component and
+ * collapsing them would lose the distinction the design is making: W2's cards
+ * are two independent promises, W1's list is one summary of a longer document
+ * that follows. Same sage material, different shape.
+ *
+ * A real `<ul>` rather than styled divs, because a screen reader announcing
+ * "list, three items" is the whole point of a summary — it tells somebody how
+ * much they are about to be told before they commit to reading it.
+ */
+export function PlainWords({
+  title,
+  items,
+}: {
+  title: string;
+  items: readonly string[];
+}) {
+  return (
+    <div className="mt-10 rounded-[26px] border border-sage-border bg-sage-surface px-7 py-6">
+      <h2 className="text-[18px] font-medium text-sage-ink">{title}</h2>
+      <ul className="mt-3 flex list-none flex-col gap-3 p-0">
+        {items.map((item) => (
+          {/* The marker is a middle dot rather than a disc, matching the
+              numbered headings below. It is `aria-hidden` because the list
+              role already carries the structure, and a screen reader reading
+              "middle dot" before every line is noise. */}
+          <li
+            key={item}
+            className="relative pl-5 text-[16px] leading-[1.7] text-ink-secondary"
+          >
+            <span aria-hidden className="absolute left-0 text-sage">
+              &middot;
+            </span>
+            {item}
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+/**
  * A numbered section.
  *
  * The number is part of the visible heading rather than a `list-style`, so it

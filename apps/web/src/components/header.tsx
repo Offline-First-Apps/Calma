@@ -5,12 +5,12 @@ import { Orb } from "./orb";
 /**
  * The site header, from the W1/W2 design.
  *
- * ONE DIVERGENCE, AND IT IS THE OWNER'S RULE APPLIED TO THE WEB: the design
- * draws Calma · Terms · Privacy · Get Calma, and there is no Terms page here.
- * The design's terms copy is Lorem ipsum, and terms of service are a legal
- * document rather than a design decision — writing them is the owner's call,
- * not a session's. A header link to a page that does not exist is the same
- * mistake j1 spent a session undoing, so the link waits for the page.
+ * The design draws Calma · Terms · Privacy · Get Calma. Terms now exists —
+ * written in session 17 on the owner's instruction, with the company, the
+ * jurisdiction and the Plus prices supplied by them — so the link is here
+ * rather than waiting. Support is added to the row because both stores
+ * require a reachable support page and it is the one link somebody might
+ * arrive needing.
  *
  * "Get Calma" is a plain link rather than a button, because there is nowhere
  * for it to go until the apps are listed (plan 16). It scrolls to the badges,
@@ -32,6 +32,11 @@ export function Header() {
         </Link>
 
         <ul className="flex list-none items-center gap-6 p-0 text-[15px]">
+          <li>
+            <Link href="/terms" className="text-ink-muted hover:text-ink">
+              Terms
+            </Link>
+          </li>
           <li>
             <Link href="/privacy" className="text-ink-muted hover:text-ink">
               Privacy

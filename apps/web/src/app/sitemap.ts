@@ -3,9 +3,9 @@ import type { MetadataRoute } from "next";
 const SITE = "https://calma.app";
 
 /**
- * Three pages, listed by hand.
+ * Four pages, listed by hand.
  *
- * A generated sitemap would need a route manifest to walk, and with three
+ * A generated sitemap would need a route manifest to walk, and with four
  * static pages that machinery costs more than it saves — and would fail
  * silently by omitting a page rather than loudly by not compiling.
  *
