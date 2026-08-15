@@ -95,12 +95,12 @@ export function PlainWords({
   return (
     <div className="mt-10 rounded-[26px] border border-sage-border bg-sage-surface px-7 py-6">
       <h2 className="text-[18px] font-medium text-sage-ink">{title}</h2>
+      {/* The marker is a middle dot rather than a disc, matching the numbered
+          headings below. It is `aria-hidden` because the list role already
+          carries the structure, and a screen reader reading "middle dot"
+          before every line is noise. */}
       <ul className="mt-3 flex list-none flex-col gap-3 p-0">
         {items.map((item) => (
-          {/* The marker is a middle dot rather than a disc, matching the
-              numbered headings below. It is `aria-hidden` because the list
-              role already carries the structure, and a screen reader reading
-              "middle dot" before every line is noise. */}
           <li
             key={item}
             className="relative pl-5 text-[16px] leading-[1.7] text-ink-secondary"
